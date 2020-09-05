@@ -12,8 +12,10 @@ PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
 PREFIX dcterms: <http://purl.org/dc/terms/>
 PREFIX dcelements: <http://purl.org/dc/elements/1.1/>
 
-SELECT ?subject ?subclassof
-WHERE {?subject rdf:type owl:Class;
-                rdfs:subClassOf ?subclassof.
-        FILTER(STRSTARTS(STR(?subject), "https://github.com/tibonto/aeon#"))
+SELECT ?subject ?subclassof ?smw_import_info
+WHERE {
+    ?subject rdf:type owl:Class.
+    OPTIONAL {?subject rdfs:subClassOf ?subclassof.}
+    OPTIONAL {?subject aeon:SMW_import_info ?smw_import_info.}
+    FILTER(STRSTARTS(STR(?subject), "https://github.com/tibonto/aeon#"))
 }
