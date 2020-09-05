@@ -9,17 +9,11 @@ PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
 PREFIX aeon: <https://github.com/tibonto/aeon#>
 PREFIX obda: <https://w3id.org/obda/vocabulary#>
 PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX dcterms: <http://purl.org/dc/terms/>
+PREFIX dcelements: <http://purl.org/dc/elements/1.1/>
 
-
-SELECT ?subject ?subpropertyof ?domain ?type
-WHERE {
-    {?subject rdf:type owl:ObjectProperty}
-    UNION {?subject rdf:type owl:DatatypeProperty}.
-    OPTIONAL {
-        ?subject rdfs:subPropertyOf ?subpropertyof;
-                 rdfs:domain ?domain ;
-                 rdf:type ?type.
-        }
-    FILTER(STRSTARTS(STR(?subject), "https://github.com/tibonto/aeon#")).
+SELECT ?subject ?subclassof
+WHERE {?subject rdf:type owl:Class;
+                rdfs:subClassOf ?subclassof.
+        FILTER(STRSTARTS(STR(?subject), "https://github.com/tibonto/aeon#"))
 }
-ORDER BY ?type
