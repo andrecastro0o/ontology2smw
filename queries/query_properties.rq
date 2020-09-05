@@ -11,15 +11,16 @@ PREFIX obda: <https://w3id.org/obda/vocabulary#>
 PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
 
 
-SELECT ?subject ?subpropertyof ?domain ?type
+SELECT ?subject ?subpropertyof ?domain ?type ?smw_datatype ?smw_import_info
 WHERE {
-    {?subject rdf:type owl:ObjectProperty}
-    UNION {?subject rdf:type owl:DatatypeProperty}.
-    OPTIONAL {
-        ?subject rdfs:subPropertyOf ?subpropertyof;
-                 rdfs:domain ?domain ;
-                 rdf:type ?type.
-        }
+    {?subject rdf:type owl:ObjectProperty.}
+    UNION {?subject rdf:type owl:DatatypeProperty.}
+    OPTIONAL {?subject rdfs:subPropertyOf ?subpropertyof.}
+    OPTIONAL {?subject rdfs:domain ?domain.}
+    OPTIONAL {?subject rdf:type ?type.}
+    OPTIONAL {?subject aeon:SMW_import_info ?smw_import_info.}
+     ?subject aeon:SMW_datatype ?smw_datatype. # only importing props with datatype
+
     FILTER(STRSTARTS(STR(?subject), "https://github.com/tibonto/aeon#")).
 }
 ORDER BY ?type
