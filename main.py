@@ -80,7 +80,11 @@ if __name__ == '__main__':
         item = SPARQLitem(resource_type=query.resource_type,
                           item=printout,
                           ontology_ns='aeon')
-        item.create_wiki_item()
+        if item.item_dict.get('smw_import_info'):
+            item.create_wiki_item()
+        else:
+            print(f'{item.subject} MISSING aeon:SMW_import_info value')
+            # TODO print -> log
 
 
 # subject = last_property['subject']

@@ -3,8 +3,8 @@ Imported from [[Imported from::{{ ns }}:{{ item_name }}]]
 
 Equivalent URI [[Equivalent URI::{{ item_dict['subject'] }}]]
 
-{% if item_dict['subclassof'] %}
-[[Category:{{ item_dict['subclassof']| }}]]
+{% if 'aeon' in item_dict['subclassof']  %}  {# exclude subClassOf of other NS #}
+Subcategory of [[:Category:{{ item_dict['subclassof']|urlfragment }}]] [[Category:{{ item_dict['subclassof']|urlfragment }}]]
 {% endif %}
 
 {{ item_dict['smw_import_info'] }}
