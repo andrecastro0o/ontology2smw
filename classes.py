@@ -41,16 +41,17 @@ class SPARQLitem:
         self.item = item_
         self.item_dict = item_.asdict()
         self.subject = self.item_dict['subject']
+        self.subject_name = None
         self.iri = self.subject.defrag()
         self.wikipage_name = None
         self.wikipage_content = None
-        pprint(self.item_dict)
+        # pprint(self.item_dict)
 
     def create_wiki_item(self):
         # test urldefrag(url=self.item_dict['url']) == self.ini
-        subject_name = urldefrag(url=self.item_dict['subject']).fragment
+        self.subject_name = urldefrag(url=self.item_dict['subject']).fragment
         self.wikipage_name = f'{self.resource_type.capitalize()}:' \
-                             f'{subject_name}'
+                             f'{self.subject_name}'
         '''
         * Imported from [[Imported from::foaf:Organization]]
         * Equivalent URI
@@ -62,12 +63,13 @@ class SPARQLitem:
         '''
 
         if self.resource_type.lower() == 'category':
-            self.wikipage_content = render_template(template='mw_category.j2',
-                                                    ns=self.ontology_ns,
-                                                    item=self.item_dict,
-                                                    item_name=subject_name)
-            print(f'*****************{self.wikipage_name}*****************\n'
-                  f'{self.wikipage_content}\n*****************\n')
+            self.wikipage_content = render_template(
+                template='mw_category.j2',
+                ns=self.ontology_ns,
+                item=self.item_dict,
+                item_name=self.subject_name)
+            # print(f'*****************{self.wikipage_name}*****************\n'
+            #       f'{self.wikipage_content}\n*****************\n')
             # def createsmwpage(self, printout: Dict):  #     printout
 
 
@@ -82,7 +84,7 @@ if __name__ == '__main__':
                           ontology_ns='aeon')
         if item.item_dict.get('smw_import_info'):
             item.create_wiki_item()
-            print(item.wikipage_name)
+            print(item.wikipage_content)
         else:
             print(f'{item.subject} MISSING aeon:SMW_import_info value')
             # TODO print -> log
