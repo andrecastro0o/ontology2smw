@@ -82,6 +82,7 @@ if __name__ == '__main__':
                           ontology_ns='aeon')
         if item.item_dict.get('smw_import_info'):
             item.create_wiki_item()
+            print(item.wikipage_name)
         else:
             print(f'{item.subject} MISSING aeon:SMW_import_info value')
             # TODO print -> log
