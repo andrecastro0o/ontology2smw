@@ -5,6 +5,8 @@ from pathlib import Path
 from typing import Dict
 from pprint import pprint
 from jinja_utils import render_template
+from datetime import datetime
+from mediawikitools.wiki import actions as mwactions
 
 
 class Query:
@@ -68,10 +70,15 @@ class SPARQLitem:
                 ns=self.ontology_ns,
                 item=self.item_dict,
                 item_name=self.subject_name)
-            # print(f'*****************{self.wikipage_name}*****************\n'
-            #       f'{self.wikipage_content}\n*****************\n')
-            # def createsmwpage(self, printout: Dict):  #     printout
 
+    def write_wikipage(self):
+        now = datetime.now()
+        now = now.isoformat()
+        mwactions.edit(page=self.wikipage_name,
+                       content=self.wikipage_content,
+                       summary=f'Edited by Bot at {now}',
+                       append=False,
+                       newpageonly=False)
 
 if __name__ == '__main__':
     query = Query(resource_type='category',
