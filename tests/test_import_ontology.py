@@ -54,3 +54,5 @@ def test_category_creation():
                 print(f'Subcategory: {subclass_name} '
                       f'is found as {found_subcats}')
                 assert subclass_name in found_subcats
+
+# todo: WRITE PROPERTY TESTS

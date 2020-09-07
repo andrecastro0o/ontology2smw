@@ -54,22 +54,15 @@ class SPARQLitem:
         self.subject_name = urldefrag(url=self.item_dict['subject']).fragment
         self.wikipage_name = f'{self.resource_type.capitalize()}:' \
                              f'{self.subject_name}'
-        '''
-        * Imported from [[Imported from::foaf:Organization]]
-        * Equivalent URI
-        [[Equivalent URI::http://xmlns.com/foaf/0.1/Organization]]
-
-       smw_import_info
-        [[Category:Imported vocabulary]]
-        [[Category:aeon]]
-        '''
-
         if self.resource_type.lower() == 'category':
-            self.wikipage_content = render_template(
-                template='mw_category.j2',
-                ns=self.ontology_ns,
-                item=self.item_dict,
-                item_name=self.subject_name)
+            template_file = 'mw_category.j2'
+        elif self.resource_type.lower() == 'property':
+            template_file = 'mw_property.j2'
+        self.wikipage_content = render_template(
+            template=template_file,
+            ns=self.ontology_ns,
+            item=self.item_dict,
+            item_name=self.subject_name)
 
     def write_wikipage(self):
         now = datetime.now()
@@ -80,18 +73,38 @@ class SPARQLitem:
                        append=False,
                        newpageonly=False)
 
+
 if __name__ == '__main__':
-    query = Query(resource_type='category',
-                  sparql_fn='query_classes.rq',
+
+    # properties
+    query = Query(resource_type='property',
+                  sparql_fn='query_properties.rq',
                   format_='ttl',
                   source='aeon/aeon.ttl')
     for printout in query.return_printout():
         item = SPARQLitem(resource_type=query.resource_type,
                           item_=printout,
                           ontology_ns='aeon')
-        if item.item_dict.get('smw_import_info'):
-            item.create_wiki_item()
+        if item.item_dict.get('smw_datatype'):  # TODO add smw_datatype check
+            # item.create_wiki_item()
+            print(item.item_dict)
             print(item.wikipage_content)
-        else:
-            print(f'{item.subject} MISSING aeon:SMW_import_info value')
+        # else:
+        #     print(f'{item.subject} MISSING aeon:SMW_import_info value')
             # TODO print -> log
+
+
+    # query = Query(resource_type='category',
+    #               sparql_fn='query_classes.rq',
+    #               format_='ttl',
+    #               source='aeon/aeon.ttl')
+    # for printout in query.return_printout():
+    #     item = SPARQLitem(resource_type=query.resource_type,
+    #                       item_=printout,
+    #                       ontology_ns='aeon')
+    #     if item.item_dict.get('smw_import_info'):
+    #         item.create_wiki_item()
+    #         print(item.wikipage_content)
+    #     else:
+    #         print(f'{item.subject} MISSING aeon:SMW_import_info value')
+    #         # TODO print -> log
