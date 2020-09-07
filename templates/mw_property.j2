@@ -6,4 +6,8 @@ Equivalent URI [[Equivalent URI::{{ item['subject'] }}]]
 Has type [[Has type::{{ item['smw_datatype'] }}]]
 
 
+{% if 'aeon' in item['subpropertyof']  %}  {# exclude subpropertyof of other NS #}
+Subcategory of [[Subproperty of::{{ item['subpropertyof']|urlfragment }}]]
+{% endif %}
+
 {{ item['smw_import_info'] }}

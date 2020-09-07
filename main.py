@@ -4,6 +4,7 @@ args = parser.parse_args()
 
 
 if __name__ == '__main__':
+
     smw_import_overview = SMWImportOverview(ontology_ns='aeon')
     # properties
     query = Query(resource_type='property',
