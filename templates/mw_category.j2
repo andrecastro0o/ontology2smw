@@ -3,7 +3,7 @@ Imported from [[Imported from::{{ ns }}:{{ item_name }}]]
 
 Equivalent URI [[Equivalent URI::{{ item['subject'] }}]]
 
-{% if 'aeon' in item['subclassof']  %}  {# exclude subClassOf of other NS #}
+{% if item['subclassof']  %}
 Subcategory of [[:Category:{{ item['subclassof']|urlfragment }}]] [[Category:{{ item['subclassof']|urlfragment }}]]
 {% endif %}
 
