@@ -88,11 +88,13 @@ class SMWImportOverview(SMWontology):
         self.properties = []
         self.ontology_name = None
         self.iri = None
+        self.iri_seperator = None
         self.ontology_url = None
 
     def create_smw_import(self):
         all_resources = self.categories + self.properties
         page_info_dict = {'ontology_iri': self.iri,
+                          'ontology_iri_seperator': self.iri_seperator,
                           'ontology_url': self.ontology_url,
                           'ontology_ns': self.ontology_ns,
                           'ontology_name': self.ontology_name,

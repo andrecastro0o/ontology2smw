@@ -54,7 +54,7 @@ if __name__ == '__main__':
     smw_import_overview.wikipage_name = \
         f'Mediawiki:Smw_import_{item.ontology_ns}'
     smw_import_overview.ontology_name = 'Academic Event Ontology (AEON)'
-    smw_import_overview.iri = item.iri
+    smw_import_overview.iri = item.iri+'#'
     smw_import_overview.ontology_url = 'http://ontology.tib.eu/aeon/'
     smw_import_overview.create_smw_import()
     smw_import_overview.write_wikipage()
