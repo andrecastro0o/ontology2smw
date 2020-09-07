@@ -4,10 +4,15 @@ import re
 from urllib.parse import urldefrag
 sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
 from classes import Query, SMWCategoryORProp
+import rdflib
 
 
-def test_test():
-    assert 1 == 1
+def test_ontology_parse():
+    graph = rdflib.Graph()
+    graph.parse(
+        source='aeon/aeon.ttl',
+        format='ttl')
+    assert graph
 
 
 exp_importfrom = re.compile(
