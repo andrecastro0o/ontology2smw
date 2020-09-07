@@ -3,7 +3,7 @@ import sys
 import re
 from urllib.parse import urldefrag
 sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
-from classes import Query, SPARQLitem
+from classes import Query, SMWCategoryORProp
 
 
 def test_test():
@@ -27,9 +27,9 @@ def test_category_creation():
                   source='aeon/aeon.ttl')
     assert query
     for printout in query.return_printout():
-        item = SPARQLitem(resource_type=query.resource_type,
-                          item_=printout,
-                          ontology_ns='aeon')
+        item = SMWCategoryORProp(resource_type=query.resource_type,
+                                 item_=printout,
+                                 ontology_ns='aeon')
         if item.item_dict.get('smw_import_info'):
             item.create_wiki_item()
             print(item.wikipage_content)

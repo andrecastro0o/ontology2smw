@@ -9,6 +9,21 @@ from datetime import datetime
 from mediawikitools.wiki import actions as mwactions
 
 
+class SMWontology:
+    def __init__(self):
+        self.wikipage_name = None
+        self.wikipage_content = None
+
+    def write_wikipage(self):  # TODO: do not repeate this function declaration
+        now = datetime.now()
+        now = now.isoformat()
+        mwactions.edit(page=self.wikipage_name,
+                       content=self.wikipage_content,
+                       summary=f'Edited by Bot at {now}',
+                       append=False,
+                       newpageonly=False)
+
+
 class Query:
     graph = rdflib.Graph()
 
@@ -36,7 +51,7 @@ class Query:
             yield printout_
 
 
-class SPARQLitem:
+class SMWCategoryORProp(SMWontology):
     def __init__(self, resource_type: str, item_: Dict, ontology_ns: str):
         self.resource_type = resource_type
         self.ontology_ns = ontology_ns
@@ -45,8 +60,7 @@ class SPARQLitem:
         self.subject = self.item_dict['subject']
         self.subject_name = None
         self.iri = self.subject.defrag()
-        self.wikipage_name = None
-        self.wikipage_content = None
+
         # pprint(self.item_dict)
 
     def create_wiki_item(self):
@@ -66,22 +80,12 @@ class SPARQLitem:
             page_info=None
         )
 
-    def write_wikipage(self):
-        now = datetime.now()
-        now = now.isoformat()
-        mwactions.edit(page=self.wikipage_name,
-                       content=self.wikipage_content,
-                       summary=f'Edited by Bot at {now}',
-                       append=False,
-                       newpageonly=False)
 
-
-class SMWImportOverview:
+class SMWImportOverview(SMWontology):
     def __init__(self, ontology_ns: str):
         self.ontology_ns = ontology_ns
         self.categories = []
         self.properties = []
-        self.wikipage_content = None
         self.ontology_name = None
         self.iri = None
         self.ontology_url = None
@@ -98,6 +102,8 @@ class SMWImportOverview:
                                                 item=all_resources,
                                                 item_name=None,
                                                 page_info=page_info_dict)
+
+
 
 
 '''
@@ -130,9 +136,9 @@ if __name__ == '__main__':
                   format_='ttl',
                   source='aeon/aeon.ttl')
     for printout in query.return_printout():
-        item = SPARQLitem(resource_type=query.resource_type,
-                          item_=printout,
-                          ontology_ns='aeon')
+        item = SMWCategoryORProp(resource_type=query.resource_type,
+                                 item_=printout,
+                                 ontology_ns='aeon')
         if item.item_dict.get('smw_datatype'):  # TODO add smw_datatype check
             # item.create_wiki_item()
             print(item.item_dict)
