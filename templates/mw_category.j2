@@ -1,10 +1,10 @@
 
 Imported from [[Imported from::{{ ns }}:{{ item_name }}]]
 
-Equivalent URI [[Equivalent URI::{{ item_dict['subject'] }}]]
+Equivalent URI [[Equivalent URI::{{ item['subject'] }}]]
 
-{% if 'aeon' in item_dict['subclassof']  %}  {# exclude subClassOf of other NS #}
-Subcategory of [[:Category:{{ item_dict['subclassof']|urlfragment }}]] [[Category:{{ item_dict['subclassof']|urlfragment }}]]
+{% if 'aeon' in item['subclassof']  %}  {# exclude subClassOf of other NS #}
+Subcategory of [[:Category:{{ item['subclassof']|urlfragment }}]] [[Category:{{ item['subclassof']|urlfragment }}]]
 {% endif %}
 
-{{ item_dict['smw_import_info'] }}
+{{ item['smw_import_info'] }}

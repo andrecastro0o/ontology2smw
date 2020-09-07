@@ -62,7 +62,9 @@ class SPARQLitem:
             template=template_file,
             ns=self.ontology_ns,
             item=self.item_dict,
-            item_name=self.subject_name)
+            item_name=self.subject_name,
+            page_info=None
+        )
 
     def write_wikipage(self):
         now = datetime.now()
@@ -72,6 +74,52 @@ class SPARQLitem:
                        summary=f'Edited by Bot at {now}',
                        append=False,
                        newpageonly=False)
+
+
+class SMWImportOverview:
+    def __init__(self, ontology_ns: str):
+        self.ontology_ns = ontology_ns
+        self.categories = []
+        self.properties = []
+        self.wikipage_content = None
+        self.ontology_name = None
+        self.iri = None
+        self.ontology_url = None
+
+    def create_smw_import(self):
+        all_resources = self.categories + self.properties
+        page_info_dict = {'ontology_iri': self.iri,
+                          'ontology_url': self.ontology_url,
+                          'ontology_ns': self.ontology_ns,
+                          'ontology_name': self.ontology_name,
+                          }
+        self.wikipage_content = render_template(template='mw_smw_import.j2',
+                                                ns=self.ontology_ns,
+                                                item=all_resources,
+                                                item_name=None,
+                                                page_info=page_info_dict)
+
+
+'''
+MediaWiki:Smw_import_foaf
+
+http://xmlns.com/foaf/0.1/|[http://www.foaf-project.org/ Friend Of A Friend]
+ Organization|Category
+ Person|Category
+ Project|Category
+ name|Type:Text
+ homepage|Type:URL
+ mbox|Type:Email
+ mbox_sha1sum|Type:Text
+ depiction|Type:URL
+ phone|Type:Text
+ knows|Type:Page
+ member|Type:Page
+ maker|Type:Page
+ made|Type:Page 
+
+[[Category:Imported vocabulary]]
+'''
 
 
 if __name__ == '__main__':

@@ -1,7 +1,7 @@
 from jinja2 import (FileSystemLoader,
                     Environment,
                     environment)
-from typing import Dict
+from typing import Dict, List, Union, Optional
 from pathlib import Path
 from urllib.parse import urldefrag
 
@@ -18,11 +18,13 @@ def load_template(template: str):
     return template_obj
 
 
-def render_template(template: str, ns: str, item: Dict, item_name: str) -> str:
+def render_template(template: str, ns: str, item: Union[Dict, List],
+                    item_name: Optional[str], page_info: Optional[Dict]) -> str:
     environment.DEFAULT_FILTERS['urlfragment'] = urlfragment
     template_obj = load_template(template=template)
     wiki_item = template_obj.render(ns=ns,
-                                    item_dict=item,
-                                    item_name=item_name)
+                                    item=item,
+                                    item_name=item_name,
+                                    page_info=page_info)
     return wiki_item
 

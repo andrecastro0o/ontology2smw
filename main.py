@@ -1,9 +1,10 @@
-from classes import Query, SPARQLitem
+from classes import Query, SPARQLitem, SMWImportOverview
 from cli_args import parser
 args = parser.parse_args()
 
 
 if __name__ == '__main__':
+    smw_import_overview = SMWImportOverview(ontology_ns='aeon')
     # properties
     query = Query(resource_type='property',
                   sparql_fn='query_properties.rq',
@@ -15,6 +16,9 @@ if __name__ == '__main__':
                           ontology_ns='aeon')
         if item.item_dict.get('smw_datatype') not in [None, '']:
             item.create_wiki_item()
+            smw_import_overview.properties.append(
+                (item.subject_name,
+                 str(item.item_dict['smw_datatype'])))
             print(item.item_dict)
             print(item.wikipage_content)
             if args.write is True:
@@ -34,6 +38,9 @@ if __name__ == '__main__':
                           ontology_ns='aeon')
         if item.item_dict.get('smw_import_info'):
             item.create_wiki_item()
+            smw_import_overview.categories.append(
+                (item.subject_name,
+                 'Category'))
             if args.write is True:
                 print('Writing Wiki Page')  # TODO: print -> log
                 item.write_wikipage()
@@ -43,7 +50,10 @@ if __name__ == '__main__':
         else:
             print(f'{item.subject} MISSING aeon:SMW_import_info value')
             # TODO print -> log
-
+    smw_import_overview.ontology_name = 'Academic Event Ontology (AEON)'
+    smw_import_overview.iri = item.iri
+    smw_import_overview.ontology_url = 'http://ontology.tib.eu/aeon/'
+    smw_import_overview.create_smw_import()
 
 
 
