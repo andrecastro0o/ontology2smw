@@ -1,5 +1,6 @@
 from classes import Query, SMWCategoryORProp, SMWImportOverview
 from cli_args import parser
+from log import logger
 args = parser.parse_args()
 
 
@@ -23,34 +24,38 @@ if __name__ == '__main__':
             print(item.item_dict)
             print(item.wikipage_content)
             if args.write is True:
-                print('Writing Wiki Page')  # TODO: print -> log
+                logger.debug(msg=f'Wrote {item.wikipage_name} to wiki')
                 item.write_wikipage()
         else:
-            print(f'{item.subject} MISSING aeon:SMW_datatype  value')
-            # TODO print -> log
+            logger.warning(
+                msg=f'{item.wikipage_name} MISSING aeon:SMW_datatype val. '
+                    f'Not imported to wiki')
 
     query = Query(resource_type='category',
                   sparql_fn='query_classes.rq',
                   format_='ttl',
                   source='aeon/aeon.ttl')
     for printout in query.return_printout():
+        logger.debug(f'SPARQL printout:{printout}')
         item = SMWCategoryORProp(resource_type=query.resource_type,
                                  item_=printout,
                                  ontology_ns='aeon')
+        logger.debug(f'SMWCategoryORProp item:{item}')
+
         if item.item_dict.get('smw_import_info'):
             item.create_wiki_item()
             smw_import_overview.categories.append(
                 (item.subject_name,
                  'Category'))
             if args.write is True:
-                print('Writing Wiki Page')  # TODO: print -> log
+                logger.debug(msg=f'Wrote {item.wikipage_name} to wiki')
                 item.write_wikipage()
-            # TODO print -> log
-            print(f'*****************{item.wikipage_name}*****************\n'
-                  f'{item.wikipage_content}\n*****************\n')
+            # print(f'*****************{item.wikipage_name}*****************\n'
+            #       f'{item.wikipage_content}\n*****************\n')
         else:
-            print(f'{item.subject} MISSING aeon:SMW_import_info value')
-            # TODO print -> log
+            logger.warning(
+                msg=f'{item.wikipage_name} MISSING aeon:SMW_import_info  val. '
+                    f'Not imported to wiki')
     smw_import_overview.wikipage_name = \
         f'Mediawiki:Smw_import_{item.ontology_ns}'
     smw_import_overview.ontology_name = 'Academic Event Ontology (AEON)'

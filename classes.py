@@ -67,7 +67,6 @@ class SMWCategoryORProp(SMWontology):
         # test urldefrag(url=self.item_dict['url']) == self.ini
         self.subject_name = urldefrag(url=self.item_dict['subject']).fragment
         self.wikipage_name = f'{self.resource_type.capitalize()}:' \
-                             f'{self.ontology_ns.upper()}:' \
                              f'{self.subject_name}'
         if self.resource_type.lower() == 'category':
             template_file = 'mw_category.j2'

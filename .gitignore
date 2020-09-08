@@ -4,3 +4,4 @@ Test Results - pytest_in_test_import_ontology_py.html
 __pycache__
 /wikidetails.yml
 /tmp
+/logs
