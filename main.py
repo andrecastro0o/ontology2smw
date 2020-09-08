@@ -16,19 +16,20 @@ def query2page(resource_type: str, sparql_fn: str, format_: str,
         item = SMWCategoryORProp(resource_type=query.resource_type,
                                  item_=printout,
                                  ontology_ns='aeon')
-        if item.item_dict.get('smw_datatype') not in [None, '']:
-            item.create_wiki_item()
-            smw_import_overview.properties.append(
-                (item.subject_name, str(item.item_dict['smw_datatype'])))
+        item.create_wiki_item()
+        if args.write is True:
+            logger.debug(msg=f'Wrote {item.wikipage_name} to wiki')
+            item.write_wikipage()
+        else:
             print(item.item_dict)
             print(item.wikipage_content)
-            if args.write is True:
-                logger.debug(msg=f'Wrote {item.wikipage_name} to wiki')
-                item.write_wikipage()
-        else:
-            logger.warning(
-                msg=f'{item.wikipage_name} MISSING aeon:SMW_datatype val. '
-                    f'Not imported to wiki')
+        if resource_type == 'property':
+            smw_import_overview.properties.append(
+                (item.subject_name, str(item.item_dict['smw_datatype'])))
+        elif resource_type == 'category':
+            smw_import_overview.properties.append(
+                (item.subject_name, 'Category'))
+
     last_item = item
     return last_item
 
