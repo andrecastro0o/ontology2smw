@@ -1,10 +1,10 @@
 import os
 import sys
 import re
-from urllib.parse import urldefrag
+import rdflib
 sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
 from classes import Query, SMWCategoryORProp
-import rdflib
+from jinja_utils import url_termination
 
 
 def test_ontology_parse():
@@ -39,6 +39,7 @@ def test_category_creation():
             item.create_wiki_item()
             print(item.wikipage_content)
             assert item.wikipage_name.startswith(f'{resource.capitalize()}:')
+            assert ':]]' not in item.wikipage_content  # empty prop/category
             found_importfrom = re.search(pattern=exp_importfrom,
                                          string=item.wikipage_content)
             assert found_importfrom.group('ontology') == item.ontology_ns
@@ -55,7 +56,7 @@ def test_category_creation():
                          string=item.wikipage_content):
                 found_subcats = re.findall(pattern=exp_subcategory,
                                            string=item.wikipage_content)
-                subclass_name = urldefrag(item.item_dict['subclassof']).fragment
+                subclass_name = url_termination(item.item_dict['subclassof'])
                 print(f'Subcategory: {subclass_name} '
                       f'is found as {found_subcats}')
                 assert subclass_name in found_subcats

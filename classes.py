@@ -1,12 +1,12 @@
 import rdflib
 from rdflib.namespace import OWL, RDF, RDFS
-from urllib.parse import urldefrag
 from pathlib import Path
 from typing import Dict
 from pprint import pprint
 from jinja_utils import render_template
 from datetime import datetime
 from mediawikitools.wiki import actions as mwactions
+from jinja_utils import url_termination
 
 
 class SMWontology:
@@ -64,8 +64,7 @@ class SMWCategoryORProp(SMWontology):
         # pprint(self.item_dict)
 
     def create_wiki_item(self):
-        # test urldefrag(url=self.item_dict['url']) == self.ini
-        self.subject_name = urldefrag(url=self.item_dict['subject']).fragment
+        self.subject_name = url_termination(self.item_dict['subject'])
         self.wikipage_name = f'{self.resource_type.capitalize()}:' \
                              f'{self.subject_name}'
         if self.resource_type.lower() == 'category':
