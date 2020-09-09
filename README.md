@@ -38,8 +38,8 @@ writing to wiki pages: `python ./main.py --write`
 ## Properties from other ontologies
 AEON makes use of the properties from OWL and BFO namespaces, namely:
 * [owl:topDataProperty](http://www.w3.org/2002/07/owl#topDataProperty) ` rdfs:comment "The data property that relates every individual to every data value."`
-* [obo:BFO_0000015](https://raw.githubusercontent.com/BFO-ontology/BFO/v2019-08-26/bfo_classes_only.owl#BFO_0000015) `rdfs:label "process"@en`
-* [obo:BFO_0000023](https://raw.githubusercontent.com/BFO-ontology/BFO/v2019-08-26/bfo_classes_only.owl#BFO_0000023) `rdfs:label "role"@en`
+* [obo:BFO_0000015](http://purl.obolibrary.org/obo/BFO_0000015) `rdfs:label "process"@en`
+* [obo:BFO_0000023](http://purl.obolibrary.org/obo/BFO_0000023) `rdfs:label "role"@en`
     
 Which requires us to also **include them to SMW (currently manually) in Mediawiki instaces pages**:
 
@@ -59,7 +59,7 @@ Has type [[Has type::Page]]
 
 *MediaWiki:Smw_import_bfo*:
 ```
-https://raw.githubusercontent.com/BFO-ontology/BFO/v2019-08-26/bfo_classes_only.owl#|[https://basic-formal-ontology.org/ Basic Formal Ontology (BFO)]
+http://purl.obolibrary.org/obo/|[https://basic-formal-ontology.org/ Basic Formal Ontology (BFO)]
 
  BFO_0000015|Category
  BFO_0000023|Category
@@ -71,7 +71,7 @@ https://raw.githubusercontent.com/BFO-ontology/BFO/v2019-08-26/bfo_classes_only.
 ```
 Imported from [[Imported from::bfo:BFO_0000015]]
 
-Equivalent URI [[Equivalent URI::https://raw.githubusercontent.com/BFO-ontology/BFO/v2019-08-26/bfo_classes_only.owl#BFO_0000015]]
+Equivalent URI [[Equivalent URI::http://purl.obolibrary.org/obo/BFO_0000015]]
 
 
 [[Category:BFO]] [[Category:Imported vocabulary]]
@@ -81,7 +81,7 @@ Equivalent URI [[Equivalent URI::https://raw.githubusercontent.com/BFO-ontology/
 ```
 Imported from [[Imported from::bfo:BFO_0000023]]
 
-Equivalent URI [[Equivalent URI::https://raw.githubusercontent.com/BFO-ontology/BFO/v2019-08-26/bfo_classes_only.owl#BFO_0000015]]
+Equivalent URI [[Equivalent URI::http://purl.obolibrary.org/obo/BFO_0000015]]
 
 [[Category:BFO]] [[Category:Imported vocabulary]]
 ```
