@@ -44,13 +44,27 @@ AEON makes use of the properties from OWL and BFO namespaces, namely:
 Which requires us to also **include them to SMW (currently manually) in Mediawiki instaces pages**:
 
 *MediaWiki:Smw_import_owl* appending the rest of the resource list:<br/> 
-` topDataProperty|Type:Page`
+``` 
+ topDataProperty|Type:Page
+ topObjectProperty|Type:Page
+```
 
 *Property:topDataProperty*:
 ```
 Imported from [[Imported from::owl:topDataProperty]]
 
 Equivalent URI [[Equivalent URI::http://www.w3.org/2002/07/owl#topDataProperty]]
+
+Has type [[Has type::Page]]
+
+[[Category:OWL]] [[Category:Imported vocabulary]]
+```
+
+*Property:topObjectProperty*:
+```
+Imported from [[Imported from::owl:topObjectProperty]]
+
+Equivalent URI [[Equivalent URI::http://www.w3.org/2002/07/owl#topObjectProperty]]
 
 Has type [[Has type::Page]]
 
