@@ -6,11 +6,11 @@ Equivalent URI [[Equivalent URI::{{ item['subject'] }}]]
 Has type [[Has type::{{ item['smw_datatype'] }}]]
 
 {% if item['domain']  %}
-Domain [[Domain::Category:{{ item['domain']|urlfragment }}]]
+Domain [[Domain::Category:{{ item['domain']|url_termination }}]]
 {% endif %}
 
 {% if item['subpropertyof']  %}
-Subcategory of [[Subproperty of::{{ item['subpropertyof']|urlfragment }}]]
+Subcategory of [[Subproperty of::{{ item['subpropertyof']|url_termination }}]]
 {% endif %}
 
 {{ item['smw_import_info'] }}

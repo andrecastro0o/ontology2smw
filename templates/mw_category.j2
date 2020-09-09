@@ -3,8 +3,8 @@ Imported from [[Imported from::{{ ns }}:{{ item_name }}]]
 
 Equivalent URI [[Equivalent URI::{{ item['subject'] }}]]
 
-{% if item['subclassof']  and item['subclassof'] != '' %}
-Subcategory of [[:Category:{{ item['subclassof']|urlfragment }}]] [[Category:{{ item['subclassof']|urlfragment }}]]
+{% if item['subclassof'] and item['subclassof'] != '' %}
+Subcategory of [[:Category:{{ item['subclassof']|url_termination }}]] [[Category:{{ item['subclassof']|url_termination }}]]
 {% endif %}
 
 {{ item['smw_import_info'] }}
