@@ -1,5 +1,6 @@
 import rdflib
 from file_utils import dict2yaml
+from jinja_utils import url_termination
 
 """
 Script to make a YAML file that holds the mapping of AEON/ConfIDent properties 
@@ -19,12 +20,15 @@ def make_yaml(source: str, outfile_path: str):
         """
         PREFIX aeon: <https://github.com/tibonto/aeon#>
         PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
-        SELECT ?aeon_property ?WikidatURI ?WikidataLabel
+        PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+        
+        SELECT DISTINCT ?aeon_property ?WikidatURI ?WikidataLabel ?aeon_domain
         WHERE {
-             ?aeon_property aeon:WikidataLabel ?WikidataLabel.
-             OPTIONAL {?aeon_property aeon:WikidataURI ?WikidatURI.}
-
-        }""")
+                     ?aeon_property aeon:WikidataLabel ?WikidataLabel.
+                     OPTIONAL {?aeon_property aeon:WikidataURI ?WikidatURI.}
+                     OPTIONAL {?aeon_property rdfs:domain ?aeon_domain.}
+        }
+        """)
 
     print("the graph has %s statements" % len(qres))
 
@@ -39,6 +43,7 @@ def make_yaml(source: str, outfile_path: str):
         aeon_property = aeon_property.replace(
             "https://github.com/tibonto/aeon#", "")
 
+        aeon_domain = str(printout_dict.get('aeon_domain'))
         # make rdf literal to string
         wikidat_uri = str(printout_dict.get('WikidatURI'))
         wikidat_uri = wikidat_uri.replace("'", "")
@@ -67,8 +72,11 @@ def make_yaml(source: str, outfile_path: str):
         else:
             mapping_dict[aeon_property] = {'external_props': [
                 {'URI': wikidat_uri, 'external_prop': wikidata_label}]}
+        mapping_dict[aeon_property]['domain'] = url_termination(aeon_domain)
+
 
     dict2yaml(outfile_path, mapping_dict)
+
 
 if __name__ == '__main__':
     make_yaml(
