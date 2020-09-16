@@ -44,6 +44,9 @@ def make_yaml(source: str, outfile_path: str):
             "https://github.com/tibonto/aeon#", "")
 
         aeon_domain = str(printout_dict.get('aeon_domain'))
+        if aeon_domain == 'None':
+            aeon_domain = 'BFO_0000015'  # not tested, but assuming when
+            # props have no domain, they will default to BFO_0000015 (Process)
         # make rdf literal to string
         wikidat_uri = str(printout_dict.get('WikidatURI'))
         wikidat_uri = wikidat_uri.replace("'", "")
