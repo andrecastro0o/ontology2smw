@@ -83,6 +83,5 @@ def make_yaml(source: str, outfile_path: str):
 
 if __name__ == '__main__':
     make_yaml(
-        source='https://raw.githubusercontent.com/tibonto/aeon/'
-               'confIDent/aeon.ttl',
+        source='aeon/aeon.ttl',
         outfile_path='./confident2wikidata_mapping.yml')
