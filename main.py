@@ -18,7 +18,6 @@ def query2page(resource_type: str, sparql_fn: str, format_: str,
                                  ontology_ns='aeon')
         item.create_wiki_item()
         if args.write is True:
-            logger.debug(msg=f'Wrote {item.wikipage_name} to wiki')
             item.write_wikipage()
         else:
             print(item.item_dict)

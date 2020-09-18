@@ -7,6 +7,7 @@ from jinja_utils import render_template
 from datetime import datetime
 from mediawikitools.wiki import actions as mwactions
 from jinja_utils import url_termination
+from log import logger
 
 
 class SMWontology:
@@ -17,12 +18,19 @@ class SMWontology:
     def write_wikipage(self):  # TODO: do not repeate this function declaration
         now = datetime.now()
         now = now.isoformat()
-        mwactions.edit(page=self.wikipage_name,
-                       content=self.wikipage_content,
-                       summary=f'Edited by Bot at {now}',
-                       append=False,
-                       newpageonly=False)
-
+        logger.debug(
+            msg=f'Attempting to write {self.wikipage_name} to wiki')
+        edit_response = mwactions.edit(page=self.wikipage_name,
+                                       content=self.wikipage_content,
+                                       summary=f'Edited by Bot at {now}',
+                                       append=False,
+                                       newpageonly=False)
+        if edit_response:
+            logger.debug(
+                msg=f'Wrote {self.wikipage_name} to wiki')
+        else:
+            logger.warning(
+                msg=f'Failed to write {self.wikipage_name} to wiki')
 
 class Query:
     graph = rdflib.Graph()
