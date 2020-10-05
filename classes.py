@@ -32,6 +32,7 @@ class SMWontology:
             logger.warning(
                 msg=f'Failed to write {self.wikipage_name} to wiki')
 
+
 class Query:
     graph = rdflib.Graph()
 
@@ -113,8 +114,13 @@ class SMWImportOverview(SMWontology):
                                                 page_info=page_info_dict)
 
 
-
-
+def instantiate_smwimport_overview(ontology_ns, sematicterm):
+    instance = SMWImportOverview(ontology_ns=ontology_ns)
+    instance.wikipage_name = f'Mediawiki:Smw_import_{sematicterm.ontology_ns}'  # TODO: turn into method
+    instance.ontology_name = 'Academic Event Ontology (AEON)'  # TODO: get from ontology
+    instance.iri = sematicterm.iri
+    instance.ontology_url = 'http://ontology.tib.eu/aeon/'  # TODO: get from ontology
+    return instance
 '''
 MediaWiki:Smw_import_foaf
 

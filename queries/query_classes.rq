@@ -17,5 +17,4 @@ WHERE {
     ?subject rdf:type owl:Class.
     OPTIONAL {?subject rdfs:subClassOf ?subclassof.}
     OPTIONAL {?subject aeon:SMW_import_info ?smw_import_info.}
-    FILTER(STRSTARTS(STR(?subject), "https://github.com/tibonto/aeon#"))
 }
