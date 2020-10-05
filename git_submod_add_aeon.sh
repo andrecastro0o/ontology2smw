@@ -1,2 +1,2 @@
 #!/bin/bash
-git submodule add -b confIDent https://github.com/tibonto/aeon.git
+git submodule add -b master https://github.com/tibonto/aeon.git
