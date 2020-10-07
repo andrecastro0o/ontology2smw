@@ -19,6 +19,6 @@ WHERE {
     OPTIONAL {?subject rdfs:domain ?domain.}
     OPTIONAL {?subject rdf:type ?type.}
     OPTIONAL {?subject aeon:SMW_import_info ?smw_import_info.}
-     # ?subject aeon:SMW_datatype ?smw_datatype. # only importing props with datatype
+    ?subject aeon:SMW_datatype ?smw_datatype. # only importing props with datatype
 }
 ORDER BY ?type

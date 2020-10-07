@@ -11,10 +11,12 @@ PREFIX obda: <https://w3id.org/obda/vocabulary#>
 PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
 PREFIX dcterms: <http://purl.org/dc/terms/>
 PREFIX dcelements: <http://purl.org/dc/elements/1.1/>
+PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
 
-SELECT ?subject ?subclassof ?smw_import_info
+SELECT ?subject ?subclassof ?smw_import_info ?smw_datatype
 WHERE {
     ?subject rdf:type owl:Class.
     OPTIONAL {?subject rdfs:subClassOf ?subclassof.}
     OPTIONAL {?subject aeon:SMW_import_info ?smw_import_info.}
+    ?subject aeon:SMW_datatype ?smw_datatype. # only importing props with datatype
 }
