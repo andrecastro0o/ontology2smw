@@ -6,3 +6,4 @@ __pycache__
 /tmp
 /logs
 confident2wikidata_mapping.yml
+/notebooks/.ipynb_checkpoints/
