@@ -1,5 +1,5 @@
 import rdflib
-from rdflib.namespace import OWL, RDF, RDFS
+from rdflib.namespace import OWL, RDF, RDFS, Namespace, NamespaceManager
 from pathlib import Path
 from typing import Dict
 from pprint import pprint
@@ -35,7 +35,9 @@ class SMWontology:
 
 class Query:
     graph = rdflib.Graph()
-
+    # namespace_manager = NamespaceManager(Graph())
+    # graph.namespace_manager = namespace_manager
+    # all_ns = [n for n in graph.namespace_manager.namespaces()]
     def __init__(self, resource_type: str, sparql_fn: str, source: str,
                  format_: str):
         self.resource_type = resource_type
@@ -44,6 +46,13 @@ class Query:
         self.source = source
         self.graph.parse(source='aeon/aeon.ttl', format=self.format)
         self.printouts = None
+        self.prefixes = None
+
+    def get_graph_prefixes(self):
+        namespace_manager = NamespaceManager(self.graph)
+        all_prefixes = {n[0]: n[1] for n in namespace_manager.namespaces()}
+        all_prefixes.pop('')  # remove '' key
+        self.prefixes = all_prefixes
 
     def query_graph(self):
         query_path = Path.cwd() / 'queries' / self.sparql_fn
@@ -71,6 +80,8 @@ class SMWCategoryORProp(SMWontology):
         self.iri = self.subject.defrag()
 
         # pprint(self.item_dict)
+        # how to get the namespace of a property?
+
 
     def create_wiki_item(self):
         self.subject_name = url_termination(self.item_dict['subject'])
@@ -116,11 +127,16 @@ class SMWImportOverview(SMWontology):
 
 def instantiate_smwimport_overview(ontology_ns, sematicterm):
     instance = SMWImportOverview(ontology_ns=ontology_ns)
-    instance.wikipage_name = f'Mediawiki:Smw_import_{sematicterm.ontology_ns}'  # TODO: turn into method
-    instance.ontology_name = 'Academic Event Ontology (AEON)'  # TODO: get from ontology
+    # TODO: turn into method
+    instance.wikipage_name = f'Mediawiki:Smw_import_{sematicterm.ontology_ns}'
+    # TODO: get from ontology
+    instance.ontology_name = 'Academic Event Ontology (AEON)'
     instance.iri = sematicterm.iri
-    instance.ontology_url = 'http://ontology.tib.eu/aeon/'  # TODO: get from ontology
+    # TODO: get from ontology
+    instance.ontology_url = 'http://ontology.tib.eu/aeon/'
     return instance
+
+
 '''
 MediaWiki:Smw_import_foaf
 
@@ -150,10 +166,21 @@ if __name__ == '__main__':
                   sparql_fn='query_properties.rq',
                   format_='ttl',
                   source='aeon/aeon.ttl')
+    query.get_graph_prefixes()
+    print('PREFIXES:', query.prefixes)
     for printout in query.return_printout():
+        # print(printout)
+        subject = printout.subject
+        subject_ns = Namespace(subject)
+        for prefix, namespace in query.prefixes.items():
+            if namespace in subject_ns:
+                subject_prefix = prefix
+                break
+        print('subject:', subject, 'prefix:', prefix)
+
         item = SMWCategoryORProp(resource_type=query.resource_type,
                                  item_=printout,
-                                 ontology_ns='aeon')
+                                 ontology_ns=prefix)
         if item.item_dict.get('smw_datatype'):  # TODO add smw_datatype check
             # item.create_wiki_item()
             print(item.item_dict)
