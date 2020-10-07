@@ -46,7 +46,7 @@ class Query:
         self.source = source
         self.graph.parse(source='aeon/aeon.ttl', format=self.format)
         self.printouts = None
-        self.prefixes = None
+        self.get_graph_prefixes()
 
     def get_graph_prefixes(self):
         namespace_manager = NamespaceManager(self.graph)
@@ -70,8 +70,10 @@ class Query:
 
 
 class SMWCategoryORProp(SMWontology):
-    def __init__(self, resource_type: str, item_: Dict, ontology_ns: str):
+    def __init__(self, resource_type: str, item_: Dict, ontology_ns: str,
+                 ontology_ns_prefix: str):
         self.resource_type = resource_type
+        self.ontology_ns_prefix = ontology_ns_prefix
         self.ontology_ns = ontology_ns
         self.item = item_
         self.item_dict = item_.asdict()
@@ -93,7 +95,7 @@ class SMWCategoryORProp(SMWontology):
             template_file = 'mw_property.j2'
         self.wikipage_content = render_template(
             template=template_file,
-            ns=self.ontology_ns,
+            ns_prefix=self.ontology_ns_prefix,
             item=self.item_dict,
             item_name=self.subject_name,
             page_info=None
@@ -101,8 +103,9 @@ class SMWCategoryORProp(SMWontology):
 
 
 class SMWImportOverview(SMWontology):
-    def __init__(self, ontology_ns: str):
+    def __init__(self, ontology_ns: str, ontology_ns_prefix: str):
         self.ontology_ns = ontology_ns
+        self.ontology_ns_prefix = ontology_ns_prefix
         self.categories = []
         self.properties = []
         self.ontology_name = None
@@ -116,25 +119,36 @@ class SMWImportOverview(SMWontology):
                           'ontology_iri_seperator': self.iri_seperator,
                           'ontology_url': self.ontology_url,
                           'ontology_ns': self.ontology_ns,
+                          'ontology_ns_prefix': self.ontology_ns_prefix,
                           'ontology_name': self.ontology_name,
                           }
         self.wikipage_content = render_template(template='mw_smw_import.j2',
-                                                ns=self.ontology_ns,
+                                                ns_prefix=self.ontology_ns_prefix,
                                                 item=all_resources,
                                                 item_name=None,
                                                 page_info=page_info_dict)
 
 
-def instantiate_smwimport_overview(ontology_ns, sematicterm):
-    instance = SMWImportOverview(ontology_ns=ontology_ns)
+def instantiate_smwimport_overview(ontology_ns,
+                                   ontology_ns_prefix,
+                                   sematicterm):
+    instance = SMWImportOverview(ontology_ns=ontology_ns,
+                                 ontology_ns_prefix=ontology_ns_prefix)
     # TODO: turn into method
-    instance.wikipage_name = f'Mediawiki:Smw_import_{sematicterm.ontology_ns}'
+    instance.wikipage_name = f'Mediawiki:Smw_import_{sematicterm.ontology_ns_prefix}'
     # TODO: get from ontology
     instance.ontology_name = 'Academic Event Ontology (AEON)'
     instance.iri = sematicterm.iri
     # TODO: get from ontology
     instance.ontology_url = 'http://ontology.tib.eu/aeon/'
     return instance
+
+
+def get_term_ns_prefix(term, prefixes):
+    term_ns = Namespace(term)
+    for prefix, namespace in prefixes.items():
+        if namespace in term_ns:
+            return namespace, prefix
 
 
 '''

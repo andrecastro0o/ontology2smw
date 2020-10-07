@@ -1,6 +1,6 @@
 from typing import Dict
 from classes import Query, SMWCategoryORProp, SMWImportOverview, \
-    instantiate_smwimport_overview
+    instantiate_smwimport_overview, get_term_ns_prefix
 from cli_args import parser
 from log import logger
 args = parser.parse_args()
@@ -14,35 +14,43 @@ def query2page(resource_type: str, sparql_fn: str, format_: str,
                   source=source)
 
     for printout in query.return_printout():
+        ns, ns_prefix = get_term_ns_prefix(term=printout.subject,
+                                           prefixes=query.prefixes)
+        print('NS:', ns, ns_prefix)
         term = SMWCategoryORProp(resource_type=query.resource_type,
                                  item_=printout,
-                                 ontology_ns='aeon')
+                                 ontology_ns=ns,
+                                 ontology_ns_prefix=ns_prefix)
         term.create_wiki_item()
-        if term.ontology_ns not in smw_import_dict.keys():
-            smw_import_instance = instantiate_smwimport_overview(
-                ontology_ns=term.ontology_ns, sematicterm=term)
-            smw_import_dict[term.ontology_ns] = smw_import_instance
+
+        print(term.ontology_ns_prefix)
+        if term.ontology_ns_prefix not in smw_import_dict.keys():
+            smw_import_dict[term.ontology_ns_prefix] = instantiate_smwimport_overview(
+                ontology_ns=term.ontology_ns,
+                ontology_ns_prefix=term.ontology_ns_prefix,
+                sematicterm=term)
+
         if resource_type == 'property':
-            smw_import_dict[term.ontology_ns].properties.append(
+            smw_import_dict[term.ontology_ns_prefix].properties.append(
                 (term.subject_name, str(term.item_dict.get('smw_datatype'))))
         elif resource_type == 'category':
-            smw_import_dict[term.ontology_ns].properties.append(
+            smw_import_dict[term.ontology_ns_prefix].properties.append(
                 (term.subject_name, 'Category'))
-            
+
         # TODO: create_smw_import to all instances in smw_import_dict
         # After queries are terminated,
         # smw_import_overview.create_smw_import()
         # smw_import_overview.write_wikipage()
-        
-        if args.write is True:
-            term.write_wikipage()
-        else:
-            print(term.item_dict)
-            print(term.wikipage_content)
+        #
+        # if args.write is True:
+        #     term.write_wikipage()
+        # else:
+        #     print(term.item_dict)
+        #     print(term.wikipage_content)
 
-
-    last_term = term
-    return last_term
+    print(smw_import_dict)
+    last_term = term   # TODO: remove
+    return last_term    # TODO: remove
 
 
 if __name__ == '__main__':
