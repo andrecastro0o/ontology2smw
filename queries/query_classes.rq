@@ -12,11 +12,17 @@ PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
 PREFIX dcterms: <http://purl.org/dc/terms/>
 PREFIX dcelements: <http://purl.org/dc/elements/1.1/>
 PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
+PREFIX iao: <http://purl.obolibrary.org/obo/iao/2020-06-10/iao.owl#>
 
-SELECT ?subject ?subclassof ?smw_import_info ?smw_datatype
+SELECT ?subject
+    ?subclassof ?smw_import_info ?smw_datatype
+    ?label ?definition ?editor_note
 WHERE {
     ?subject rdf:type owl:Class.
     OPTIONAL {?subject rdfs:subClassOf ?subclassof.}
     OPTIONAL {?subject aeon:SMW_import_info ?smw_import_info.}
+    OPTIONAL {?subject rdfs:label ?label.}
+    OPTIONAL {?subject iao:IAO_0000115 ?definition.}
+    OPTIONAL {?subject iao:IAO_0000116 ?editor_note.}
     ?subject aeon:SMW_datatype ?smw_datatype. # only importing props with datatype
 }

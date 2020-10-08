@@ -7,3 +7,4 @@ __pycache__
 /logs
 confident2wikidata_mapping.yml
 /notebooks/.ipynb_checkpoints/
+/ontos/

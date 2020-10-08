@@ -9,9 +9,12 @@ PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
 PREFIX aeon: <https://github.com/tibonto/aeon#>
 PREFIX obda: <https://w3id.org/obda/vocabulary#>
 PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX iao: <http://purl.obolibrary.org/obo/iao/2020-06-10/iao.owl#>
 
 
-SELECT ?subject ?subpropertyof ?domain ?type ?smw_datatype ?smw_import_info
+SELECT ?subject
+    ?subpropertyof ?domain ?type ?smw_datatype ?smw_import_info
+    ?label ?definition ?editor_note
 WHERE {
     {?subject rdf:type owl:ObjectProperty.}
     UNION {?subject rdf:type owl:DatatypeProperty.}
@@ -19,6 +22,10 @@ WHERE {
     OPTIONAL {?subject rdfs:domain ?domain.}
     OPTIONAL {?subject rdf:type ?type.}
     OPTIONAL {?subject aeon:SMW_import_info ?smw_import_info.}
+    OPTIONAL {?subject rdfs:label ?label.}
+    OPTIONAL {?subject iao:IAO_0000115 ?definition.}
+    OPTIONAL {?subject iao:IAO_0000116 ?editor_note.}
+
     ?subject aeon:SMW_datatype ?smw_datatype. # only importing props with datatype
 }
 ORDER BY ?type
