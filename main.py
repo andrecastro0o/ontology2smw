@@ -58,7 +58,7 @@ if __name__ == '__main__':
 
     # # properties
     query2page(resource_type='property',
-               sparql_fn='query_properties.rq',
+               sparql_fn='query_class_prop.rq',
                format_='ttl',
                source='aeon/aeon.ttl',
                smw_import_dict=smw_import_overview_dict,

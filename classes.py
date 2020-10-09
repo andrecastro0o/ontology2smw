@@ -1,3 +1,4 @@
+import sys
 import rdflib
 from rdflib.namespace import OWL, RDF, RDFS, Namespace, NamespaceManager
 from pathlib import Path
@@ -149,6 +150,9 @@ def get_term_ns_prefix(term, prefixes):
     for prefix, namespace in prefixes.items():
         if namespace in term_ns:
             return namespace, prefix
+    print(f'Error:The ontology you are parsing has no prefix for namespace '
+          f'for term: {term}', file=sys.stderr)
+    sys.exit()
 
 
 '''

@@ -11,6 +11,8 @@ PREFIX obda: <https://w3id.org/obda/vocabulary#>
 PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
 PREFIX dcterms: <http://purl.org/dc/terms/>
 PREFIX dcelements: <http://purl.org/dc/elements/1.1/>
+PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
+PREFIX iao: <http://purl.obolibrary.org/obo/iao/2020-06-10/iao.owl#>
 
 SELECT ?subject ?versionInfo ?title
 WHERE {
