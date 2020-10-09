@@ -71,11 +71,11 @@ class Query:
 
 
 class SMWCategoryORProp(SMWontology):
-    def __init__(self, resource_type: str, item_: Dict, ontology_ns: str,
-                 ontology_ns_prefix: str):
+    def __init__(self, resource_type: str, item_: Dict, namespace: str,
+                 namespace_prefix: str):
         self.resource_type = resource_type
-        self.ontology_ns_prefix = ontology_ns_prefix
-        self.ontology_ns = ontology_ns
+        self.namespace_prefix = namespace_prefix
+        self.namespace = namespace
         self.item = item_
         self.item_dict = item_.asdict()
         self.subject = self.item_dict['subject']
@@ -96,7 +96,7 @@ class SMWCategoryORProp(SMWontology):
             template_file = 'mw_property.j2'
         self.wikipage_content = render_template(
             template=template_file,
-            ns_prefix=self.ontology_ns_prefix,
+            ns_prefix=self.namespace_prefix,
             item=self.item_dict,
             item_name=self.subject_name,
             page_info=None
@@ -136,7 +136,7 @@ def instantiate_smwimport_overview(ontology_ns,
     instance = SMWImportOverview(ontology_ns=ontology_ns,
                                  ontology_ns_prefix=ontology_ns_prefix)
     # TODO: turn into method
-    instance.wikipage_name = f'Mediawiki:Smw_import_{sematicterm.ontology_ns_prefix}'
+    instance.wikipage_name = f'Mediawiki:Smw_import_{sematicterm.namespace_prefix}'
     # TODO: get from ontology
     instance.ontology_name = 'Academic Event Ontology (AEON)'
     instance.iri = sematicterm.iri
@@ -150,8 +150,9 @@ def get_term_ns_prefix(term, prefixes):
     for prefix, namespace in prefixes.items():
         if namespace in term_ns:
             return namespace, prefix
-    print(f'Error:The ontology you are parsing has no prefix for namespace '
-          f'for term: {term}', file=sys.stderr)
+    # TODO:  get/create the prefixes when they are not declared in the ontology
+    print(f'Error: The ontology you are parsing has no declared prefix for the '
+          f'term: {term}', file=sys.stderr)
     sys.exit()
 
 
@@ -198,7 +199,7 @@ if __name__ == '__main__':
 
         item = SMWCategoryORProp(resource_type=query.resource_type,
                                  item_=printout,
-                                 ontology_ns=prefix)
+                                 namespace=prefix)
         if item.item_dict.get('smw_datatype'):  # TODO add smw_datatype check
             # item.create_wiki_item()
             print(item.item_dict)

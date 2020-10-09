@@ -34,7 +34,7 @@ def test_category_creation():
     for printout in query.return_printout():
         item = SMWCategoryORProp(resource_type=query.resource_type,
                                  item_=printout,
-                                 ontology_ns='aeon')
+                                 namespace='aeon')
         assert item.item_dict['smw_import_info']
         item.create_wiki_item()
         print(item.wikipage_content)
@@ -72,7 +72,7 @@ def test_property_creation():
     for printout in query.return_printout():
         item = SMWCategoryORProp(resource_type=query.resource_type,
                                  item_=printout,
-                                 ontology_ns='aeon')
+                                 namespace='aeon')
         assert item.item_dict['smw_import_info']
         item.create_wiki_item()
         print(item.wikipage_name)
