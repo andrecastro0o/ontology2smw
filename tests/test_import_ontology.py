@@ -32,8 +32,8 @@ def test_term_creation():
     assert query
     for printout in query.return_printout():
         assert printout
-        ns, ns_prefix = get_term_ns_prefix(term=printout.subject,
-                                           prefixes=query.prefixes)
+        ns, ns_prefix = get_term_ns_prefix(term_uri=printout.subject,
+                                           allprefixes=query.prefixes)
 
         term = SMWCategoryORProp(item_=printout,
                                  namespace=ns,
