@@ -105,14 +105,14 @@ class SMWCategoryORProp(SMWontology):
 
 class SMWImportOverview(SMWontology):
     def __init__(self, ontology_ns: str, ontology_ns_prefix: str):
-        self.ontology_ns = ontology_ns
-        self.ontology_ns_prefix = ontology_ns_prefix
+        self.ontology_ns = ontology_ns  # TODO: change to uri
+        self.ontology_ns_prefix = ontology_ns_prefix  # TODO: change prefix
         self.categories = []
         self.properties = []
         self.ontology_name = None
-        self.iri = None
-        self.iri_seperator = None
-        self.ontology_url = None
+        self.iri = None  # TODO: determine if is required
+        self.iri_seperator = None  # TODO: determine if is required
+        self.ontology_url = None  # TODO: determine if is required
 
     def create_smw_import(self):
         all_resources = self.categories + self.properties
@@ -123,11 +123,12 @@ class SMWImportOverview(SMWontology):
                           'ontology_ns_prefix': self.ontology_ns_prefix,
                           'ontology_name': self.ontology_name,
                           }
-        self.wikipage_content = render_template(template='mw_smw_import.j2',
-                                                ns_prefix=self.ontology_ns_prefix,
-                                                item=all_resources,
-                                                item_name=None,
-                                            page_info=page_info_dict)
+        self.wikipage_content = render_template(
+            template='mw_smw_import.j2',
+            ns_prefix=self.ontology_ns_prefix,
+            item=all_resources,
+            item_name=None,
+            page_info=page_info_dict)
 
 
 # def copied from Query Class (should reuse that one)
@@ -173,10 +174,12 @@ def instantiate_smwimport_overview(ontology_ns,
     # TODO: turn into method
     instance.wikipage_name = f'Mediawiki:Smw_import_{sematicterm.namespace_prefix}'
     title, version, description = query_ontology_schema(ontology_ns=ontology_ns)
-    # TODO: get from ontology
-    instance.ontology_name = title
-    instance.iri = sematicterm.iri  # TODO: determin if can be removed
-    # TODO: get from ontology
+    if title:
+        instance.ontology_name = title
+    else:
+        instance.ontology_name =ontology_ns_prefix
+    # TODO: add version and descrippipt to instance, if they exist
+    instance.iri = sematicterm.iri  # TODO: determine if can be removed
     instance.ontology_url = ontology_ns
     return instance
 
