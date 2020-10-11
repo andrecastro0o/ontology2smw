@@ -1,6 +1,7 @@
 import sys
-import rdflib
+from rdflib import Graph
 from rdflib.namespace import OWL, RDF, RDFS, Namespace, NamespaceManager
+from rdflib import exceptions
 from pathlib import Path
 from typing import Dict
 from pprint import pprint
@@ -9,7 +10,6 @@ from datetime import datetime
 from mediawikitools.wiki import actions as mwactions
 from jinja_utils import url_termination
 from log import logger
-
 
 class SMWontology:
     def __init__(self):
@@ -35,7 +35,7 @@ class SMWontology:
 
 
 class Query:
-    graph = rdflib.Graph()
+    graph = Graph()
     # namespace_manager = NamespaceManager(Graph())
     # graph.namespace_manager = namespace_manager
     # all_ns = [n for n in graph.namespace_manager.namespaces()]
@@ -127,7 +127,42 @@ class SMWImportOverview(SMWontology):
                                                 ns_prefix=self.ontology_ns_prefix,
                                                 item=all_resources,
                                                 item_name=None,
-                                                page_info=page_info_dict)
+                                            page_info=page_info_dict)
+
+
+# def copied from Query Class (should reuse that one)
+def query_graph(sparql_fn, graph):
+    query_path = Path.cwd() / 'queries' / sparql_fn
+    print(f'\n\n*** {query_path} ***\n')
+    with open(query_path, 'r') as query_fobj:
+        sparq_query = query_fobj.read()
+    printouts = graph.query(sparq_query)
+    return printouts
+
+
+def query_ontology_schema(ontology_ns):
+    print(f'Query ontology schema: {ontology_ns}')
+    title, version, description = None, None, None  # default
+    try:
+        graph = Graph()
+        graph.parse(location=ontology_ns,
+                    format="application/rdf+xml")
+        printouts = query_graph(sparql_fn='query_ontology_schema.rq',
+                                graph=graph)
+        if len(printouts) > 0:
+            printout_dict = (list(printouts)[0]).asdict()
+            title, version, description = printout_dict.get('title'), \
+                                          printout_dict.get('version'),\
+                                          printout_dict.get('description')
+
+    except (exceptions.ParserError, TypeError) as pe:
+        msg = f"{ontology_ns} failed to resolve to an RDF. Provide " \
+              f"infomartion about the ontology in ontologies.yml"
+        # TODO: Create the structure of ontologies.yml. Read it and store info
+        # fill: title, version, description
+        # TODO: Ask user if she want to continue
+        print('Error: ',pe, '\n', msg)
+    return title, version, description
 
 
 def instantiate_smwimport_overview(ontology_ns,
@@ -137,11 +172,12 @@ def instantiate_smwimport_overview(ontology_ns,
                                  ontology_ns_prefix=ontology_ns_prefix)
     # TODO: turn into method
     instance.wikipage_name = f'Mediawiki:Smw_import_{sematicterm.namespace_prefix}'
+    title, version, description = query_ontology_schema(ontology_ns=ontology_ns)
     # TODO: get from ontology
-    instance.ontology_name = 'Academic Event Ontology (AEON)'
-    instance.iri = sematicterm.iri
+    instance.ontology_name = title
+    instance.iri = sematicterm.iri  # TODO: determin if can be removed
     # TODO: get from ontology
-    instance.ontology_url = 'http://ontology.tib.eu/aeon/'
+    instance.ontology_url = ontology_ns
     return instance
 
 

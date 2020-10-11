@@ -13,11 +13,13 @@ PREFIX dcterms: <http://purl.org/dc/terms/>
 PREFIX dcelements: <http://purl.org/dc/elements/1.1/>
 PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
 PREFIX iao: <http://purl.obolibrary.org/obo/iao/2020-06-10/iao.owl#>
-
-SELECT ?subject ?versionInfo ?title
+SELECT 
+   ?subject ?versionInfo ?title ?description ?IRI
 WHERE {
-    ?subject rdf:type owl:Ontology;
-             owl:versionInfo ?versionInfo;
-             dcelements:title ?title.
+    OPTIONAL{?subject dcterms:title|dcelements:title ?title.}
+	OPTIONAL{?subject dcterms:description|dcelements:description ?description.}
+	OPTIONAL{?subject owl:versionInfo ?versionInfo.}
+	OPTIONAL{?subject owl:versionIRI  ?IRI}
+#:title ?seeAlso
 }
 ORDER BY ?type
