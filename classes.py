@@ -34,31 +34,30 @@ class SMWontology:
 
 
 class Query:
-    graph = Graph()  # shouldnt it be inside __init__
-
+    """
+    SPARQL query to Ontology Schema
+    """
     def __init__(self, sparql_fn: str, source: str,
                  format_: str):
         self.sparql_fn = sparql_fn
         self.format = format_  # TODO: rm format and infer from source=*.ext
         self.source = source
-        self.graph.parse(source='aeon/aeon.ttl', format=self.format)
+        self.graph = Graph()
+        self.graph.parse(source=self.source, format=self.format)
         self.printouts = None
-        self.get_graph_prefixes()
+        self.prefixes = self.get_graph_prefixes()
 
     def get_graph_prefixes(self):
         namespace_manager = NamespaceManager(self.graph)
         all_prefixes = {n[0]: n[1] for n in namespace_manager.namespaces()}
         all_prefixes.pop('')  # remove '' key
-        self.prefixes = all_prefixes
+        return all_prefixes
 
     def query_graph(self):
-        query_path = Path.cwd() / 'queries' / self.sparql_fn
-        print(f'\n\n*** {query_path} ***\n')
-        with open(query_path, 'r') as query_fobj:
+        print(f'\n\n*** {self.sparql_fn} ***\n')
+        with open(self.sparql_fn, 'r') as query_fobj:
             sparq_query = query_fobj.read()
-        self.printouts = self.graph.query(sparq_query,
-                                          initNs={'rdf': RDF, 'rdfs': RDFS,
-                                                  'owl': OWL})
+        self.printouts = self.graph.query(sparq_query)
 
     def return_printout(self):
         self.query_graph()

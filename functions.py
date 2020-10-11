@@ -25,6 +25,7 @@ def query_ontology_schema(ontology_ns):
         graph = Graph()
         graph.parse(location=ontology_ns,
                     format="application/rdf+xml")
+
         printouts = query_graph(sparql_fn='query_ontology_schema.rq',
                                 graph=graph)
         if len(printouts) > 0:
