@@ -9,18 +9,26 @@ PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
 PREFIX aeon: <https://github.com/tibonto/aeon#>
 PREFIX obda: <https://w3id.org/obda/vocabulary#>
 PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
+PREFIX iao: <http://purl.obolibrary.org/obo/iao/2020-06-10/iao.owl#>
 
-
-SELECT ?subject ?subpropertyof ?domain ?type ?smw_datatype ?smw_import_info
+SELECT ?subject ?smw_datatype
+    ?subclassof ?subpropertyof ?domain ?type
+    ?smw_import_info ?label ?definition ?editor_note
 WHERE {
     {?subject rdf:type owl:ObjectProperty.}
     UNION {?subject rdf:type owl:DatatypeProperty.}
+    UNION {?subject rdf:type owl:Class. }
     OPTIONAL {?subject rdfs:subPropertyOf ?subpropertyof.}
     OPTIONAL {?subject rdfs:domain ?domain.}
     OPTIONAL {?subject rdf:type ?type.}
     OPTIONAL {?subject aeon:SMW_import_info ?smw_import_info.}
-     ?subject aeon:SMW_datatype ?smw_datatype. # only importing props with datatype
+    OPTIONAL {?subject rdfs:label ?label.}
+    OPTIONAL {?subject iao:IAO_0000115 ?definition.}
+    OPTIONAL {?subject iao:IAO_0000116 ?editor_note.}
+    ?subject aeon:SMW_datatype ?smw_datatype. # only importing props with datatype
 
-    FILTER(STRSTARTS(STR(?subject), "https://github.com/tibonto/aeon#")).
+#    FILTER EXISTS {?subject rdf:type owl:Class} # prints only classes
+#    MINUS {?subject rdf:type owl:Class} # prints only properties
 }
-ORDER BY ?type
+ORDER BY ?subject

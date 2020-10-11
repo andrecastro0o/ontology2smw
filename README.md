@@ -9,8 +9,13 @@ the wiki pages, which point to IRIs of the imported ontology(s).
 The process of importing is simple, but time consuming. Hence making it a perfect candidate for an automated process, 
 which can be run at anytime a new version of the ontology is published, hence this python script.
 
-Currently the script works only with [The Academic Event Ontology (AEON)](https://github.com/tibonto/aeon) in the context of the confIDent project,
-but seems possible to make it work with any ontology and an instances of SMW. 
+<s>Currently the script works only with [The Academic Event Ontology (AEON)](https://github.com/tibonto/aeon) in the context of the confIDent project,
+but seems possible to make it work with any ontology and an instances of SMW. </s>
+
+**In order for the terms of an ontology to be imported to SMW instance they should include the property
+`aeon:SMW_datatype` and the appropriate [SMW datatype](https://www.semantic-mediawiki.org/wiki/Help:List_of_datatypes) or Category for Classes**
+
+
 
 <!-- HOW IS THE IMPORT DONE -->
 
