@@ -75,9 +75,7 @@ class SMWCategoryORProp(SMWontology):
         self.namespace = namespace
         self.item = item_
         self.item_dict = item_.asdict()
-        self.resource_type = self.item_dict['smw_datatype']  # TODO change to
-        # default: prop  if  rdf:type is not rdfs:Class OR owl:Class
-        # test: if item_dict['smw_datatype'] mateches the self.resource_type
+        self.resource_type = self.item_dict['smw_datatype']
         self.subject = self.item_dict['subject']
         self.subject_name = None
         self.iri = self.subject.defrag()
