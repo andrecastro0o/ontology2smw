@@ -11,6 +11,7 @@ from mediawikitools.wiki import actions as mwactions
 from jinja_utils import url_termination
 from log import logger
 
+
 class SMWontology:
     def __init__(self):
         self.wikipage_name = None
@@ -35,10 +36,8 @@ class SMWontology:
 
 
 class Query:
-    graph = Graph()
-    # namespace_manager = NamespaceManager(Graph())
-    # graph.namespace_manager = namespace_manager
-    # all_ns = [n for n in graph.namespace_manager.namespaces()]
+    graph = Graph() # shouldnt it be inside __init__
+
     def __init__(self, resource_type: str, sparql_fn: str, source: str,
                  format_: str):
         self.resource_type = resource_type
@@ -195,28 +194,6 @@ def get_term_ns_prefix(term, prefixes):
     sys.exit()
 
 
-'''
-MediaWiki:Smw_import_foaf
-
-http://xmlns.com/foaf/0.1/|[http://www.foaf-project.org/ Friend Of A Friend]
- Organization|Category
- Person|Category
- Project|Category
- name|Type:Text
- homepage|Type:URL
- mbox|Type:Email
- mbox_sha1sum|Type:Text
- depiction|Type:URL
- phone|Type:Text
- knows|Type:Page
- member|Type:Page
- maker|Type:Page
- made|Type:Page 
-
-[[Category:Imported vocabulary]]
-'''
-
-
 if __name__ == '__main__':
 
     # properties
@@ -246,19 +223,3 @@ if __name__ == '__main__':
         # else:
         #     print(f'{item.subject} MISSING aeon:SMW_import_info value')
             # TODO print -> log
-
-
-    # query = Query(resource_type='category',
-    #               sparql_fn='query_classes.rq',
-    #               format_='ttl',
-    #               source='aeon/aeon.ttl')
-    # for printout in query.return_printout():
-    #     item = SPARQLitem(resource_type=query.resource_type,
-    #                       item_=printout,
-    #                       ontology_ns='aeon')
-    #     if item.item_dict.get('smw_import_info'):
-    #         item.create_wiki_item()
-    #         print(item.wikipage_content)
-    #     else:
-    #         print(f'{item.subject} MISSING aeon:SMW_import_info value')
-    #         # TODO print -> log

@@ -1,4 +1,3 @@
-from typing import Dict
 from classes import Query, SMWCategoryORProp, SMWImportOverview, \
     instantiate_smwimport_overview, get_term_ns_prefix
 from cli_args import parser
@@ -6,15 +5,14 @@ from pprint import pprint
 from log import logger
 args = parser.parse_args()
 
-# TODO: REMOVE resource_type and use the rdf:type or ?smw_datatype to
-#  determine when needed
-def query2page(resource_type: str, sparql_fn: str, format_: str,
-               source: str, smw_import_dict: dict) -> Dict:
+
+def query2page(resource_type: str, sparql_fn: str, format_: str, source: str):
+    smw_import_dict = {}  # will store SMWImportOverview instances
     query = Query(resource_type=resource_type,
                   sparql_fn=sparql_fn,
                   format_=format_,
                   source=source)
-
+    # loop through each ontology term resulting from SPARQL query
     for printout in query.return_printout():
         ns, ns_prefix = get_term_ns_prefix(term=printout.subject,
                                            prefixes=query.prefixes)
@@ -57,12 +55,9 @@ def query2page(resource_type: str, sparql_fn: str, format_: str,
             print(importoverview.wikipage_content)
 
 
-
 if __name__ == '__main__':
-    smw_import_overview_dict = {}  # will store SMWImportOverview instances
     query2page(resource_type='property',
                sparql_fn='query_class_prop.rq',
                format_='ttl',
                source='aeon/aeon.ttl',
-               smw_import_dict=smw_import_overview_dict,
                )
