@@ -1,4 +1,5 @@
-import logging, os
+import logging
+import os
 from pathlib import Path
 from logging.handlers import RotatingFileHandler
 from datetime import datetime
@@ -22,7 +23,7 @@ def log(_dir, filename):
 
 
 logs_dir_str = 'logs/'
-_dir = Path(logs_dir_str) #os.path.dirname(os.path.abspath(__file__))
+_dir = Path(logs_dir_str)  # os.path.dirname(os.path.abspath(__file__))
 if not _dir.is_dir():
     os.mkdir(path=logs_dir_str, mode=0o777)
 now = datetime.now().strftime("%Y-%m-%d_%H:%M:%S")

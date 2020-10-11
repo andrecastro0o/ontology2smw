@@ -1,0 +1,19 @@
+[flake8]
+ignore = D203, W503, E203
+exclude =
+    .y*ml
+    .tox,
+    .git,
+    venv,
+    env,
+    __pycache__,
+    *.pyc,
+    *.egg-info,
+    .cache,
+    .eggs,
+    dist,
+    build,
+    prototypes,
+    test_*,
+    cli_args.py
+max-complexity = 10
