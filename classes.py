@@ -1,7 +1,5 @@
-import sys
 from rdflib import Graph
-from rdflib.namespace import OWL, RDF, RDFS, Namespace, NamespaceManager
-from rdflib import exceptions
+from rdflib.namespace import OWL, RDF, RDFS, NamespaceManager
 from pathlib import Path
 from typing import Dict
 # from pprint import pprint
@@ -125,73 +123,6 @@ class SMWImportOverview(SMWontology):
             item=all_resources,
             item_name=None,
             page_info=page_info_dict)
-
-
-# def copied from Query Class (should reuse that one)
-def query_graph(sparql_fn, graph):
-    query_path = Path.cwd() / 'queries' / sparql_fn
-    print(f'\n\n*** {query_path} ***\n')
-    with open(query_path, 'r') as query_fobj:
-        sparq_query = query_fobj.read()
-    printouts = graph.query(sparq_query)
-    return printouts
-
-
-def query_ontology_schema(ontology_ns):
-    print(f'Query ontology schema: {ontology_ns}')
-    title, version, description = None, None, None  # default
-    try:
-        graph = Graph()
-        graph.parse(location=ontology_ns,
-                    format="application/rdf+xml")
-        printouts = query_graph(sparql_fn='query_ontology_schema.rq',
-                                graph=graph)
-        if len(printouts) > 0:
-            printout_dict = (list(printouts)[0]).asdict()
-            title = printout_dict.get('title')
-            version = printout_dict.get('version')
-            description = printout_dict.get('description')
-
-    except (exceptions.ParserError, TypeError) as pe:
-        msg = f"{ontology_ns} failed to resolve to an RDF. Provide " \
-              f"infomartion about the ontology in ontologies.yml"
-        # TODO: Create the structure of ontologies.yml. Read it and store info
-        # fill: title, version, description
-        # TODO: Ask user if she want to continue
-        print('Error: ', pe, '\n', msg)
-    return title, version, description
-
-
-def instantiate_smwimport_overview(ontology_ns,
-                                   ontology_ns_prefix,
-                                   sematicterm):
-    instance = SMWImportOverview(ontology_ns=ontology_ns,
-                                 ontology_ns_prefix=ontology_ns_prefix)
-    # TODO: turn into method
-    instance.wikipage_name = f'Mediawiki:Smw_import_' \
-                             f'{sematicterm.namespace_prefix}'
-    title, version, description = query_ontology_schema(
-        ontology_ns=ontology_ns)
-    if title:
-        instance.ontology_name = title
-    else:
-        instance.ontology_name = ontology_ns_prefix
-    # TODO: add version and descrippipt to instance, if they exist
-    instance.iri = sematicterm.iri  # TODO: determine if can be removed
-    instance.ontology_url = ontology_ns
-    return instance
-
-
-def get_term_ns_prefix(term, prefixes):
-    term_ns = Namespace(term)
-    for prefix, namespace in prefixes.items():
-        if namespace in term_ns:
-            return namespace, prefix
-    # TODO:  get/create the prefixes when they are not declared in the ontology
-    print(f'Error: The ontology you are parsing has no declared prefix for '
-          f'the term: {term}', file=sys.stderr)
-    sys.exit()
-
 
 # if __name__ == '__main__':
 #

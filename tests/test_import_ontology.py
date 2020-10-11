@@ -3,7 +3,8 @@ import sys
 import re
 import rdflib
 sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
-from classes import Query, SMWCategoryORProp, get_term_ns_prefix
+from classes import Query, SMWCategoryORProp
+from functions import get_term_ns_prefix
 from jinja_utils import url_termination
 
 
