@@ -4,7 +4,7 @@ from rdflib.namespace import OWL, RDF, RDFS, Namespace, NamespaceManager
 from rdflib import exceptions
 from pathlib import Path
 from typing import Dict
-from pprint import pprint
+# from pprint import pprint
 from jinja_utils import render_template
 from datetime import datetime
 from mediawikitools.wiki import actions as mwactions
@@ -41,7 +41,7 @@ class Query:
     def __init__(self, sparql_fn: str, source: str,
                  format_: str):
         self.sparql_fn = sparql_fn
-        self.format = format_
+        self.format = format_  # TODO: rm format and infer from source=*.ext
         self.source = source
         self.graph.parse(source='aeon/aeon.ttl', format=self.format)
         self.printouts = None
@@ -79,10 +79,8 @@ class SMWCategoryORProp(SMWontology):
         self.subject = self.item_dict['subject']
         self.subject_name = None
         self.iri = self.subject.defrag()
-
         # pprint(self.item_dict)
         # how to get the namespace of a property?
-
 
     def create_wiki_item(self):
         self.subject_name = url_termination(self.item_dict['subject'])
@@ -150,9 +148,9 @@ def query_ontology_schema(ontology_ns):
                                 graph=graph)
         if len(printouts) > 0:
             printout_dict = (list(printouts)[0]).asdict()
-            title, version, description = printout_dict.get('title'), \
-                                          printout_dict.get('version'),\
-                                          printout_dict.get('description')
+            title = printout_dict.get('title')
+            version = printout_dict.get('version')
+            description = printout_dict.get('description')
 
     except (exceptions.ParserError, TypeError) as pe:
         msg = f"{ontology_ns} failed to resolve to an RDF. Provide " \
@@ -160,7 +158,7 @@ def query_ontology_schema(ontology_ns):
         # TODO: Create the structure of ontologies.yml. Read it and store info
         # fill: title, version, description
         # TODO: Ask user if she want to continue
-        print('Error: ',pe, '\n', msg)
+        print('Error: ', pe, '\n', msg)
     return title, version, description
 
 
@@ -170,12 +168,14 @@ def instantiate_smwimport_overview(ontology_ns,
     instance = SMWImportOverview(ontology_ns=ontology_ns,
                                  ontology_ns_prefix=ontology_ns_prefix)
     # TODO: turn into method
-    instance.wikipage_name = f'Mediawiki:Smw_import_{sematicterm.namespace_prefix}'
-    title, version, description = query_ontology_schema(ontology_ns=ontology_ns)
+    instance.wikipage_name = f'Mediawiki:Smw_import_' \
+                             f'{sematicterm.namespace_prefix}'
+    title, version, description = query_ontology_schema(
+        ontology_ns=ontology_ns)
     if title:
         instance.ontology_name = title
     else:
-        instance.ontology_name =ontology_ns_prefix
+        instance.ontology_name = ontology_ns_prefix
     # TODO: add version and descrippipt to instance, if they exist
     instance.iri = sematicterm.iri  # TODO: determine if can be removed
     instance.ontology_url = ontology_ns
@@ -188,8 +188,8 @@ def get_term_ns_prefix(term, prefixes):
         if namespace in term_ns:
             return namespace, prefix
     # TODO:  get/create the prefixes when they are not declared in the ontology
-    print(f'Error: The ontology you are parsing has no declared prefix for the '
-          f'term: {term}', file=sys.stderr)
+    print(f'Error: The ontology you are parsing has no declared prefix for '
+          f'the term: {term}', file=sys.stderr)
     sys.exit()
 
 

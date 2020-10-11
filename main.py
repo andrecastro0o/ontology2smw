@@ -1,8 +1,8 @@
-from classes import Query, SMWCategoryORProp, SMWImportOverview, \
+from classes import Query, SMWCategoryORProp, \
     instantiate_smwimport_overview, get_term_ns_prefix
 from cli_args import parser
-from pprint import pprint
-from log import logger
+# from pprint import pprint
+# from log import logger
 args = parser.parse_args()
 
 
@@ -37,7 +37,7 @@ def query2page(sparql_fn: str, format_: str, source: str):
                 (term.subject_name, term.resource_type))
 
     # CREATE Mediawiki:Smw_import_ PAGES
-    print(f"\n*** Mediawiki: Smw_import_ PAGES ***\n")
+    print("\n*** Mediawiki: Smw_import_ PAGES ***\n")
     for prefix, importoverview in smw_import_dict.items():
         print(f'\n{prefix}')
         # pprint(importoverview.__dict__)
