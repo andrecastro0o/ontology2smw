@@ -6,18 +6,16 @@ from log import logger
 args = parser.parse_args()
 
 
-def query2page(resource_type: str, sparql_fn: str, format_: str, source: str):
+def query2page(sparql_fn: str, format_: str, source: str):
     smw_import_dict = {}  # will store SMWImportOverview instances
-    query = Query(resource_type=resource_type,
-                  sparql_fn=sparql_fn,
+    query = Query(sparql_fn=sparql_fn,
                   format_=format_,
                   source=source)
     # loop through each ontology term resulting from SPARQL query
     for printout in query.return_printout():
         ns, ns_prefix = get_term_ns_prefix(term=printout.subject,
                                            prefixes=query.prefixes)
-        term = SMWCategoryORProp(resource_type=query.resource_type,
-                                 item_=printout,
+        term = SMWCategoryORProp(item_=printout,
                                  namespace=ns,
                                  namespace_prefix=ns_prefix)
         term.create_wiki_item()
@@ -35,12 +33,8 @@ def query2page(resource_type: str, sparql_fn: str, format_: str, source: str):
                     ontology_ns_prefix=term.namespace_prefix,
                     sematicterm=term)
 
-        if resource_type == 'property':
-            smw_import_dict[term.namespace_prefix].properties.append(
-                (term.subject_name, str(term.item_dict.get('smw_datatype'))))
-        elif resource_type == 'category':
-            smw_import_dict[term.namespace_prefix].properties.append(
-                (term.subject_name, 'Category'))
+        smw_import_dict[term.namespace_prefix].properties.append(
+                (term.subject_name, term.resource_type))
 
     # CREATE Mediawiki:Smw_import_ PAGES
     print(f"\n*** Mediawiki: Smw_import_ PAGES ***\n")
@@ -56,8 +50,7 @@ def query2page(resource_type: str, sparql_fn: str, format_: str, source: str):
 
 
 if __name__ == '__main__':
-    query2page(resource_type='property',
-               sparql_fn='query_class_prop.rq',
+    query2page(sparql_fn='query_class_prop.rq',
                format_='ttl',
                source='aeon/aeon.ttl',
                )

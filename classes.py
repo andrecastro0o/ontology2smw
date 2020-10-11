@@ -36,11 +36,10 @@ class SMWontology:
 
 
 class Query:
-    graph = Graph() # shouldnt it be inside __init__
+    graph = Graph()  # shouldnt it be inside __init__
 
-    def __init__(self, resource_type: str, sparql_fn: str, source: str,
+    def __init__(self, sparql_fn: str, source: str,
                  format_: str):
-        self.resource_type = resource_type
         self.sparql_fn = sparql_fn
         self.format = format_
         self.source = source
@@ -70,13 +69,15 @@ class Query:
 
 
 class SMWCategoryORProp(SMWontology):
-    def __init__(self, resource_type: str, item_: Dict, namespace: str,
+    def __init__(self, item_: Dict, namespace: str,
                  namespace_prefix: str):
-        self.resource_type = resource_type
         self.namespace_prefix = namespace_prefix
         self.namespace = namespace
         self.item = item_
         self.item_dict = item_.asdict()
+        self.resource_type = self.item_dict['smw_datatype']  # TODO change to
+        # default: prop  if  rdf:type is not rdfs:Class OR owl:Class
+        # test: if item_dict['smw_datatype'] mateches the self.resource_type
         self.subject = self.item_dict['subject']
         self.subject_name = None
         self.iri = self.subject.defrag()
@@ -91,7 +92,7 @@ class SMWCategoryORProp(SMWontology):
                              f'{self.subject_name}'
         if self.resource_type.lower() == 'category':
             template_file = 'mw_category.j2'
-        elif self.resource_type.lower() == 'property':
+        else:
             template_file = 'mw_property.j2'
         self.wikipage_content = render_template(
             template=template_file,
@@ -194,32 +195,32 @@ def get_term_ns_prefix(term, prefixes):
     sys.exit()
 
 
-if __name__ == '__main__':
-
-    # properties
-    query = Query(resource_type='property',
-                  sparql_fn='query_properties.rq',
-                  format_='ttl',
-                  source='aeon/aeon.ttl')
-    query.get_graph_prefixes()
-    print('PREFIXES:', query.prefixes)
-    for printout in query.return_printout():
-        # print(printout)
-        subject = printout.subject
-        subject_ns = Namespace(subject)
-        for prefix, namespace in query.prefixes.items():
-            if namespace in subject_ns:
-                subject_prefix = prefix
-                break
-        print('subject:', subject, 'prefix:', prefix)
-
-        item = SMWCategoryORProp(resource_type=query.resource_type,
-                                 item_=printout,
-                                 namespace=prefix)
-        if item.item_dict.get('smw_datatype'):  # TODO add smw_datatype check
-            # item.create_wiki_item()
-            print(item.item_dict)
-            print(item.wikipage_content)
-        # else:
-        #     print(f'{item.subject} MISSING aeon:SMW_import_info value')
-            # TODO print -> log
+# if __name__ == '__main__':
+#
+#     # properties
+#     query = Query(resource_type='property',
+#                   sparql_fn='query_properties.rq',
+#                   format_='ttl',
+#                   source='aeon/aeon.ttl')
+#     query.get_graph_prefixes()
+#     print('PREFIXES:', query.prefixes)
+#     for printout in query.return_printout():
+#         # print(printout)
+#         subject = printout.subject
+#         subject_ns = Namespace(subject)
+#         for prefix, namespace in query.prefixes.items():
+#             if namespace in subject_ns:
+#                 subject_prefix = prefix
+#                 break
+#         print('subject:', subject, 'prefix:', prefix)
+#
+#         item = SMWCategoryORProp(resource_type=query.resource_type,
+#                                  item_=printout,
+#                                  namespace=prefix)
+#         if item.item_dict.get('smw_datatype'):  # TODO add smw_datatype check
+#             # item.create_wiki_item()
+#             print(item.item_dict)
+#             print(item.wikipage_content)
+#         # else:
+#         #     print(f'{item.subject} MISSING aeon:SMW_import_info value')
+#             # TODO print -> log
