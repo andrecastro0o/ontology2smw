@@ -16,6 +16,14 @@ but seems possible to make it work with any ontology and an instances of SMW. </
 `aeon:SMW_datatype` and the appropriate [SMW datatype](https://www.semantic-mediawiki.org/wiki/Help:List_of_datatypes) or Category for Classes**
 
 
+## Package into distribution package
+Test: `python setup.py install`
+
+Create a buuild: `python setup.py sdist bdist_wheel`
+
+Run: `ontology2smw python -m ontology2smw -f ttl -o aeon/aeon.ttl`
+or using a remote ontology: `ontology2smw python -m ontology2smw -f ttl -o https://raw.githubusercontent.com/tibonto/aeon/master/aeon.ttl`
+
 
 <!-- HOW IS THE IMPORT DONE -->
 
@@ -29,9 +37,9 @@ Git add [aeon/confIDent](https://github.com/tibonto/aeon/tree/confIDent) as subm
 
 **Run:**
 
-without writing to pages: `python ./main.py ` 
+without writing to pages: `python -m ontology2smw -f ttl -o aeon/aeon.ttl` 
 
-writing to wiki pages: `python ./main.py --write` 
+writing to wiki pages: `python -m ontology2smw -f ttl -o aeon/aeon.ttl --write` 
 
 
 ## To write wiki pages
@@ -41,79 +49,14 @@ writing to wiki pages: `python ./main.py --write`
 * copy `wikidetails.template.yml` as `wikidetails.yml` and fill in bot name and password:<br/>
     
 ## Properties from other ontologies
-AEON makes use of the properties from OWL and BFO namespaces, namely:
-* [owl:topDataProperty](http://www.w3.org/2002/07/owl#topDataProperty) ` rdfs:comment "The data property that relates every individual to every data value."`
-* [obo:BFO_0000015](http://purl.obolibrary.org/obo/BFO_0000015) `rdfs:label "process"@en`
-* [obo:BFO_0000023](http://purl.obolibrary.org/obo/BFO_0000023) `rdfs:label "role"@en`
-    
-Which requires us to also **include them to SMW (currently manually) in Mediawiki instaces pages**:
-
-*MediaWiki:Smw_import_owl* appending the rest of the resource list:<br/> 
-``` 
- topDataProperty|Type:Page
- topObjectProperty|Type:Page
-```
-
-*Property:topDataProperty*:
-```
-Imported from [[Imported from::owl:topDataProperty]]
-
-Equivalent URI [[Equivalent URI::http://www.w3.org/2002/07/owl#topDataProperty]]
-
-Has type [[Has type::Page]]
-
-[[Category:OWL]] [[Category:Imported vocabulary]]
-```
-
-*Property:topObjectProperty*:
-```
-Imported from [[Imported from::owl:topObjectProperty]]
-
-Equivalent URI [[Equivalent URI::http://www.w3.org/2002/07/owl#topObjectProperty]]
-
-Has type [[Has type::Page]]
-
-[[Category:OWL]] [[Category:Imported vocabulary]]
-```
-
-*MediaWiki:Smw_import_bfo*:
-```
-http://purl.obolibrary.org/obo/|[https://basic-formal-ontology.org/ Basic Formal Ontology (BFO)]
-
- BFO_0000015|Category
- BFO_0000023|Category
-
-[[Category:Imported vocabulary]] [[Category:BFO]]
-``` 
-
-*Category:BFO_0000015*:
-```
-Imported from [[Imported from::bfo:BFO_0000015]]
-
-Equivalent URI [[Equivalent URI::http://purl.obolibrary.org/obo/BFO_0000015]]
-
-
-[[Category:BFO]] [[Category:Imported vocabulary]]
-```
-
-*Category BFO_0000023*:
-```
-Imported from [[Imported from::bfo:BFO_0000023]]
-
-Equivalent URI [[Equivalent URI::http://purl.obolibrary.org/obo/BFO_0000015]]
-
-[[Category:BFO]] [[Category:Imported vocabulary]]
-```
-
-
-
+...
 
 ## queries with [ARQ](https://jena.apache.org/documentation/query/)
-`arq --data=aeon/aeon.ttl   --query=queries/ontology.rq`
+`arq --data=aeon/aeon.ttl   --query=ontology2smw/queries/ontology.rq`
 
-`arq --data=aeon/aeon.ttl   --query=queries/query_classes.rq`
+`arq --data=aeon/aeon.ttl   --query=ontology2smw/queries/query_classes.rq`
 
-`arq --data=aeon/aeon.ttl   --query=queries/query_properties.rq`
+`arq --data=aeon/aeon.ttl   --query=ontology2smw/queries/query_properties.rq`
 
 
 # Other Scripts

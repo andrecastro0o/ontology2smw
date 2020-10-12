@@ -3,16 +3,15 @@ from rdflib import Graph
 from pathlib import Path
 from rdflib import exceptions
 
-from classes import Query, SMWCategoryORProp, SMWImportOverview
-from cli_args import parser
+from ontology2smw.classes import Query, SMWCategoryORProp, SMWImportOverview
+from ontology2smw.cli_args import parser
 args = parser.parse_args()
 
 
 # def copied from Query Class (should reuse that one)
 def query_graph(sparql_fn, graph):
-    query_path = Path.cwd() / 'queries' / sparql_fn
-    print(f'\n\n*** {query_path} ***\n')
-    with open(query_path, 'r') as query_fobj:
+    print(f'\n\n*** {sparql_fn} ***\n')
+    with open(sparql_fn, 'r') as query_fobj:
         sparq_query = query_fobj.read()
     printouts = graph.query(sparq_query)
     return printouts
@@ -26,8 +25,9 @@ def query_ontology_schema(ontology_ns):
         graph.parse(location=ontology_ns,
                     format="application/rdf+xml")
 
-        printouts = query_graph(sparql_fn='query_ontology_schema.rq',
-                                graph=graph)
+        printouts = query_graph(
+            sparql_fn='ontology2smw/queries/query_ontology_schema.rq',
+            graph=graph)
         if len(printouts) > 0:
             printout_dict = (list(printouts)[0]).asdict()
             title = printout_dict.get('title')
@@ -128,6 +128,7 @@ def sparql2smwpage(sparql_fn: str, format_: str, source: str):
                                  namespace=ns,
                                  namespace_prefix=ns_prefix)
         term.create_wiki_item()
+        print(f'\n----------------------------------\n{term.wikipage_name}')
         if args.write is True:
             term.write_wikipage()
         else:

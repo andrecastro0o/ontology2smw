@@ -1,6 +1,6 @@
 import rdflib
-from file_utils import dict2yaml
-from jinja_utils import url_termination
+from ontology2smw.file_utils import dict2yaml
+from ontology2smw.jinja_utils import url_termination
 
 """ Script to make a YAML file that holds the mapping of AEON/ConfIDent 
 properties to Wikidata properties, by parsing the annotation properties 

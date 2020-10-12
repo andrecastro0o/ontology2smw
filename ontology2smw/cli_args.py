@@ -10,3 +10,9 @@ confIDent ontology2SMW
 parser.add_argument('-w', '--write', action='store_true',
                     help="writes the output to wiki or file. "
                          "Default: False (dry-run).")
+parser.add_argument('-o', '--ontology',
+                    help="Ontology file or URI")
+parser.add_argument('-f', '--format',
+                    choices=['application/rdf+xml', 'ttl'],
+                    default='application/rdf+xml',
+                    help="Ontology format. Default value: application/rdf+xml")

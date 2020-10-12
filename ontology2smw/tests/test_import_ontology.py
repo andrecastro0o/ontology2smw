@@ -3,9 +3,9 @@ import sys
 import re
 import rdflib
 sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
-from classes import Query, SMWCategoryORProp
-from functions import get_term_ns_prefix
-from jinja_utils import url_termination
+from ontology2smw.classes import Query, SMWCategoryORProp
+from ontology2smw.functions import get_term_ns_prefix
+from ontology2smw.jinja_utils import url_termination
 
 
 def test_ontology_parse():
@@ -27,7 +27,7 @@ exp_subcategory = re.compile(
 
 def test_query_class():
     ontology_ns = 'http://www.w3.org/2004/02/skos/core#'
-    query = Query(sparql_fn='queries/query_ontology_schema.rq',
+    query = Query(sparql_fn='ontology2smw/queries/query_ontology_schema.rq',
                   format_="application/rdf+xml", source=ontology_ns)
     printouts = list(query.return_printout())
     print(printouts)
@@ -40,7 +40,7 @@ def test_query_class():
     # assert len(printouts) == 0
 
 def test_term_creation():
-    query = Query(sparql_fn='queries/query_class_prop.rq',
+    query = Query(sparql_fn='ontology2smw/queries/query_classes_properties.rq',
                   format_='ttl',
                   source='aeon/aeon.ttl')
     query.get_graph_prefixes()

@@ -8,3 +8,5 @@ __pycache__
 confident2wikidata_mapping.yml
 /notebooks/.ipynb_checkpoints/
 /ontos/
+/build/
+/dist/
