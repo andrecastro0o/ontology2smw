@@ -9,6 +9,7 @@ setup(
     name='ontology2smw',
     version='0.0.1',
     packages=['ontology2smw'],
+    include_package_data=True,
     license='GPLv3',
     author='Andre Castro',
     author_email='andre.castro@tib.eu',
