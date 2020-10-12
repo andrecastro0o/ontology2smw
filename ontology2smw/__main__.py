@@ -1,4 +1,4 @@
-from functions import sparql2smwpage
+from ontology2smw.functions import sparql2smwpage
 # from pprint import pprint
 # from log import logger
 # args = parser.parse_args()

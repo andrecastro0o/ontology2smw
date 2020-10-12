@@ -3,8 +3,8 @@ from rdflib import Graph
 from pathlib import Path
 from rdflib import exceptions
 
-from classes import Query, SMWCategoryORProp, SMWImportOverview
-from cli_args import parser
+from ontology2smw.classes import Query, SMWCategoryORProp, SMWImportOverview
+from ontology2smw.cli_args import parser
 args = parser.parse_args()
 
 
