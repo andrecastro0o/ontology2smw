@@ -21,7 +21,7 @@ def query_graph(sparql_fn, graph):
 def query_ontology_schema(ontology_ns):
     print(f'Query ontology schema: {ontology_ns}')
     title, version, description = None, None, None  # default
-    try:
+    try:   # TODO: try logic moved to Query.query_graph with error handling
         graph = Graph()
         graph.parse(location=ontology_ns,
                     format="application/rdf+xml")
@@ -119,6 +119,7 @@ def sparql2smwpage(sparql_fn: str, format_: str, source: str):
     """
     smw_import_dict = {}  # will store SMWImportOverview instances
     query = Query(sparql_fn=sparql_fn, format_=format_, source=source)
+    query.get_graph_prefixes()
     for printout in query.return_printout():
         # loop through each ontology schema term, resulting from SPARQL query
         ns, ns_prefix = get_term_ns_prefix(term_uri=printout.subject,

@@ -45,19 +45,22 @@ class Query:
         self.graph = Graph()
         self.graph.parse(source=self.source, format=self.format)
         self.printouts = None
-        self.prefixes = self.get_graph_prefixes()
+        self.prefixes = None
+        self.query = None  # TMP
 
     def get_graph_prefixes(self):
         namespace_manager = NamespaceManager(self.graph)
         all_prefixes = {n[0]: n[1] for n in namespace_manager.namespaces()}
         all_prefixes.pop('')  # remove '' key
-        return all_prefixes
+        self.prefixes = all_prefixes
 
     def query_graph(self):
         print(f'\n\n*** {self.sparql_fn} ***\n')
         with open(self.sparql_fn, 'r') as query_fobj:
-            sparq_query = query_fobj.read()
+            self.query = query_fobj.read()  # TMP
+            sparq_query = self.query  # query_fobj.read()
         self.printouts = self.graph.query(sparq_query)
+        # TODO: handle errors
 
     def return_printout(self):
         self.query_graph()

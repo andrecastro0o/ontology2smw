@@ -25,10 +25,25 @@ exp_subcategory = re.compile(
     "Subcategory\sof.*?\[\[Category:(?P<subcat>.*?)]]")
 
 
+def test_query_class():
+    ontology_ns = 'http://www.w3.org/2004/02/skos/core#'
+    query = Query(sparql_fn='queries/query_ontology_schema.rq',
+                  format_="application/rdf+xml", source=ontology_ns)
+    printouts = list(query.return_printout())
+    print(printouts)
+    assert len(list(printouts)) > 0
+    # ontology_ns = 'http://purl.obolibrary.org/obo/'
+    # query = Query(sparql_fn='queries/query_ontology_schema.rq',
+    #               format_="application/rdf+xml", source=ontology_ns)
+    # query.return_printout()
+    # printouts = list(query.return_printout())
+    # assert len(printouts) == 0
+
 def test_term_creation():
-    query = Query(sparql_fn='query_class_prop.rq',
+    query = Query(sparql_fn='queries/query_class_prop.rq',
                   format_='ttl',
                   source='aeon/aeon.ttl')
+    query.get_graph_prefixes()
     assert query
     for printout in query.return_printout():
         assert printout
