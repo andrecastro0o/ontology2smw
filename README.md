@@ -16,6 +16,12 @@ but seems possible to make it work with any ontology and an instances of SMW. </
 `aeon:SMW_datatype` and the appropriate [SMW datatype](https://www.semantic-mediawiki.org/wiki/Help:List_of_datatypes) or Category for Classes**
 
 
+## Package into distribution package
+Test: `python setup.py install`
+
+Create a buuild: `python setup.py sdist bdist_wheel`
+
+Run: `ontology2smw`
 
 <!-- HOW IS THE IMPORT DONE -->
 
