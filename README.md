@@ -21,7 +21,9 @@ Test: `python setup.py install`
 
 Create a buuild: `python setup.py sdist bdist_wheel`
 
-Run: `ontology2smw`
+Run: `ontology2smw python -m ontology2smw -f ttl -o aeon/aeon.ttl`
+or using a remote ontology: `ontology2smw python -m ontology2smw -f ttl -o https://raw.githubusercontent.com/tibonto/aeon/master/aeon.ttl`
+
 
 <!-- HOW IS THE IMPORT DONE -->
 
@@ -35,9 +37,9 @@ Git add [aeon/confIDent](https://github.com/tibonto/aeon/tree/confIDent) as subm
 
 **Run:**
 
-without writing to pages: `python ./main.py ` 
+without writing to pages: `python -m ontology2smw -f ttl -o aeon/aeon.ttl` 
 
-writing to wiki pages: `python ./main.py --write` 
+writing to wiki pages: `python -m ontology2smw -f ttl -o aeon/aeon.ttl --write` 
 
 
 ## To write wiki pages
