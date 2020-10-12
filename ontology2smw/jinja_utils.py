@@ -26,11 +26,16 @@ def load_template(template: str):
 
 def render_template(template: str, ns_prefix: str, item: Union[Dict, List],
                     item_name: Optional[str],
-                    page_info: Optional[Dict]) -> str:
+                    page_info: Optional[Dict],
+                    term_description=None,
+                    term_description_lang=None) -> str:
     environment.DEFAULT_FILTERS['url_termination'] = url_termination
     template_obj = load_template(template=template)
     wiki_item = template_obj.render(ns_prefix=ns_prefix,
                                     item=item,
                                     item_name=item_name,
-                                    page_info=page_info)
+                                    page_info=page_info,
+                                    term_description=term_description,
+                                    term_description_lang=term_description_lang
+                                    )
     return wiki_item

@@ -88,12 +88,20 @@ class SMWCategoryORProp(SMWontology):
             template_file = 'mw_category.j2'
         else:
             template_file = 'mw_property.j2'
+
+        label = self.item_dict.get('label')
+        if label and label.language:
+            label_lang=label.language
+        else:
+            label_lang='en'
         self.wikipage_content = render_template(
             template=template_file,
             ns_prefix=self.namespace_prefix,
             item=self.item_dict,
             item_name=self.subject_name,
-            page_info=None
+            page_info=None,
+            term_description=label,
+            term_description_lang=label_lang
         )
 
     def determine_smw_datatype(self):
@@ -128,7 +136,9 @@ class SMWImportOverview(SMWontology):
             ns_prefix=self.ontology_ns_prefix,
             item=all_resources,
             item_name=None,
-            page_info=page_info_dict)
+            page_info=page_info_dict,
+            # term_description=''
+        )
 
 # if __name__ == '__main__':
 #

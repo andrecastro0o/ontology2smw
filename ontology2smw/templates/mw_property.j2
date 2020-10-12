@@ -13,4 +13,6 @@ Domain [[Domain::Category:{{ item['domain']|url_termination }}]]
 Subcategory of [[Subproperty of::{{ item['subpropertyof']|url_termination }}]]
 {% endif %}
 
+{% if term_description %}Property description: [[Has property description::{{ term_description }}@{{ term_description_lang }}]]{% endif %}
+
 {{ item['smw_import_info'] }}

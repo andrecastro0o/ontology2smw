@@ -9,8 +9,10 @@ def main():
               file=sys.stderr)
         sys.exit()
     if args.write:
-        write_confirm = input("You enabled --write. Are you sure you want to "
-                              "write to the wiki?: [yes/no]")
+        write_confirm = input(
+            "You enabled --write. Are you sure you want to write to the wiki? "
+            "(If you say yes, make sure to disable cronjob for "
+            "mediawiki/maintenance/runJobs.php) [yes/no]")
         if write_confirm == 'yes':
             wikidetails = Path(__file__).parent.parent/ 'wikidetails.yml'
             if Path.is_file(wikidetails) is False:

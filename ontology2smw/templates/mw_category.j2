@@ -7,4 +7,6 @@ Equivalent URI [[Equivalent URI::{{ item['subject'] }}]]
 Subcategory of [[:Category:{{ item['subclassof']|url_termination }}]] [[Category:{{ item['subclassof']|url_termination }}]]
 {% endif %}
 
+{% if term_description %}Property description: [[Has property description::{{ term_description }}@{{ term_description_lang }}]]{% endif %}
+
 {{ item['smw_import_info'] }}
