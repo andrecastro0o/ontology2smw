@@ -40,7 +40,7 @@ def test_query_class():
     # assert len(printouts) == 0
 
 def test_term_creation():
-    query = Query(sparql_fn='queries/query_class_prop.rq',
+    query = Query(sparql_fn='ontology2smw/queries/query_classes_properties.rq',
                   format_='ttl',
                   source='aeon/aeon.ttl')
     query.get_graph_prefixes()

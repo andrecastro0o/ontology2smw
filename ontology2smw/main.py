@@ -5,7 +5,7 @@
 
 
 # if __name__ == '__main__':
-#     sparql2smwpage(sparql_fn='queries/query_class_prop.rq',
+#     sparql2smwpage(sparql_fn='ontology2smw/queries/query_classes_properties.rq',
 #                    format_='ttl',
 #                    source='aeon/aeon.ttl',
 #                    )

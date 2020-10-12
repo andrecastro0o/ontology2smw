@@ -1,1 +1,2 @@
 include ontology2smw/templates/*
+include ontology2smw/queries/*

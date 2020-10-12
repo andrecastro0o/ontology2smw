@@ -10,9 +10,8 @@ args = parser.parse_args()
 
 # def copied from Query Class (should reuse that one)
 def query_graph(sparql_fn, graph):
-    query_path = Path.cwd() / 'queries' / sparql_fn
-    print(f'\n\n*** {query_path} ***\n')
-    with open(query_path, 'r') as query_fobj:
+    print(f'\n\n*** {sparql_fn} ***\n')
+    with open(sparql_fn, 'r') as query_fobj:
         sparq_query = query_fobj.read()
     printouts = graph.query(sparq_query)
     return printouts
@@ -26,8 +25,9 @@ def query_ontology_schema(ontology_ns):
         graph.parse(location=ontology_ns,
                     format="application/rdf+xml")
 
-        printouts = query_graph(sparql_fn='query_ontology_schema.rq',
-                                graph=graph)
+        printouts = query_graph(
+            sparql_fn='ontology2smw/queries/query_ontology_schema.rq',
+            graph=graph)
         if len(printouts) > 0:
             printout_dict = (list(printouts)[0]).asdict()
             title = printout_dict.get('title')

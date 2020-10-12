@@ -8,10 +8,11 @@ from ontology2smw.cli_args import parser
 args = parser.parse_args()
 
 def main():
-    sparql2smwpage(sparql_fn='queries/query_class_prop.rq',
-                   format_='ttl',
-                   source='aeon/aeon.ttl',
-                   )
+    sparql2smwpage(
+        sparql_fn='ontology2smw/queries/query_classes_properties.rq',
+        format_='ttl',
+        source='aeon/aeon.ttl',
+        )
 
 
 if __name__ == '__main__':
