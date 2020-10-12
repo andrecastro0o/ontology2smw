@@ -1,6 +1,5 @@
 from rdflib import Graph
-from rdflib.namespace import OWL, RDF, RDFS, NamespaceManager
-from pathlib import Path
+from rdflib.namespace import NamespaceManager
 from typing import Dict
 # from pprint import pprint
 from jinja_utils import render_template
