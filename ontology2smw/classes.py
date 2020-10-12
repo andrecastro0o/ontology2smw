@@ -73,7 +73,7 @@ class SMWCategoryORProp(SMWontology):
         self.namespace = namespace
         self.item = item_
         self.item_dict = item_.asdict()
-        self.resource_type = self.item_dict['smw_datatype']
+        self.resource_type = self.determine_smw_datatype()
         self.subject = self.item_dict['subject']
         self.subject_name = None
         self.iri = self.subject.defrag()
@@ -95,6 +95,12 @@ class SMWCategoryORProp(SMWontology):
             item_name=self.subject_name,
             page_info=None
         )
+
+    def determine_smw_datatype(self):
+        if str(self.item_dict['smw_datatype']) == 'Category':
+            return 'Category'
+        else:
+            return 'Property'
 
 
 class SMWImportOverview(SMWontology):

@@ -128,6 +128,7 @@ def sparql2smwpage(sparql_fn: str, format_: str, source: str):
                                  namespace=ns,
                                  namespace_prefix=ns_prefix)
         term.create_wiki_item()
+        print(f'\n----------------------------------\n{term.wikipage_name}')
         if args.write is True:
             term.write_wikipage()
         else:
