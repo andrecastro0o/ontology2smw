@@ -10,3 +10,4 @@ confident2wikidata_mapping.yml
 /ontos/
 /build/
 /dist/
+/ontology2smw.egg-info/

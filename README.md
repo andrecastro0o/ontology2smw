@@ -1,5 +1,5 @@
 # Ontology to SMW
-_**Querying an ontology in order to bring it to import to SMW**_
+_**Automating an RDF ontology import into Semantic Mediawiki**_
 
 [Semantic Mediawiki](https://www.semantic-mediawiki.org)(SMW) allows 
 [external ontologies to be imported into a Mediawiki (MW) instance](https://www.semantic-mediawiki.org/wiki/Help:Import_vocabulary). 
@@ -16,37 +16,76 @@ but seems possible to make it work with any ontology and an instances of SMW. </
 `aeon:SMW_datatype` and the appropriate [SMW datatype](https://www.semantic-mediawiki.org/wiki/Help:List_of_datatypes) or Category for Classes**
 
 
-## Package into distribution package
-Test: `python setup.py install`
-
-Create a buuild: `python setup.py sdist bdist_wheel`
-
-Run: `ontology2smw python -m ontology2smw -f ttl -o aeon/aeon.ttl`
-or using a remote ontology: `ontology2smw python -m ontology2smw -f ttl -o https://raw.githubusercontent.com/tibonto/aeon/master/aeon.ttl`
-
-
 <!-- HOW IS THE IMPORT DONE -->
+## Install:
 
-## Run Script:
-**Prerequisites:** 
+### Manually
+```bash
+git clone https://github.com/TIBHannover/ontology2smw.git
+cd ontology2smw
+# (optional) create and activate a virtual-environment
+python setup.py install
+```
 
-In virtual environment install requirements `pip install -r requirements.txt`
-
-Git add [aeon/confIDent](https://github.com/tibonto/aeon/tree/confIDent) as submodule
-`./git_submod_add_aeon.sh`
+## Run:
 
 **Run:**
 
-without writing to pages: `python -m ontology2smw -f ttl -o aeon/aeon.ttl` 
+Using local ontology:<br/>`ontology2smw --format ttl --ontology aeon/aeon.ttl`
 
-writing to wiki pages: `python -m ontology2smw -f ttl -o aeon/aeon.ttl --write` 
+Using a remote ontology:<br/>`ontology2smw --format ttl --ontology https://raw.githubusercontent.com/tibonto/aeon/master/aeon.ttl`
+
+Writing to wiki pages:<br/>`ontology2smw --format ttl --ontology aeon/aeon.ttl --write` 
+
+Asking for help:<br/>`ontology2smw --help`
+```bash
+usage: ontology2smw [-h] [-w] [-o ONTOLOGY] [-f {application/rdf+xml,ttl}]
+
+                   ___    
+                 { . . } 
+--------------o00---'----00o--
+confIDent ontology2SMW  
+-----------------------------
+
+optional arguments:
+  -h, --help            show this help message and exit
+  -w, --write           writes the output to wiki or file. Default: False (dry-run).
+  -o ONTOLOGY, --ontology ONTOLOGY
+                        Ontology file or URI
+  -f {application/rdf+xml,ttl}, --format {application/rdf+xml,ttl}
+                        Ontology format. Default value: application/rdf+xml
+```
+
+<!--
+
+**Requirements:** 
+
+In virtual environment install requirements `pip install -r requirements.txt`
+
+`python setup.py install`
 
 
-## To write wiki pages
+**Create a build:** 
+
+`python setup.py sdist bdist_wheel`
+-->
+
+### To write wiki pages
 **wikidetails.yml & wiki write access**
 * Ensure user your wiki user account belongs to bot group: see wiki page `Special:UserRights`
 * Create a bot password in wiki page: `Special:BotPasswords`
 * copy `wikidetails.template.yml` as `wikidetails.yml` and fill in bot name and password:<br/>
+    
+## Develop
+
+```bash
+git clone https://github.com/TIBHannover/ontology2smw.git
+cd ontology2smw
+# (optional) create and activate a virtual-environment
+pip install -r requirements.txt
+python -m ontology2smw
+```
+    
     
 ## Properties from other ontologies
 ...
