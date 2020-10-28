@@ -1,2 +1,3 @@
 include ontology2smw/templates/*
 include ontology2smw/queries/*
+include ontology2smw/mediawikitools/*

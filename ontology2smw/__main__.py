@@ -1,7 +1,11 @@
 import sys
 from pathlib import Path
 from ontology2smw.cli_args import parser
+from ontology2smw.file_utils import yaml_get_source
+from ontology2smw.mediawikitools.actions import login, read
+
 args = parser.parse_args()
+
 
 def main():
     if not args.ontology:
@@ -19,6 +23,13 @@ def main():
                 print('No wikidetails.yml file was found in the root '
                       'directory. Hence is not possible to write to the wiki')
                 sys.exit()
+            wikidetails = yaml_get_source(wikidetails)
+            site = login(host=wikidetails['host'],
+                  path=wikidetails['path'],
+                  scheme=wikidetails['scheme'],
+                  username=wikidetails['username'],
+                  password=wikidetails['password'])
+            print(f'Bot logged in to wiki {site.host} {site.path}')
             print('Terms will be written to wiki')
             pass
         else:

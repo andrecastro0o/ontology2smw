@@ -2,4 +2,3 @@ requests
 rdflib
 jinja2
 pyyaml
-mediawikitools @ git+https://github.com/TIBHannover/confiDent-mediawikitools.git@master
