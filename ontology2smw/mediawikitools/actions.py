@@ -1,7 +1,7 @@
 from typing import ClassVar, List, Tuple
 from datetime import datetime
 from mwclient import Site
-from ontology2smw.file_utils import yaml_get_source
+
 
 def read(page: str) -> Tuple:
     page = site.pages[page]
