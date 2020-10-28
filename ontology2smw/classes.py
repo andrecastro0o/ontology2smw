@@ -3,10 +3,9 @@ from rdflib.namespace import NamespaceManager
 from typing import Dict
 # from pprint import pprint
 from datetime import datetime
-from mediawikitools.wiki import actions as mwactions
 from ontology2smw.jinja_utils import url_termination, render_template
 from ontology2smw.log import logger
-
+from ontology2smw.mediawikitools import actions as mwactions
 
 class SMWontology:
     def __init__(self):
