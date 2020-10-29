@@ -176,13 +176,13 @@
 
     - name: bot account creation
       command:
-        cmd: php maintenance/createBotPassword.php --appid ontology2smwbot --grants basic,editpage,editprotected,createeditmovepage,highvolume '{{ mw_admin_name }}' botpasswordbotpasswordbotpassword
+        cmd: php maintenance/createBotPassword.php --appid ontology2smwbot --grants basic,editinterface,editpage,editprotected,createeditmovepage,highvolume '{{ mw_admin_name }}' botpasswordbotpasswordbotpassword
         chdir: '{{ mw_path }}'
-
+#Edit the MediaWiki namespace and sitewide/user JSON
     - name: mw url
       debug:
-        msg: 'Mediawiki running in {{ vm_url }}/{{ mw_script_path }}'
+        msg: 'Mediawiki running in {{ vm_url }}{{ mw_script_path }}'
 
     - name: botpassword page
       debug:
-        msg: 'Bot password viewable in {{ vm_url }}/{{ mw_script_path }}/index.php?title=Special:BotPasswords'
+        msg: 'Bot password viewable in {{ vm_url }}{{ mw_script_path }}/index.php?title=Special:BotPasswords'
