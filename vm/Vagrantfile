@@ -1,0 +1,18 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+
+Vagrant.configure("2") do |config|
+  config.vm.define "mw" do |lamp|
+    lamp.vm.box = "debian/buster64"
+    lamp.ssh.insert_key = false
+    lamp.vm.hostname = "mw.box"
+    lamp.vm.synced_folder ".", "/vagrant", create: true, disabled: false
+    lamp.vm.network :private_network, ip: "192.168.100.100"
+
+    lamp.vm.provider :virtualbox do |vb|
+      vb.name = "mwbox"
+      vb.memory = 2048
+      vb.cpus = 2
+    end
+  end
+end

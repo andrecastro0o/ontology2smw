@@ -12,3 +12,4 @@ confident2wikidata_mapping.yml
 /dist/
 /ontology2smw.egg-info/
 /.tox/
+/vm/.vagrant/

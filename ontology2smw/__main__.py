@@ -18,12 +18,13 @@ def main():
             "(If you say yes, make sure to disable cronjob for "
             "mediawiki/maintenance/runJobs.php) [yes/no]")
         if write_confirm == 'yes':
-            wikidetails = Path(__file__).parent.parent / 'wikidetails.yml'
+            wikidetails = Path('.')/ 'wikidetails.yml'
             if Path.is_file(wikidetails) is False:
-                print('No wikidetails.yml file was found in the root '
-                      'directory. Hence is not possible to write to the wiki')
+                print(f'No wikidetails.yml file was found in '
+                      f'{wikidetails.absolute()}. Is is not possible to write'
+                      f' to the wiki')
                 sys.exit()
-            wikidetails = yaml_get_source(wikidetails)
+            wikidetails = yaml_get_source(path2f=wikidetails, absolutepath=True)
             site = login(host=wikidetails['host'],
                          path=wikidetails['path'],
                          scheme=wikidetails['scheme'],

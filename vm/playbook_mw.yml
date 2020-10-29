@@ -1,0 +1,188 @@
+---
+- name: Create Mediawiki test VM
+  hosts: mwbox
+  become: True
+  become_user: root
+  vars:
+    vm_url: http://192.168.100.100
+    webdir: /var/www/html
+    mw_path: /var/www/html/w
+    mw_script_path: /w
+    mw_instance_name: 'testwiki'
+    mariadb_root_pass: 'mariadbpass'
+    mw_language: 'en'
+    mw_version: 'REL1_35'
+    smw_version: '~3.2'
+    mw_db: 'testwikidb'
+    mw_db_user: 'testwikidb_user'
+    mw_db_password: 'testwikidb_passwd'
+    mw_db_connection: 'mysql'
+    mw_admin_name: 'Admin'
+    mw_admin_password: 'adminpassword'
+    mw_adminbot_password: 'botpasswordbotpasswordbotpassword'
+    extensions_composer:
+      - ext_name: "Semantic Mediawiki"
+        composer_cmd: 'mediawiki/semantic-media-wiki "{{smw_version}}"'
+        load_strs:
+          - "enableSemantics( '{{vm_url}}{{ mw_script_path }}/', true );"
+          - "$smwgShowFactbox=true;"
+          - "$smwgFieldTypeFeatures=SMW_FIELDT_CHAR_NOCASE;"
+          - "$smwgChangePropagationProtection=false;"
+          - "$wgCapitalLinks=false;"
+  tasks:
+    - name: apt update and upgrade apt packages
+      apt: upgrade='True' update_cache='True'
+
+    - name: install packages
+      package: name="{{ item }}" state=present
+      loop:
+        - python3-pip
+        - zip
+        - wget
+        - git
+        - nginx
+        - mariadb-server
+        - python3-mysqldb  # needed?
+        - python-pymysql   # needed?
+        - php
+
+    - name: nginx site default
+      template: src=nginx_default.j2 dest=/etc/nginx/sites-available/default
+
+    - name: reload webserser
+      service: name=nginx state=reloaded
+
+    - name: mariadb conf
+      template: src=mysql.cnf dest=/etc/mysql/my.cnf mode=o-rw
+
+    - name: start mariadb
+      service: name=mysql state=started enabled=true
+
+    - name: install php modules packages
+      package: name="{{ item }}" state="present"
+      loop:
+        - "php-common"
+        - "php-cli"
+        - "php-fpm"
+        - "php-pgsql"
+        - "php-mysql"
+        - "php-gd"
+        - "php-bz2"
+        - "php-zip"
+        - "php-json"
+        - "php-xml"
+        - "php-curl"
+        - "php-intl"
+        - "php-mbstring"
+        - "php-bcmath"
+        - "php-soap"
+        - "php-opcache"
+        - "php-mail"
+        - "libapache2-mod-php"
+        - "composer"
+
+    - name: reload webserser
+      service: name=nginx state=reloaded
+
+    - name: info.php in web dir
+      template: src=info.php dest='{{ webdir }}' owner=www-data group=www-data
+
+    - name: message
+      debug: msg="info.php at {{ vm_url }}/info.php"
+
+    - name: is MW dir present?
+      stat: path='{{ mw_path }}/maintenance'
+      register: stat_mw_repo
+
+    - name: clone mediawiki
+      git: 
+        repo: 'https://gerrit.wikimedia.org/r/p/mediawiki/core.git' 
+        dest: '{{ mw_path }}'
+        version: "{{ mw_version|default('HEAD') }}"
+        depth: 1 
+        force: yes
+      when: not stat_mw_repo.stat.exists
+
+    - name: mwwiki db
+      mysql_db: name='{{ mw_db }}' login_unix_socket='/var/run/mysqld/mysqld.sock'
+      become: yes
+
+    - name: create database user
+      mysql_user: name='{{ mw_db_user }}' password='{{ mw_db_password }}' priv='{{ mw_db }}.*:ALL' login_unix_socket='/var/run/mysqld/mysqld.sock'
+      become: yes
+
+
+    - name: is LocalSettings.php present?
+      stat: path='{{ mw_path }}/LocalSettings.php'
+      register: stat_LocalSettings
+
+    - name: discard old LocalSettings
+      file: path='{{ mw_path }}/LocalSettings.php' state=absent
+      when: stat_LocalSettings
+
+    - name: install mediawiki
+      command: >
+       php {{ mw_path }}/maintenance/install.php
+        --dbname '{{ mw_db | quote }}'
+        --dbuser {{ mw_db_user | quote }}
+        --dbpass {{ mw_db_password | quote }}
+        --dbtype {{ mw_db_connection | quote }}
+        --lang {{ mw_language | quote }}
+        --pass {{ mw_admin_password | quote }}
+        --scriptpath {{ mw_script_path | quote }}
+        --server {{ vm_url | quote }}
+        {{ mw_instance_name | quote }} {{ mw_admin_name | quote }}
+      args:
+        creates: '{{ mw_path }}/LocalSettings.php'
+
+    - name: settings in LocalSetting.php
+      blockinfile:
+        path: '{{ mw_path }}/LocalSettings.php'
+        insertafter: EOF
+        block: |
+            # Job are run by cron
+            $wgJobRunRate = 0;
+            # Permissions
+            $wgGroupPermissions['*']['read'] = true;
+            $wgGroupPermissions['*']['edit'] = true;
+            $wgGroupPermissions['*']['createaccount'] = true;
+            # Debug
+            $wgShowExceptionDetails=true;
+            $wgShowSQLError=true;
+            $wgShowDBErrorBacktrace=true;
+            error_reporting(-1);
+            ini_set('display_errors',1);
+
+    - name: install Composer Extensions
+      command:
+        cmd: composer require {{ item.composer_cmd }} --update-no-dev
+        chdir: '{{ mw_path }}'
+      with_items:
+        - '{{ extensions_composer }}'
+
+    - name: enable Composer Extensions
+      lineinfile:
+        path: '{{ mw_path }}/LocalSettings.php'
+        insertafter: 'EOF'
+        line: "# {{ item.ext_name }}\n{{ item.load_strs | join('\n') }}\n"
+        state: present
+      with_items:
+        - '{{ extensions_composer }}'
+
+    - name: update_mw
+      command:
+        cmd: php maintenance/update.php
+        chdir: '{{ mw_path }}'
+
+    - name: bot account creation
+      command:
+        cmd: php maintenance/createBotPassword.php --appid ontology2smwbot --grants basic,editinterface,editpage,editprotected,createeditmovepage,highvolume '{{ mw_admin_name }}' botpasswordbotpasswordbotpassword
+        chdir: '{{ mw_path }}'
+#Edit the MediaWiki namespace and sitewide/user JSON
+    - name: mw url
+      debug:
+        msg: 'Mediawiki running in {{ vm_url }}{{ mw_script_path }}'
+
+    - name: botpassword page
+      debug:
+        msg: 'Bot password viewable in {{ vm_url }}{{ mw_script_path }}/index.php?title=Special:BotPasswords'
