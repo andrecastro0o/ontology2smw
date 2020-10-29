@@ -88,6 +88,27 @@ def test_category_creation():
     assert page_lastrev
     assert 'Test' in page_content
 
+def test_smw_import_creation():
+    # TODO: block should go to fixtures
+    current_file = Path(__file__)
+    root_dir = current_file.parent.parent.parent
+    print(root_dir)
+    wikidetails = root_dir  / 'wikidetails.yml'
+    print(wikidetails)
+    wikidetails = yaml_get_source(wikidetails)
+    site = actions.login(host=wikidetails['host'],
+                         path=wikidetails['path'],
+                         scheme=wikidetails['scheme'],
+                         username=wikidetails['username'],
+                         password=wikidetails['password'])
+    # end of block
+    actions.edit(page='MediaWiki:Smw_import_test', content='Test',
+                 summary='Testing Smw_import_ creation\n[[Category:Imported vocabulary]]',
+                 append=True)
+    page_content, page_lastrev = actions.read(page='Category:Test')
+    assert page_lastrev
+    assert 'Test' in page_content
+
 
 
 # def test_property_creation():
