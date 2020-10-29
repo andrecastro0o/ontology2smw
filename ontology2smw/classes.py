@@ -7,6 +7,7 @@ from ontology2smw.jinja_utils import url_termination, render_template
 from ontology2smw.log import logger
 from ontology2smw.mediawikitools import actions as mwactions
 
+
 class SMWontology:
     def __init__(self):
         self.wikipage_name = None
@@ -90,9 +91,9 @@ class SMWCategoryORProp(SMWontology):
 
         label = self.item_dict.get('label')
         if label and label.language:
-            label_lang=label.language
+            label_lang = label.language
         else:
-            label_lang='en'
+            label_lang = 'en'
         self.wikipage_content = render_template(
             template=template_file,
             ns_prefix=self.namespace_prefix,

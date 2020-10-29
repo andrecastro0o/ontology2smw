@@ -2,3 +2,5 @@ requests
 rdflib
 jinja2
 pyyaml
+tox
+flake8

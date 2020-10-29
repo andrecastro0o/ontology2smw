@@ -1,6 +1,5 @@
 import sys
 from rdflib import Graph
-from pathlib import Path
 from rdflib import exceptions
 
 from ontology2smw.classes import Query, SMWCategoryORProp, SMWImportOverview
