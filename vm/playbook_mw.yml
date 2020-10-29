@@ -19,6 +19,15 @@
     mw_db_connection: 'mysql'
     mw_admin_name: 'Admin'
     mw_admin_password: 'adminpassword'
+    extensions_composer:
+      - ext_name: "Semantic Mediawiki"
+        composer_cmd: 'mediawiki/semantic-media-wiki "{{smw_version}}"'
+        load_strs:
+          - "enableSemantics( '{{vm_url}}{{ mw_script_path }}/', true );"
+          - "$smwgShowFactbox=true;"
+          - "$smwgFieldTypeFeatures=SMW_FIELDT_CHAR_NOCASE;"
+          - "$smwgChangePropagationProtection=false;"
+          - "$wgCapitalLinks=false;"
   tasks:
     - name: apt update and upgrade apt packages
       apt: upgrade='True' update_cache='True'
@@ -125,7 +134,41 @@
       args:
         creates: '{{ mw_path }}/LocalSettings.php'
 
+    - name: settings in LocalSetting.php
+      blockinfile:
+        path: '{{ mw_path }}/LocalSettings.php'
+        insertafter: EOF
+        block: |
+            # Job are run by cron
+            $wgJobRunRate = 0;
+            # Permissions
+            $wgGroupPermissions['*']['read'] = true;
+            $wgGroupPermissions['*']['edit'] = true;
+            $wgGroupPermissions['*']['createaccount'] = true;
+            # Debug
+            $wgShowExceptionDetails=true;
+            $wgShowSQLError=true;
+            $wgShowDBErrorBacktrace=true;
+            error_reporting(-1);
+            ini_set('display_errors',1);
 
-#          mw_db: 'testwikidb'
-#    mw_db_user: 'testwikidb_user'
-#    mw_db_password: 'testwikidb_passwd'
+    - name: install Composer Extensions
+      command:
+        cmd: composer require {{ item.composer_cmd }} --update-no-dev
+        chdir: '{{ mw_path }}'
+      with_items:
+        - '{{ extensions_composer }}'
+
+    - name: enable Composer Extensions
+      lineinfile:
+        path: '{{ mw_path }}/LocalSettings.php'
+        insertafter: 'EOF'
+        line: "# {{ item.ext_name }}\n{{ item.load_strs | join('\n') }}\n"
+        state: present
+      with_items:
+        - '{{ extensions_composer }}'
+
+    - name: update_mw
+      command:
+        cmd: php maintenance/update.php
+        chdir: '{{ mw_path }}'
