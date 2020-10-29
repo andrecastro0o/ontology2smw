@@ -1,0 +1,24 @@
+server {
+    listen 80 default_server;
+    listen [::]:80 default_server;
+    root /var/www/html;
+    index index.php index.html index.htm index.nginx-debian.html;
+    server_name _ ;
+
+    location / {
+        try_files $uri $uri/ =404;
+    }
+
+    location ~* \.php$ {
+    fastcgi_pass unix:/run/php/php7.3-fpm.sock;
+    include         fastcgi_params;
+    fastcgi_param   SCRIPT_FILENAME    $document_root$fastcgi_script_name;
+    fastcgi_param   SCRIPT_NAME        $fastcgi_script_name;
+  }
+
+    location ~ /\.ht {
+        deny all;
+    }
+
+    # last line of server scope
+}

@@ -1,0 +1,71 @@
+---
+- name: Create Mediawiki test VM
+  hosts: mwbox
+  become: True
+  become_user: root
+  vars:
+    vm_url: http://192.168.100.100
+    webdir: /var/www/html
+    mediawiki_path: /var/www/html/w
+    mw_script_path: /w
+    mw_instance_name: 'testwiki'
+    mariadb_root_pass: 'mariadbpass'
+  tasks:
+    - name: apt update and upgrade apt packages
+      apt: upgrade='True' update_cache='True'
+
+    - name: install packages
+      package: name="{{ item }}" state=present
+      loop:
+        - python3-pip
+        - zip
+        - wget
+        - git
+        - nginx
+        - mariadb-server
+        - python3-mysqldb  # needed?
+        - python-pymysql   # needed?
+        - php
+
+    - name: nginx site default
+      template: src=nginx_default.j2 dest=/etc/nginx/sites-available/default
+
+    - name: reload webserser
+      service: name=nginx state=reloaded
+
+    - name: mariadb conf
+      template: src=mysql.cnf dest=/etc/mysql/my.cnf mode=o-rw
+
+    - name: start mariadb
+      service: name=mysql state=started enabled=true
+
+    - name: install php modules packages
+      package: name="{{ item }}" state="present"
+      loop:
+        - "php-common"
+        - "php-cli"
+        - "php-fpm"
+        - "php-pgsql"
+        - "php-mysql"
+        - "php-gd"
+        - "php-bz2"
+        - "php-zip"
+        - "php-json"
+        - "php-xml"
+        - "php-curl"
+        - "php-intl"
+        - "php-mbstring"
+        - "php-bcmath"
+        - "php-soap"
+        - "php-opcache"
+        - "php-mail"
+        - "libapache2-mod-php"
+
+    - name: reload webserser
+      service: name=nginx state=reloaded
+
+    - name: info.php in web dir
+      template: src=info.php dest='{{ webdir }}' owner=www-data group=www-data
+
+    - name: Message
+      debug: msg="info.php at {{ vm_url }}/info.php"

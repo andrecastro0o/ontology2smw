@@ -76,6 +76,31 @@ In virtual environment install requirements `pip install -r requirements.txt`
 * Create a bot password in wiki page: `Special:BotPasswords`
 * copy `wikidetails.template.yml` as `wikidetails.yml` and fill in bot name and password:<br/>
     
+### Test on local Virtual Machine
+In order to test ontology2smw in action in a isolated virtual 
+environment, the repository include a Ansible playbook to create a VM with Mediawiki installed.
+
+The playbook sets Mediawiki with:
+ * URL: http://192.168.100.100/w
+ * user: Admin 
+ * user password: adminpassword
+ * bot: Admin@ontology2smwbot
+ * bot password: botpasswordbotpasswordbotpassword
+ * SemanticMediawiki extension
+
+Requirements:
+* [VirtualBox](https://www.virtualbox.org/)
+* [Vagrant](https://www.vagrantup.com/)
+* [Ansible](https://www.ansible.com/) 
+
+Create VM:
+```bash
+cd vm
+vagrant up
+ansible-playbook playbook_mw.yml
+```
+    
+    
 ## Develop
 
 ```bash
