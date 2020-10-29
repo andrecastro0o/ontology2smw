@@ -2,5 +2,6 @@ requests
 rdflib
 jinja2
 pyyaml
-tox
+mwclient
 flake8
+pytest

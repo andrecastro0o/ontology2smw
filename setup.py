@@ -18,7 +18,7 @@ setup(
     classifiers=['Programming Language :: Python',
                  'Programming Language :: Python :: 3.7'],
     keywords='Semantic Mediawiki Ontology RDF SPARQL',
-    install_requires=['rdflib', 'pyyaml', 'Jinja2', 'mediawikitools'],
+    install_requires=['rdflib', 'pyyaml', 'Jinja2', 'mwclient'],
     test_require=['pytest'],
     entry_points={
         'console_scripts': [
