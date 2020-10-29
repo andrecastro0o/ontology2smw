@@ -19,6 +19,7 @@
     mw_db_connection: 'mysql'
     mw_admin_name: 'Admin'
     mw_admin_password: 'adminpassword'
+    mw_adminbot_password: 'botpasswordbotpasswordbotpassword'
     extensions_composer:
       - ext_name: "Semantic Mediawiki"
         composer_cmd: 'mediawiki/semantic-media-wiki "{{smw_version}}"'
@@ -86,7 +87,7 @@
     - name: info.php in web dir
       template: src=info.php dest='{{ webdir }}' owner=www-data group=www-data
 
-    - name: Message
+    - name: message
       debug: msg="info.php at {{ vm_url }}/info.php"
 
     - name: is MW dir present?
@@ -106,7 +107,7 @@
       mysql_db: name='{{ mw_db }}' login_unix_socket='/var/run/mysqld/mysqld.sock'
       become: yes
 
-    - name: 3. Create database user
+    - name: create database user
       mysql_user: name='{{ mw_db_user }}' password='{{ mw_db_password }}' priv='{{ mw_db }}.*:ALL' login_unix_socket='/var/run/mysqld/mysqld.sock'
       become: yes
 
@@ -119,7 +120,7 @@
       file: path='{{ mw_path }}/LocalSettings.php' state=absent
       when: stat_LocalSettings
 
-    - name: 5. Install mediawiki
+    - name: install mediawiki
       command: >
        php {{ mw_path }}/maintenance/install.php
         --dbname '{{ mw_db | quote }}'
@@ -172,3 +173,16 @@
       command:
         cmd: php maintenance/update.php
         chdir: '{{ mw_path }}'
+
+    - name: bot account creation
+      command:
+        cmd: php maintenance/createBotPassword.php --appid ontology2smwbot --grants basic,editpage,editprotected,createeditmovepage,highvolume '{{ mw_admin_name }}' botpasswordbotpasswordbotpassword
+        chdir: '{{ mw_path }}'
+
+    - name: mw url
+      debug:
+        msg: 'Mediawiki running in {{ vm_url }}/{{ mw_script_path }}'
+
+    - name: botpassword page
+      debug:
+        msg: 'Bot password viewable in {{ vm_url }}/{{ mw_script_path }}/index.php?title=Special:BotPasswords'
