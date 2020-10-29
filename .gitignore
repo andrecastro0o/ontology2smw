@@ -11,3 +11,4 @@ confident2wikidata_mapping.yml
 /build/
 /dist/
 /ontology2smw.egg-info/
+/.tox/
