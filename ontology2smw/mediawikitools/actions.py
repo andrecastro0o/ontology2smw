@@ -73,7 +73,6 @@ def login(host: str, path: str, scheme: str, username='', password='') -> \
     site = site_
     return site_
 
-
 # def create_mw_site(details):
 #     site = login(host=details['host'],
 #                  path=details['path'],

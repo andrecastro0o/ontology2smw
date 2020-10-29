@@ -2,7 +2,7 @@ import sys
 from pathlib import Path
 from ontology2smw.cli_args import parser
 from ontology2smw.file_utils import yaml_get_source
-from ontology2smw.mediawikitools.actions import login, read
+from ontology2smw.mediawikitools.actions import login
 
 args = parser.parse_args()
 
@@ -18,17 +18,17 @@ def main():
             "(If you say yes, make sure to disable cronjob for "
             "mediawiki/maintenance/runJobs.php) [yes/no]")
         if write_confirm == 'yes':
-            wikidetails = Path(__file__).parent.parent/ 'wikidetails.yml'
+            wikidetails = Path(__file__).parent.parent / 'wikidetails.yml'
             if Path.is_file(wikidetails) is False:
                 print('No wikidetails.yml file was found in the root '
                       'directory. Hence is not possible to write to the wiki')
                 sys.exit()
             wikidetails = yaml_get_source(wikidetails)
             site = login(host=wikidetails['host'],
-                  path=wikidetails['path'],
-                  scheme=wikidetails['scheme'],
-                  username=wikidetails['username'],
-                  password=wikidetails['password'])
+                         path=wikidetails['path'],
+                         scheme=wikidetails['scheme'],
+                         username=wikidetails['username'],
+                         password=wikidetails['password'])
             print(f'Bot logged in to wiki {site.host} {site.path}')
             print('Terms will be written to wiki')
             pass
@@ -41,7 +41,7 @@ def main():
         sparql_fn='ontology2smw/queries/query_classes_properties.rq',
         format_=args.format,
         source=args.ontology,
-        )
+    )
 
 
 if __name__ == '__main__':
