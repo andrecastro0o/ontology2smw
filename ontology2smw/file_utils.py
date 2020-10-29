@@ -32,10 +32,14 @@ def dict2yaml(path: str, data: Dict):
         yaml.safe_dump(data=data, stream=yaml_f)
 
 
-def yaml_get_source(relativepath2f: str, method='read', data=None) -> Dict:
+def yaml_get_source(path2f: str, method='read', data=None,
+                    absolutepath=False) -> Dict:
     # print('CWD:', Path.cwd())
     # print('parent:', Path(__file__).parent)
-    path_file = Path(__file__).parent / relativepath2f
+    if absolutepath:
+        path_file = path2f
+    else:
+        path_file = Path(__file__).parent / path2f
     if method == 'read':
         yamldict = yaml2dict(path_file)
         return yamldict
