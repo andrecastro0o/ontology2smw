@@ -6,16 +6,19 @@
   vars:
     vm_url: http://192.168.100.100
     webdir: /var/www/html
-    mediawiki_path: /var/www/html/w
+    mw_path: /var/www/html/w
     mw_script_path: /w
     mw_instance_name: 'testwiki'
     mariadb_root_pass: 'mariadbpass'
-    mediawiki_language: 'en'
-    mediawiki_version: 'REL1_35'
+    mw_language: 'en'
+    mw_version: 'REL1_35'
     smw_version: '~3.2'
-    mediawiki_db: 'testwikidb'
-    mediawiki_db_user: 'testwikidb_user'
-    mediawiki_db_password: 'testwikidb_passwd'
+    mw_db: 'testwikidb'
+    mw_db_user: 'testwikidb_user'
+    mw_db_password: 'testwikidb_passwd'
+    mw_db_connection: 'mysql'
+    mw_admin_name: 'Admin'
+    mw_admin_password: 'adminpassword'
   tasks:
     - name: apt update and upgrade apt packages
       apt: upgrade='True' update_cache='True'
@@ -78,27 +81,51 @@
       debug: msg="info.php at {{ vm_url }}/info.php"
 
     - name: is MW dir present?
-      stat: path='{{ mediawiki_path }}/maintenance'
-      register: stat_mediawiki_repo
+      stat: path='{{ mw_path }}/maintenance'
+      register: stat_mw_repo
 
     - name: clone mediawiki
       git: 
         repo: 'https://gerrit.wikimedia.org/r/p/mediawiki/core.git' 
-        dest: '{{ mediawiki_path }}' 
-        version: "{{ mediawiki_version|default('HEAD') }}" 
+        dest: '{{ mw_path }}'
+        version: "{{ mw_version|default('HEAD') }}"
         depth: 1 
         force: yes
-      when: not stat_mediawiki_repo.stat.exists
+      when: not stat_mw_repo.stat.exists
 
     - name: mwwiki db
-      mysql_db: name='{{ mediawiki_db }}' login_unix_socket='/var/run/mysqld/mysqld.sock'
+      mysql_db: name='{{ mw_db }}' login_unix_socket='/var/run/mysqld/mysqld.sock'
       become: yes
 
     - name: 3. Create database user
-      mysql_user: name='{{ mediawiki_db_user }}' password='{{ mediawiki_db_password }}' priv='{{ mediawiki_db }}.*:ALL' login_unix_socket='/var/run/mysqld/mysqld.sock'
+      mysql_user: name='{{ mw_db_user }}' password='{{ mw_db_password }}' priv='{{ mw_db }}.*:ALL' login_unix_socket='/var/run/mysqld/mysqld.sock'
       become: yes
 
 
-#          mediawiki_db: 'testwikidb'
-#    mediawiki_db_user: 'testwikidb_user'
-#    mediawiki_db_password: 'testwikidb_passwd'
+    - name: is LocalSettings.php present?
+      stat: path='{{ mw_path }}/LocalSettings.php'
+      register: stat_LocalSettings
+
+    - name: discard old LocalSettings
+      file: path='{{ mw_path }}/LocalSettings.php' state=absent
+      when: stat_LocalSettings
+
+    - name: 5. Install mediawiki
+      command: >
+       php {{ mw_path }}/maintenance/install.php
+        --dbname '{{ mw_db | quote }}'
+        --dbuser {{ mw_db_user | quote }}
+        --dbpass {{ mw_db_password | quote }}
+        --dbtype {{ mw_db_connection | quote }}
+        --lang {{ mw_language | quote }}
+        --pass {{ mw_admin_password | quote }}
+        --scriptpath {{ mw_script_path | quote }}
+        --server {{ vm_url | quote }}
+        {{ mw_instance_name | quote }} {{ mw_admin_name | quote }}
+      args:
+        creates: '{{ mw_path }}/LocalSettings.php'
+
+
+#          mw_db: 'testwikidb'
+#    mw_db_user: 'testwikidb_user'
+#    mw_db_password: 'testwikidb_passwd'
