@@ -10,6 +10,12 @@
     mw_script_path: /w
     mw_instance_name: 'testwiki'
     mariadb_root_pass: 'mariadbpass'
+    mediawiki_language: 'en'
+    mediawiki_version: 'REL1_35'
+    smw_version: '~3.2'
+    mediawiki_db: 'testwikidb'
+    mediawiki_db_user: 'testwikidb_user'
+    mediawiki_db_password: 'testwikidb_passwd'
   tasks:
     - name: apt update and upgrade apt packages
       apt: upgrade='True' update_cache='True'
@@ -60,6 +66,7 @@
         - "php-opcache"
         - "php-mail"
         - "libapache2-mod-php"
+        - "composer"
 
     - name: reload webserser
       service: name=nginx state=reloaded
@@ -69,3 +76,29 @@
 
     - name: Message
       debug: msg="info.php at {{ vm_url }}/info.php"
+
+    - name: is MW dir present?
+      stat: path='{{ mediawiki_path }}/maintenance'
+      register: stat_mediawiki_repo
+
+    - name: clone mediawiki
+      git: 
+        repo: 'https://gerrit.wikimedia.org/r/p/mediawiki/core.git' 
+        dest: '{{ mediawiki_path }}' 
+        version: "{{ mediawiki_version|default('HEAD') }}" 
+        depth: 1 
+        force: yes
+      when: not stat_mediawiki_repo.stat.exists
+
+    - name: mwwiki db
+      mysql_db: name='{{ mediawiki_db }}' login_unix_socket='/var/run/mysqld/mysqld.sock'
+      become: yes
+
+    - name: 3. Create database user
+      mysql_user: name='{{ mediawiki_db_user }}' password='{{ mediawiki_db_password }}' priv='{{ mediawiki_db }}.*:ALL' login_unix_socket='/var/run/mysqld/mysqld.sock'
+      become: yes
+
+
+#          mediawiki_db: 'testwikidb'
+#    mediawiki_db_user: 'testwikidb_user'
+#    mediawiki_db_password: 'testwikidb_passwd'
