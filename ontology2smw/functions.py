@@ -67,8 +67,8 @@ def instantiate_smwimport(ontology_ns,
     #  Class methods
     instance = SMWImportOverview(ontology_ns=ontology_ns,
                                  ontology_ns_prefix=ontology_ns_prefix)
-    instance.wikipage_name = f'Mediawiki:Smw_import_' \
-                             f'{sematicterm.namespace_prefix}'
+    # instance.wikipage_name = f'Mediawiki:Smw_import_' \
+    #                          f'{sematicterm.namespace_prefix}'
     title, version, description = query_ontology_schema(
         ontology_ns=ontology_ns)
     if title:
@@ -80,22 +80,6 @@ def instantiate_smwimport(ontology_ns,
     instance.ontology_url = ontology_ns
     return instance
 
-
-def append_smw_import_content(importdict, term_):
-    """
-    Appends term_.subject_name, term_.resource_type to
-    importdict (smw_import_dict)
-    """
-    if term_.namespace_prefix not in importdict.keys():
-        # TODO: REFACTOR remove def instantiate_smwimport turn instactions into
-        #  class
-        # methods
-        importdict[term_.namespace_prefix] = instantiate_smwimport(
-            ontology_ns=term_.namespace,
-            ontology_ns_prefix=term_.namespace_prefix,
-            sematicterm=term_)
-    importdict[term_.namespace_prefix].properties.append(
-        (term_.subject_name, term_.resource_type))
 
 
 def create_smw_import_pages(importdict):
@@ -136,6 +120,16 @@ def sparql2smwpage(sparql_fn: str, format_: str, source: str):
             term.write_wikipage()
         else:
             print(term.wikipage_content)
-        append_smw_import_content(importdict=smw_import_dict, term_=term)
+
+        if term.namespace_prefix not in smw_import_dict.keys():
+            # TODO: REFACTOR remove def instantiate_smwimport turn actions into
+            #  class methods
+            smw_import_dict[term.namespace_prefix] = instantiate_smwimport(
+                ontology_ns=term.namespace,
+                ontology_ns_prefix=term.namespace_prefix,
+                sematicterm=term)
+        smw_import_dict[term.namespace_prefix].properties.append(
+            (term.subject_name, term.resource_type))
+
         # print(term.item_dict)
     create_smw_import_pages(importdict=smw_import_dict)

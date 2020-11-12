@@ -131,6 +131,7 @@ class SMWImportOverview(MWpage):
         self.iri = None  # TODO: determine if is required
         self.iri_seperator = None  # TODO: determine if is required
         self.ontology_url = None  # TODO: determine if is required
+        self.wikipage_name = f'Mediawiki:Smw_import_{self.ontology_ns_prefix}'
 
     def create_smw_import(self):
         all_resources = self.categories + self.properties
@@ -149,6 +150,10 @@ class SMWImportOverview(MWpage):
             page_info=page_info_dict,
             # term_description=''
         )
+    #
+    # def create_page_name(self):
+    #     self.wikipage_name = f'Mediawiki:Smw_import_{self.ontology_ns_prefix}'
+
 
 # if __name__ == '__main__':
 #
