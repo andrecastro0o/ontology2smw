@@ -8,7 +8,11 @@ from ontology2smw.log import logger
 from ontology2smw.mediawikitools import actions as mwactions
 
 
-class SMWontology:
+class MWpage:
+    """
+    Parent Class represents MW page:
+    """
+
     def __init__(self):
         self.wikipage_name = None
         self.wikipage_content = None
@@ -66,7 +70,10 @@ class Query:
             yield printout_
 
 
-class SMWCategoryORProp(SMWontology):
+class SMWCategoryORProp(MWpage):
+    """
+    Class represents a SMW Category or Property
+    """
     def __init__(self, item_: Dict, namespace: str,
                  namespace_prefix: str):
         self.namespace_prefix = namespace_prefix
@@ -111,7 +118,10 @@ class SMWCategoryORProp(SMWontology):
             return 'Property'
 
 
-class SMWImportOverview(SMWontology):
+class SMWImportOverview(MWpage):
+    """
+    Class represents the Ontology overview SMW page: Mediawiki:smw_import_XYZ
+    """
     def __init__(self, ontology_ns: str, ontology_ns_prefix: str):
         self.ontology_ns = ontology_ns  # TODO: change to uri
         self.ontology_ns_prefix = ontology_ns_prefix  # TODO: change prefix

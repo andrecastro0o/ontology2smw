@@ -3,20 +3,17 @@ _**Automating an RDF ontology import into Semantic Mediawiki**_
 
 [Semantic Mediawiki](https://www.semantic-mediawiki.org)(SMW) allows 
 [external ontologies to be imported into a Mediawiki (MW) instance](https://www.semantic-mediawiki.org/wiki/Help:Import_vocabulary). 
-external ontology's properties and classes can be used inside the MW instance, and produce a RDF exports of 
+External ontology's properties and classes can be used inside the MW instance, and produce a RDF exports of 
 the wiki pages, which point to IRIs of the imported ontology(s).
 
 The process of importing is simple, but time consuming. Hence making it a perfect candidate for an automated process, 
 which can be run at anytime a new version of the ontology is published, hence this python script.
 
-<s>Currently the script works only with [The Academic Event Ontology (AEON)](https://github.com/tibonto/aeon) in the context of the confIDent project,
-but seems possible to make it work with any ontology and an instances of SMW. </s>
-
 **In order for the terms of an ontology to be imported to SMW instance they should include the property
 `aeon:SMW_datatype` and the appropriate [SMW datatype](https://www.semantic-mediawiki.org/wiki/Help:List_of_datatypes) or Category for Classes**
 
+![ontology2smw import workflow](docs/ontology2smw_aeon.svg?raw=true)
 
-<!-- HOW IS THE IMPORT DONE -->
 ## Install:
 
 ### Manually

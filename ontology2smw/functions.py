@@ -63,9 +63,10 @@ def instantiate_smwimport(ontology_ns,
     Creates and instance inf SMWImportOverview
     Which will create the content of Mediawiki:SMW_import_page
     '''
+    # TODO: REFACTOR: remove class and turn variable assigments into
+    #  Class methods
     instance = SMWImportOverview(ontology_ns=ontology_ns,
                                  ontology_ns_prefix=ontology_ns_prefix)
-    # TODO: turn into method
     instance.wikipage_name = f'Mediawiki:Smw_import_' \
                              f'{sematicterm.namespace_prefix}'
     title, version, description = query_ontology_schema(
@@ -86,6 +87,9 @@ def append_smw_import_content(importdict, term_):
     importdict (smw_import_dict)
     """
     if term_.namespace_prefix not in importdict.keys():
+        # TODO: REFACTOR remove def instantiate_smwimport turn instactions into
+        #  class
+        # methods
         importdict[term_.namespace_prefix] = instantiate_smwimport(
             ontology_ns=term_.namespace,
             ontology_ns_prefix=term_.namespace_prefix,
