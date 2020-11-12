@@ -1,4 +1,4 @@
-{{ page_info['ontology_iri'] }}|[{{ page_info['ontology_url'] }} {{ page_info['ontology_name'] }}]
+{{ page_info['ontology_ns'] }}|[{{ page_info['ontology_ns'] }} {{ page_info['ontology_name'] }}]
 {% for resource_tuple in item %}
  {{ resource_tuple[0] }}|{{ resource_tuple[1] }}
 {%- endfor %}

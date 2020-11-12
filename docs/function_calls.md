@@ -15,3 +15,19 @@ AFTER REFACTORING
     * def create_smw_import_pages
 
 
+
+
+### SMWCategoryORProp vars
+        self.ontology_ns = ontology_ns  https://github.com/tibonto/aeon#
+        self.ontology_url = ontology_url  # https://github.com/tibonto/aeon#
+        self.iri = iri   # https://github.com/tibonto/aeon
+
+    USE only IRI
+
+
+        self.ontology_ns_prefix = ontology_ns_prefix  # aeon
+        self.categories = []
+        self.properties = []
+        self.ontology_name = None
+        self.iri_seperator = None  # TODO: determine if is required
+        

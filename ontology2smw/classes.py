@@ -84,9 +84,7 @@ class SMWCategoryORProp(MWpage):
         self.resource_type = self.determine_smw_datatype()
         self.subject = self.item_dict['subject']
         self.subject_name = None
-        self.iri = self.subject.defrag()
         # pprint(self.item_dict)
-        # how to get the namespace of a property?
 
     def create_wiki_item(self):
         self.subject_name = url_termination(self.item_dict['subject'])
@@ -123,25 +121,18 @@ class SMWImportOverview(MWpage):
     """
     Class represents the Ontology overview SMW page: Mediawiki:smw_import_XYZ
     """
-    def __init__(self, ontology_ns: str, ontology_ns_prefix: str, iri: str,
-                 ontology_url: str):
+    def __init__(self, ontology_ns: str, ontology_ns_prefix: str):
         self.ontology_ns = ontology_ns  # TODO: change to uri
         self.ontology_ns_prefix = ontology_ns_prefix  # TODO: change prefix
         self.categories = []
         self.properties = []
         self.ontology_name = None
-        self.iri = iri  # TODO: determine if is required
-        self.iri_seperator = None  # TODO: determine if is required
-        self.ontology_url = ontology_url  # TODO: determine if is required
         self.wikipage_name = f'Mediawiki:Smw_import_{self.ontology_ns_prefix}'
         self.title, self.version, self.description = self.query_ontology()
 
     def create_smw_import(self):
         all_resources = self.categories + self.properties
-        page_info_dict = {'ontology_iri': self.iri,
-                          'ontology_iri_seperator': self.iri_seperator,
-                          'ontology_url': self.ontology_url,
-                          'ontology_ns': self.ontology_ns,
+        page_info_dict = {'ontology_ns': self.ontology_ns,
                           'ontology_ns_prefix': self.ontology_ns_prefix,
                           'ontology_name': self.ontology_name,
                           }

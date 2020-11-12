@@ -15,6 +15,7 @@ def query_graph(sparql_fn, graph):
     return printouts
 
 
+# TODO move into Class SMWCategoryORProp
 def get_term_ns_prefix(term_uri, allprefixes):
     """
     Based on term_uri and prefixes determine namespace and prefix of term
@@ -70,9 +71,8 @@ def sparql2smwpage(sparql_fn: str, format_: str, source: str):
         if term.namespace_prefix not in smw_import_dict.keys():
             smw_import_dict[term.namespace_prefix] = SMWImportOverview(
                 ontology_ns=term.namespace,
-                ontology_ns_prefix=term.namespace_prefix,
-                iri=term.iri,
-                ontology_url=term.namespace)
+                ontology_ns_prefix=term.namespace_prefix
+            )
         smw_import_dict[term.namespace_prefix].properties.append(
             (term.subject_name, term.resource_type))
 
