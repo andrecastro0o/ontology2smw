@@ -1,8 +1,7 @@
 import sys
-from rdflib import Graph
-from rdflib import exceptions
-
-from ontology2smw.classes import Query, SMWCategoryORProp, SMWImportOverview
+from ontology2smw.classes import QueryOntology, \
+    SMWCategoryORProp, \
+    SMWImportOverview
 from ontology2smw.cli_args import parser
 args = parser.parse_args()
 
@@ -14,33 +13,6 @@ def query_graph(sparql_fn, graph):
         sparq_query = query_fobj.read()
     printouts = graph.query(sparq_query)
     return printouts
-
-
-def query_ontology_schema(ontology_ns):
-    print(f'Query ontology schema: {ontology_ns}')
-    title, version, description = None, None, None  # default
-    try:   # TODO: try logic moved to Query.query_graph with error handling
-        graph = Graph()
-        graph.parse(location=ontology_ns,
-                    format="application/rdf+xml")
-
-        printouts = query_graph(
-            sparql_fn='ontology2smw/queries/query_ontology_schema.rq',
-            graph=graph)
-        if len(printouts) > 0:
-            printout_dict = (list(printouts)[0]).asdict()
-            title = printout_dict.get('title')
-            version = printout_dict.get('version')
-            description = printout_dict.get('description')
-
-    except (exceptions.ParserError, TypeError) as pe:
-        msg = f"{ontology_ns} failed to resolve to an RDF. Provide " \
-              f"infomartion about the ontology in ontologies.yml"
-        # TODO: Create the structure of ontologies.yml. Read it and store info
-        # fill: title, version, description
-        # TODO: Ask user if she want to continue
-        print('Error: ', pe, '\n', msg)
-    return title, version, description
 
 
 def get_term_ns_prefix(term_uri, allprefixes):
@@ -79,7 +51,7 @@ def sparql2smwpage(sparql_fn: str, format_: str, source: str):
     to import the ontology
     """
     smw_import_dict = {}  # will store SMWImportOverview instances
-    query = Query(sparql_fn=sparql_fn, format_=format_, source=source)
+    query = QueryOntology(sparql_fn=sparql_fn, format_=format_, source=source)
     query.get_graph_prefixes()
     for printout in query.return_printout():
         # loop through each ontology schema term, resulting from SPARQL query
@@ -96,19 +68,11 @@ def sparql2smwpage(sparql_fn: str, format_: str, source: str):
             print(term.wikipage_content)
 
         if term.namespace_prefix not in smw_import_dict.keys():
-            # TODO: REFACTOR: turn variable assigments into
             smw_import_dict[term.namespace_prefix] = SMWImportOverview(
                 ontology_ns=term.namespace,
-                ontology_ns_prefix=term.namespace_prefix)
-            title, version, description = query_ontology_schema(
-                ontology_ns=term.namespace)
-            if title:
-                smw_import_dict[term.namespace_prefix].ontology_name = title
-            else:
-                smw_import_dict[term.namespace_prefix].ontology_name = term.namespace_prefix
-            smw_import_dict[term.namespace_prefix].iri = term.iri
-            smw_import_dict[term.namespace_prefix].ontology_url = term.namespace
-
+                ontology_ns_prefix=term.namespace_prefix,
+                iri=term.iri,
+                ontology_url=term.namespace)
         smw_import_dict[term.namespace_prefix].properties.append(
             (term.subject_name, term.resource_type))
 
