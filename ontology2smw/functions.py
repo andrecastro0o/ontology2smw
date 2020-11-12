@@ -56,32 +56,6 @@ def get_term_ns_prefix(term_uri, allprefixes):
     sys.exit()
 
 
-def instantiate_smwimport(ontology_ns,
-                          ontology_ns_prefix,
-                          sematicterm):
-    '''
-    Creates and instance inf SMWImportOverview
-    Which will create the content of Mediawiki:SMW_import_page
-    '''
-    # TODO: REFACTOR: remove class and turn variable assigments into
-    #  Class methods
-    instance = SMWImportOverview(ontology_ns=ontology_ns,
-                                 ontology_ns_prefix=ontology_ns_prefix)
-    # instance.wikipage_name = f'Mediawiki:Smw_import_' \
-    #                          f'{sematicterm.namespace_prefix}'
-    title, version, description = query_ontology_schema(
-        ontology_ns=ontology_ns)
-    if title:
-        instance.ontology_name = title
-    else:
-        instance.ontology_name = ontology_ns_prefix
-    # TODO: add version and descrippipt to instance, if they exist
-    instance.iri = sematicterm.iri  # TODO: determine if can be removed
-    instance.ontology_url = ontology_ns
-    return instance
-
-
-
 def create_smw_import_pages(importdict):
     """
     Creates Mediawiki:smw_import_ONTO page
@@ -122,12 +96,19 @@ def sparql2smwpage(sparql_fn: str, format_: str, source: str):
             print(term.wikipage_content)
 
         if term.namespace_prefix not in smw_import_dict.keys():
-            # TODO: REFACTOR remove def instantiate_smwimport turn actions into
-            #  class methods
-            smw_import_dict[term.namespace_prefix] = instantiate_smwimport(
+            # TODO: REFACTOR: turn variable assigments into
+            smw_import_dict[term.namespace_prefix] = SMWImportOverview(
                 ontology_ns=term.namespace,
-                ontology_ns_prefix=term.namespace_prefix,
-                sematicterm=term)
+                ontology_ns_prefix=term.namespace_prefix)
+            title, version, description = query_ontology_schema(
+                ontology_ns=term.namespace)
+            if title:
+                smw_import_dict[term.namespace_prefix].ontology_name = title
+            else:
+                smw_import_dict[term.namespace_prefix].ontology_name = term.namespace_prefix
+            smw_import_dict[term.namespace_prefix].iri = term.iri
+            smw_import_dict[term.namespace_prefix].ontology_url = term.namespace
+
         smw_import_dict[term.namespace_prefix].properties.append(
             (term.subject_name, term.resource_type))
 
