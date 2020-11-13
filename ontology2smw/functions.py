@@ -1,8 +1,12 @@
 import sys
-from ontology2smw.classes import QueryOntology, \
-    SMWCategoryORProp, \
-    SMWImportOverview
+from pathlib import Path
+from ontology2smw.file_utils import yaml_get_source
+from ontology2smw.mediawikitools.actions import login
+from ontology2smw.classes import QueryOntology
+from ontology2smw.classes import SMWCategoryORProp
+from ontology2smw.classes import SMWImportOverview
 from ontology2smw.cli_args import parser
+
 args = parser.parse_args()
 
 
@@ -56,13 +60,16 @@ def sparql2smwpage(sparql_fn: str, format_: str, source: str):
     query.get_graph_prefixes()
     for printout in query.return_printout():
         # loop through each ontology schema term, resulting from SPARQL query
+
         ns, ns_prefix = get_term_ns_prefix(term_uri=printout.subject,
                                            allprefixes=query.prefixes)
         term = SMWCategoryORProp(item_=printout,
                                  namespace=ns,
                                  namespace_prefix=ns_prefix)
         term.create_wiki_item()
+
         print(f'\n----------------------------------\n{term.wikipage_name}')
+
         if args.write is True:
             term.write_wikipage()
         else:
@@ -78,3 +85,34 @@ def sparql2smwpage(sparql_fn: str, format_: str, source: str):
 
         # print(term.item_dict)
     create_smw_import_pages(importdict=smw_import_dict)
+
+
+def writetowiki_decision():
+    """
+    Prompts the uses to affirm she wants or not to write to wiki
+    If so wiki bot login will take place and connection will be available
+    under var site
+    """
+    write_confirm = input(
+        "You enabled --write. Are you sure you want to write to the wiki? "
+        "(If you say yes, make sure to disable cronjob for "
+        "mediawiki/maintenance/runJobs.php) [yes/no]")
+    if write_confirm == 'yes':
+        wikidetails = Path('.') / 'wikidetails.yml'
+        if Path.is_file(wikidetails) is False:
+            print(f'No wikidetails.yml file was found in '
+                  f'{wikidetails.absolute()}. Is is not possible to write'
+                  f' to the wiki')
+            sys.exit()
+        wikidetails = yaml_get_source(path2f=wikidetails, absolutepath=True)
+        site = login(host=wikidetails['host'], path=wikidetails['path'],
+                     scheme=wikidetails['scheme'],
+                     username=wikidetails['username'],
+                     password=wikidetails['password'])
+        print(f'Bot logged in to wiki {site.host} {site.path}')
+        print('Terms will be written to wiki')
+        pass
+    else:
+        print('If you do not want to write to the wiki, run it wihtout '
+              'argument: -w/--write')
+        sys.exit()
