@@ -6,7 +6,7 @@ import string
 from pathlib import Path
 sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
 from random import choice
-from ontology2smw.classes import Query, SMWCategoryORProp
+from ontology2smw.classes import QueryOntology, SMWCategoryORProp
 from ontology2smw.functions import get_term_ns_prefix
 from ontology2smw.jinja_utils import url_termination
 from ontology2smw.mediawikitools import actions
@@ -32,8 +32,8 @@ exp_subcategory = re.compile(
 
 def test_query_class():
     ontology_ns = 'http://www.w3.org/2004/02/skos/core#'
-    query = Query(sparql_fn='ontology2smw/queries/query_ontology_schema.rq',
-                  format_="application/rdf+xml", source=ontology_ns)
+    query = QueryOntology(sparql_fn='ontology2smw/queries/query_ontology_schema.rq',
+                          format_="application/rdf+xml", source=ontology_ns)
     printouts = list(query.return_printout())
     print(printouts)
     assert len(list(printouts)) > 0
@@ -45,9 +45,9 @@ def test_query_class():
     # assert len(printouts) == 0
 
 def test_term_creation():
-    query = Query(sparql_fn='ontology2smw/queries/query_classes_properties.rq',
-                  format_='ttl',
-                  source='aeon/aeon.ttl')
+    query = QueryOntology(sparql_fn='ontology2smw/queries/query_classes_properties.rq',
+                          format_='ttl',
+                          source='aeon/aeon.ttl')
     query.get_graph_prefixes()
     assert query
     for printout in query.return_printout():

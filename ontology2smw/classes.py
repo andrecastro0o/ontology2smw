@@ -3,21 +3,22 @@ from rdflib.namespace import NamespaceManager
 from typing import Dict
 # from pprint import pprint
 from datetime import datetime
+from rdflib import exceptions
 from ontology2smw.jinja_utils import url_termination, render_template
 from ontology2smw.log import logger
 from ontology2smw.mediawikitools import actions as mwactions
+from ontology2smw.file_utils import relative_read_f
 
 
 class MWpage:
     """
     Parent Class represents MW page:
     """
-
     def __init__(self):
         self.wikipage_name = None
         self.wikipage_content = None
 
-    def write_wikipage(self):  # TODO: do not repeate this function declaration
+    def write_wikipage(self):
         now = datetime.now()
         now = now.isoformat()
         logger.debug(
@@ -35,7 +36,7 @@ class MWpage:
                 msg=f'Failed to write {self.wikipage_name} to wiki')
 
 
-class Query:
+class QueryOntology:
     """
     SPARQL query to Ontology Schema
     """
@@ -83,9 +84,7 @@ class SMWCategoryORProp(MWpage):
         self.resource_type = self.determine_smw_datatype()
         self.subject = self.item_dict['subject']
         self.subject_name = None
-        self.iri = self.subject.defrag()
         # pprint(self.item_dict)
-        # how to get the namespace of a property?
 
     def create_wiki_item(self):
         self.subject_name = url_termination(self.item_dict['subject'])
@@ -123,21 +122,17 @@ class SMWImportOverview(MWpage):
     Class represents the Ontology overview SMW page: Mediawiki:smw_import_XYZ
     """
     def __init__(self, ontology_ns: str, ontology_ns_prefix: str):
-        self.ontology_ns = ontology_ns  # TODO: change to uri
-        self.ontology_ns_prefix = ontology_ns_prefix  # TODO: change prefix
+        self.ontology_ns = ontology_ns
+        self.ontology_ns_prefix = ontology_ns_prefix
         self.categories = []
         self.properties = []
         self.ontology_name = None
-        self.iri = None  # TODO: determine if is required
-        self.iri_seperator = None  # TODO: determine if is required
-        self.ontology_url = None  # TODO: determine if is required
+        self.wikipage_name = f'Mediawiki:Smw_import_{self.ontology_ns_prefix}'
+        self.title, self.version, self.description = self.query_ontology()
 
     def create_smw_import(self):
         all_resources = self.categories + self.properties
-        page_info_dict = {'ontology_iri': self.iri,
-                          'ontology_iri_seperator': self.iri_seperator,
-                          'ontology_url': self.ontology_url,
-                          'ontology_ns': self.ontology_ns,
+        page_info_dict = {'ontology_ns': self.ontology_ns,
                           'ontology_ns_prefix': self.ontology_ns_prefix,
                           'ontology_name': self.ontology_name,
                           }
@@ -150,32 +145,25 @@ class SMWImportOverview(MWpage):
             # term_description=''
         )
 
-# if __name__ == '__main__':
-#
-#     # properties
-#     query = Query(resource_type='property',
-#                   sparql_fn='query_properties.rq',
-#                   format_='ttl',
-#                   source='aeon/aeon.ttl')
-#     query.get_graph_prefixes()
-#     print('PREFIXES:', query.prefixes)
-#     for printout in query.return_printout():
-#         # print(printout)
-#         subject = printout.subject
-#         subject_ns = Namespace(subject)
-#         for prefix, namespace in query.prefixes.items():
-#             if namespace in subject_ns:
-#                 subject_prefix = prefix
-#                 break
-#         print('subject:', subject, 'prefix:', prefix)
-#
-#         item = SMWCategoryORProp(resource_type=query.resource_type,
-#                                  item_=printout,
-#                                  namespace=prefix)
-#         if item.item_dict.get('smw_datatype'):  # TODO add smw_datatype check
-#             # item.create_wiki_item()
-#             print(item.item_dict)
-#             print(item.wikipage_content)
-#         # else:
-#         #     print(f'{item.subject} MISSING aeon:SMW_import_info value')
-#             # TODO print -> log
+    def query_ontology(self):
+        # print(f'Query ontology schema: {self.ontology_ns}')
+        title, version, description = None, None, None  # default
+        try:
+            graph = Graph()
+            graph.parse(location=self.ontology_ns,
+                        format="application/rdf+xml")
+            sparql_query = relative_read_f('queries/query_ontology_schema.rq')
+            print(sparql_query)
+            printouts = graph.query(sparql_query)
+            if len(printouts) > 0:
+                printout_dict = (list(printouts)[0]).asdict()
+                title = printout_dict.get('title')
+                version = printout_dict.get('version')
+                description = printout_dict.get('description')
+        except (exceptions.ParserError, TypeError) as pe:
+            msg = f"{self.ontology_ns} failed to resolve to an RDF. Provide " \
+                  f"infomartion about the ontology in ontologies.yml"
+            print('Error: ', pe, '\n', msg)
+        if not title:
+            title = self.ontology_ns_prefix
+        return title, version, description

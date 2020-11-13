@@ -1,9 +1,12 @@
 import sys
-from rdflib import Graph
-from rdflib import exceptions
-
-from ontology2smw.classes import Query, SMWCategoryORProp, SMWImportOverview
+from pathlib import Path
+from ontology2smw.file_utils import yaml_get_source
+from ontology2smw.mediawikitools.actions import login
+from ontology2smw.classes import QueryOntology
+from ontology2smw.classes import SMWCategoryORProp
+from ontology2smw.classes import SMWImportOverview
 from ontology2smw.cli_args import parser
+
 args = parser.parse_args()
 
 
@@ -16,33 +19,7 @@ def query_graph(sparql_fn, graph):
     return printouts
 
 
-def query_ontology_schema(ontology_ns):
-    print(f'Query ontology schema: {ontology_ns}')
-    title, version, description = None, None, None  # default
-    try:   # TODO: try logic moved to Query.query_graph with error handling
-        graph = Graph()
-        graph.parse(location=ontology_ns,
-                    format="application/rdf+xml")
-
-        printouts = query_graph(
-            sparql_fn='ontology2smw/queries/query_ontology_schema.rq',
-            graph=graph)
-        if len(printouts) > 0:
-            printout_dict = (list(printouts)[0]).asdict()
-            title = printout_dict.get('title')
-            version = printout_dict.get('version')
-            description = printout_dict.get('description')
-
-    except (exceptions.ParserError, TypeError) as pe:
-        msg = f"{ontology_ns} failed to resolve to an RDF. Provide " \
-              f"infomartion about the ontology in ontologies.yml"
-        # TODO: Create the structure of ontologies.yml. Read it and store info
-        # fill: title, version, description
-        # TODO: Ask user if she want to continue
-        print('Error: ', pe, '\n', msg)
-    return title, version, description
-
-
+# TODO move into Class SMWCategoryORProp
 def get_term_ns_prefix(term_uri, allprefixes):
     """
     Based on term_uri and prefixes determine namespace and prefix of term
@@ -54,48 +31,6 @@ def get_term_ns_prefix(term_uri, allprefixes):
     print(f'Error: The ontology you are parsing has no declared prefix for '
           f'the term: {term_uri}', file=sys.stderr)
     sys.exit()
-
-
-def instantiate_smwimport(ontology_ns,
-                          ontology_ns_prefix,
-                          sematicterm):
-    '''
-    Creates and instance inf SMWImportOverview
-    Which will create the content of Mediawiki:SMW_import_page
-    '''
-    # TODO: REFACTOR: remove class and turn variable assigments into
-    #  Class methods
-    instance = SMWImportOverview(ontology_ns=ontology_ns,
-                                 ontology_ns_prefix=ontology_ns_prefix)
-    instance.wikipage_name = f'Mediawiki:Smw_import_' \
-                             f'{sematicterm.namespace_prefix}'
-    title, version, description = query_ontology_schema(
-        ontology_ns=ontology_ns)
-    if title:
-        instance.ontology_name = title
-    else:
-        instance.ontology_name = ontology_ns_prefix
-    # TODO: add version and descrippipt to instance, if they exist
-    instance.iri = sematicterm.iri  # TODO: determine if can be removed
-    instance.ontology_url = ontology_ns
-    return instance
-
-
-def append_smw_import_content(importdict, term_):
-    """
-    Appends term_.subject_name, term_.resource_type to
-    importdict (smw_import_dict)
-    """
-    if term_.namespace_prefix not in importdict.keys():
-        # TODO: REFACTOR remove def instantiate_smwimport turn instactions into
-        #  class
-        # methods
-        importdict[term_.namespace_prefix] = instantiate_smwimport(
-            ontology_ns=term_.namespace,
-            ontology_ns_prefix=term_.namespace_prefix,
-            sematicterm=term_)
-    importdict[term_.namespace_prefix].properties.append(
-        (term_.subject_name, term_.resource_type))
 
 
 def create_smw_import_pages(importdict):
@@ -121,21 +56,63 @@ def sparql2smwpage(sparql_fn: str, format_: str, source: str):
     to import the ontology
     """
     smw_import_dict = {}  # will store SMWImportOverview instances
-    query = Query(sparql_fn=sparql_fn, format_=format_, source=source)
+    query = QueryOntology(sparql_fn=sparql_fn, format_=format_, source=source)
     query.get_graph_prefixes()
     for printout in query.return_printout():
         # loop through each ontology schema term, resulting from SPARQL query
+
         ns, ns_prefix = get_term_ns_prefix(term_uri=printout.subject,
                                            allprefixes=query.prefixes)
         term = SMWCategoryORProp(item_=printout,
                                  namespace=ns,
                                  namespace_prefix=ns_prefix)
         term.create_wiki_item()
+
         print(f'\n----------------------------------\n{term.wikipage_name}')
+
         if args.write is True:
             term.write_wikipage()
         else:
             print(term.wikipage_content)
-        append_smw_import_content(importdict=smw_import_dict, term_=term)
+
+        if term.namespace_prefix not in smw_import_dict.keys():
+            smw_import_dict[term.namespace_prefix] = SMWImportOverview(
+                ontology_ns=term.namespace,
+                ontology_ns_prefix=term.namespace_prefix
+            )
+        smw_import_dict[term.namespace_prefix].properties.append(
+            (term.subject_name, term.resource_type))
+
         # print(term.item_dict)
     create_smw_import_pages(importdict=smw_import_dict)
+
+
+def writetowiki_decision():
+    """
+    Prompts the uses to affirm she wants or not to write to wiki
+    If so wiki bot login will take place and connection will be available
+    under var site
+    """
+    write_confirm = input(
+        "You enabled --write. Are you sure you want to write to the wiki? "
+        "(If you say yes, make sure to disable cronjob for "
+        "mediawiki/maintenance/runJobs.php) [yes/no]")
+    if write_confirm == 'yes':
+        wikidetails = Path('.') / 'wikidetails.yml'
+        if Path.is_file(wikidetails) is False:
+            print(f'No wikidetails.yml file was found in '
+                  f'{wikidetails.absolute()}. Is is not possible to write'
+                  f' to the wiki')
+            sys.exit()
+        wikidetails = yaml_get_source(path2f=wikidetails, absolutepath=True)
+        site = login(host=wikidetails['host'], path=wikidetails['path'],
+                     scheme=wikidetails['scheme'],
+                     username=wikidetails['username'],
+                     password=wikidetails['password'])
+        print(f'Bot logged in to wiki {site.host} {site.path}')
+        print('Terms will be written to wiki')
+        pass
+    else:
+        print('If you do not want to write to the wiki, run it wihtout '
+              'argument: -w/--write')
+        sys.exit()
