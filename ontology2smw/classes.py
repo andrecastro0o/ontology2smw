@@ -18,7 +18,7 @@ class MWpage:
         self.wikipage_name = None
         self.wikipage_content = None
 
-    def write_wikipage(self):  # TODO: do not repeate this function declaration
+    def write_wikipage(self):
         now = datetime.now()
         now = now.isoformat()
         logger.debug(
@@ -122,8 +122,8 @@ class SMWImportOverview(MWpage):
     Class represents the Ontology overview SMW page: Mediawiki:smw_import_XYZ
     """
     def __init__(self, ontology_ns: str, ontology_ns_prefix: str):
-        self.ontology_ns = ontology_ns  # TODO: change to uri
-        self.ontology_ns_prefix = ontology_ns_prefix  # TODO: change prefix
+        self.ontology_ns = ontology_ns
+        self.ontology_ns_prefix = ontology_ns_prefix
         self.categories = []
         self.properties = []
         self.ontology_name = None
