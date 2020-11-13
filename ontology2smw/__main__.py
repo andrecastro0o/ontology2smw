@@ -1,6 +1,7 @@
 import sys
 from ontology2smw.cli_args import parser
 from ontology2smw.functions import writetowiki_decision
+from ontology2smw.functions import sparql2smwpage
 
 args = parser.parse_args()
 
@@ -13,7 +14,6 @@ def main():
     if args.write:
         writetowiki_decision()
 
-    from ontology2smw.functions import sparql2smwpage
     sparql2smwpage(
         sparql_fn='ontology2smw/queries/query_classes_properties.rq',
         format_=args.format,
@@ -23,4 +23,3 @@ def main():
 
 if __name__ == '__main__':
     main()
-# TODO: get source from cli args
