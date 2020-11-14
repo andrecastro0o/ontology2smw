@@ -1,0 +1,47 @@
+PREFIX dc: <http://purl.org/dc/elements/1.1/title>
+PREFIX dcterm: <http://purl.org/dc/terms/>
+PREFIX ns: <http://www.w3.org/2003/06/sw-vocab-status/ns#>
+PREFIX owl: <http://www.w3.org/2002/07/owl#>
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX xml: <http://www.w3.org/XML/1998/namespace>
+PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
+
+SELECT DISTINCT ?term ?termType ?label ?range ?subclassof ?subpropertyof 
+WHERE {
+    {   
+        ?term rdf:type owl:Class. 
+        BIND (owl:Class as ?termType).
+        OPTIONAL {?term rdfs:subClassOf ?subclassof.}
+        FILTER (!isBlank(?subclassof)).
+
+    }
+    UNION
+    {    
+        ?term rdf:type owl:DatatypeProperty.
+        BIND (owl:DatatypeProperty as ?termType).
+        OPTIONAL {?term rdfs:subPropertyOf ?subclassof.}
+        OPTIONAL{ ?term rdfs:range ?range. }
+    }
+    UNION
+    {      
+        ?term rdf:type owl:ObjectProperty.
+        BIND (owl:ObjectProperty as ?termType).
+        OPTIONAL {?term rdfs:subPropertyOf ?subclassof.}
+    }
+    # UNION ## Leaving out owl:AnnotationProperty
+    # {      
+    #     ?term rdf:type owl:AnnotationProperty.
+    #     BIND (owl:AnnotationProperty as ?termType).
+    #     OPTIONAL {?term rdfs:subPropertyOf ?subclassof.}
+    # }
+
+    OPTIONAL{ 
+        ?term rdfs:label ?label.
+        FILTER(LCASE(LANG(?label)) = 'en')
+    }
+
+    FILTER (!isBlank(?term))
+}
+ORDER BY ?term
