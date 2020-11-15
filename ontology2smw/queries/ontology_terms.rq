@@ -19,14 +19,14 @@ WHERE {
     {    
         ?term rdf:type owl:DatatypeProperty.
         BIND (owl:DatatypeProperty as ?termType).
-        OPTIONAL {?term rdfs:subPropertyOf ?subclassof.}
+        OPTIONAL {?term rdfs:subPropertyOf ?subpropertyof.}
         OPTIONAL{ ?term rdfs:range ?range. }
     }
     UNION
     {      
         ?term rdf:type owl:ObjectProperty.
         BIND (owl:ObjectProperty as ?termType).
-        OPTIONAL {?term rdfs:subPropertyOf ?subclassof.}
+        OPTIONAL {?term rdfs:subPropertyOf ?subpropertyof.}
     }
     # UNION ## Leaving out owl:AnnotationProperty
     # {      
