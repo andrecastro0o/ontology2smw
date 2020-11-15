@@ -3,6 +3,7 @@ import sys
 import re
 import rdflib
 import string
+import pytest
 from pathlib import Path
 sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
 from random import choice
@@ -12,7 +13,8 @@ from ontology2smw.jinja_utils import url_termination
 from ontology2smw.mediawikitools import actions
 from ontology2smw.file_utils import yaml_get_source
 
-
+@pytest.mark.skip(reason="no way of currently testing this")
+@pytest.mark.ontology
 def test_ontology_parse():
     graph = rdflib.Graph()
     graph.parse(
@@ -29,7 +31,8 @@ exp_subcategory_line = re.compile("Subcategory\sof.*?")
 exp_subcategory = re.compile(
     "Subcategory\sof.*?\[\[Category:(?P<subcat>.*?)]]")
 
-
+@pytest.mark.skip(reason="no way of currently testing this")
+@pytest.mark.ontology
 def test_query_class():
     ontology_ns = 'http://www.w3.org/2004/02/skos/core#'
     query = QueryOntology(sparql_fn='ontology2smw/queries/query_ontology_schema.rq',
@@ -44,6 +47,8 @@ def test_query_class():
     # printouts = list(query.return_printout())
     # assert len(printouts) == 0
 
+@pytest.mark.skip(reason="no way of currently testing this")
+@pytest.mark.smw
 def test_term_creation():
     query = QueryOntology(sparql_fn='ontology2smw/queries/query_classes_properties.rq',
                           format_='ttl',
@@ -66,7 +71,8 @@ def randstring(lenght=10):
     out = "".join([choice(list(string.ascii_letters)) for n in range(lenght)])
     return out
 
-
+@pytest.mark.skip(reason="no way of currently testing this")
+@pytest.mark.smw
 def test_category_creation():
     # TODO: block should go to fixtures
     current_file = Path(__file__)
@@ -88,6 +94,8 @@ def test_category_creation():
     assert page_lastrev
     assert 'Test' in page_content
 
+@pytest.mark.skip(reason="no way of currently testing this")
+@pytest.mark.smw
 def test_smw_import_creation():
     # TODO: block should go to fixtures
     current_file = Path(__file__)
@@ -109,7 +117,16 @@ def test_smw_import_creation():
     assert page_lastrev
     assert 'Test' in page_content
 
-
+@pytest.mark.ontologyterms
+def test_non_repeating_terms():
+    all_ontologies = ['http://purl.org/spar/datacite', 'https://d-nb.info/standards/elementset/gnd']
+    ontology_ns = all_ontologies[1]
+    graph = rdflib.Graph()
+    graph.parse(location=ontology_ns, format="application/rdf+xml")
+    with open('ontology2smw/queries/ontology_terms.rq', 'r') as query_fobj:
+        sparq_query = query_fobj.read()
+    printouts = graph.query(sparq_query)
+    assert printouts
 
 # def test_property_creation():
 #     resource = 'property'
