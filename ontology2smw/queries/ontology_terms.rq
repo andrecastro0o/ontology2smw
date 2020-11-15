@@ -7,45 +7,39 @@ PREFIX xml: <http://www.w3.org/XML/1998/namespace>
 PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
 PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
 PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
-PREFIX gndo: <https://d-nb.info/standards/elementset/gnd#>
 
-SELECT DISTINCT ?term
-(GROUP_CONCAT(DISTINCT ?termType; separator='@@@@') as ?termType_concat)
-(GROUP_CONCAT(DISTINCT ?range; separator='@@@@') as ?range_concat)
-(GROUP_CONCAT(DISTINCT ?label; separator='@@@@') as ?label_concat)
-(GROUP_CONCAT(DISTINCT ?subclassof; separator='@@@@') as ?subclassof_concat)
-(GROUP_CONCAT(DISTINCT ?subpropertyof; separator='@@@@') as ?subpropertyof_concat)
-
+SELECT DISTINCT ?term ?termType ?label ?range ?subclassof ?subpropertyof 
 WHERE {
-    {
-        ?term rdf:type owl:Class.
+    {   
+        ?term rdf:type owl:Class. 
         BIND (owl:Class as ?termType).
         OPTIONAL {?term rdfs:subClassOf ?subclassof.}
     }
     UNION
-    {
+    {    
         ?term rdf:type owl:DatatypeProperty.
         BIND (owl:DatatypeProperty as ?termType).
-        OPTIONAL {?term rdfs:subPropertyOf ?subpropertyof.}
+        OPTIONAL {?term rdfs:subPropertyOf ?subclassof.}
         OPTIONAL{ ?term rdfs:range ?range. }
     }
     UNION
-    {
+    {      
         ?term rdf:type owl:ObjectProperty.
         BIND (owl:ObjectProperty as ?termType).
-        OPTIONAL {?term rdfs:subPropertyOf ?subpropertyof.}
+        OPTIONAL {?term rdfs:subPropertyOf ?subclassof.}
     }
     # UNION ## Leaving out owl:AnnotationProperty
-    # {
+    # {      
     #     ?term rdf:type owl:AnnotationProperty.
     #     BIND (owl:AnnotationProperty as ?termType).
     #     OPTIONAL {?term rdfs:subPropertyOf ?subclassof.}
     # }
-    OPTIONAL{
+
+    OPTIONAL{ 
         ?term rdfs:label ?label.
         FILTER(LCASE(LANG(?label)) = 'en')
     }
+
     FILTER (!isBlank(?term))
 }
-GROUP BY ?term
 ORDER BY ?term
