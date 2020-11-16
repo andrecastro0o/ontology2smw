@@ -12,23 +12,23 @@ PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
 PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
 PREFIX iao: <http://purl.obolibrary.org/obo/iao/2020-06-10/iao.owl#>
 
-SELECT ?subject ?smw_datatype
+SELECT ?term ?smw_datatype
     ?subclassof ?subpropertyof ?domain ?type
     ?smw_import_info ?label ?definition ?editor_note
 WHERE {
-    {?subject rdf:type owl:ObjectProperty.}
-    UNION {?subject rdf:type owl:DatatypeProperty.}
-    UNION {?subject rdf:type owl:Class. }
-    OPTIONAL {?subject rdfs:subPropertyOf ?subpropertyof.}
-    OPTIONAL {?subject rdfs:domain ?domain.}
-    OPTIONAL {?subject rdf:type ?type.}
-    OPTIONAL {?subject aeon:SMW_import_info ?smw_import_info.}
-    OPTIONAL {?subject rdfs:label ?label.}
-    OPTIONAL {?subject iao:IAO_0000115 ?definition.}
-    OPTIONAL {?subject iao:IAO_0000116 ?editor_note.}
-    ?subject aeon:SMW_datatype ?smw_datatype. # only importing props with datatype
+    {?term rdf:type owl:ObjectProperty.}
+    UNION {?term rdf:type owl:DatatypeProperty.}
+    UNION {?term rdf:type owl:Class. }
+    OPTIONAL {?term rdfs:subPropertyOf ?subpropertyof.}
+    OPTIONAL {?term rdfs:domain ?domain.}
+    OPTIONAL {?term rdf:type ?type.}
+    OPTIONAL {?term aeon:SMW_import_info ?smw_import_info.}
+    OPTIONAL {?term rdfs:label ?label.}
+    OPTIONAL {?term iao:IAO_0000115 ?definition.}
+    OPTIONAL {?term iao:IAO_0000116 ?editor_note.}
+    ?term aeon:SMW_datatype ?smw_datatype. # only importing props with datatype
 
-#    FILTER EXISTS {?subject rdf:type owl:Class} # prints only classes
-#    MINUS {?subject rdf:type owl:Class} # prints only properties
+#    FILTER EXISTS {?term rdf:type owl:Class} # prints only classes
+#    MINUS {?term rdf:type owl:Class} # prints only properties
 }
-ORDER BY ?subject
+ORDER BY ?term

@@ -14,12 +14,12 @@ PREFIX dcelements: <http://purl.org/dc/elements/1.1/>
 PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
 PREFIX iao: <http://purl.obolibrary.org/obo/iao/2020-06-10/iao.owl#>
 SELECT 
-   ?subject ?versionInfo ?title ?description ?IRI
+   ?term ?versionInfo ?title ?description ?IRI
 WHERE {
-    OPTIONAL{?subject dcterms:title|dcelements:title ?title.}
-	OPTIONAL{?subject dcterms:description|dcelements:description ?description.}
-	OPTIONAL{?subject owl:versionInfo ?versionInfo.}
-	OPTIONAL{?subject owl:versionIRI  ?IRI}
+    OPTIONAL{?term dcterms:title|dcelements:title ?title.}
+	OPTIONAL{?term dcterms:description|dcelements:description ?description.}
+	OPTIONAL{?term owl:versionInfo ?versionInfo.}
+	OPTIONAL{?term owl:versionIRI  ?IRI}
 #:title ?seeAlso
 }
 ORDER BY ?type
