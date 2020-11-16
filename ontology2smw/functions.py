@@ -61,7 +61,7 @@ def sparql2smwpage(sparql_fn: str, format_: str, source: str):
     for printout in query.return_printout():
         # loop through each ontology schema term, resulting from SPARQL query
 
-        ns, ns_prefix = get_term_ns_prefix(term_uri=printout.subject,
+        ns, ns_prefix = get_term_ns_prefix(term_uri=printout.term,
                                            allprefixes=query.prefixes)
         term = SMWCategoryORProp(item_=printout,
                                  namespace=ns,
