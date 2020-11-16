@@ -128,8 +128,16 @@ class SMWCategoryORProp(MWpage):
         """
         Based on term_uri and prefixes determine namespace and prefix of term
         """
+        if self.term.startswith('https'):
+            http_or_https_term = self.term.replace('https', 'http')
+        else:
+            http_or_https_term = self.term.replace('http', 'https')
+
+        #TODO: provide alternatives to when NS cannot be found in query.prefixes.items()
+        # IE. promp the user to provde the prefix
+
         for prefix, namespace in query.prefixes.items():
-            if namespace in self.term:
+            if namespace in self.term or namespace in http_or_https_term:
                 return namespace, prefix
         # TODO:  get/create the prefixes when they are not declared in the
         #  ontology
