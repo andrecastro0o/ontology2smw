@@ -65,7 +65,8 @@ def sparql2smwpage(sparql_fn: str, format_: str, source: str):
         term = SMWCategoryORProp(item_=printout, query_=query)
         term.create_wiki_item()
 
-        print(f'\n----------------------------------\n{term.wikipage_name}')
+        print(f'\n----------------------------------\n{term.wikipage_name}'
+              f'{term.wikipage_content}')
     #
     #     if args.write is True:
     #         term.write_wikipage()

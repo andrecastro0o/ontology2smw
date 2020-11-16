@@ -120,9 +120,8 @@ class SMWCategoryORProp(MWpage):
         self.item_dict = item_.asdict()
         self.term = self.item_dict['term']
         self.term_name = url_termination(self.term)
-        self.namespace_prefix, self.namespace = self.get_term_ns_prefix(query_)
+        self.namespace, self.namespace_prefix= self.get_term_ns_prefix(query_)
         self.resource_type = self.determine_smw_catORprop()
-
         # pprint(self.item_dict)
 
     def get_term_ns_prefix(self, query):
@@ -141,6 +140,8 @@ class SMWCategoryORProp(MWpage):
     def create_wiki_item(self):
         self.wikipage_name = f'{self.resource_type.capitalize()}:' \
                              f'{self.term_name}'
+        self.wikipage_content = None
+
         if self.resource_type.lower() == 'category':
             template_file = 'mw_category.j2'
         else:
@@ -151,8 +152,10 @@ class SMWCategoryORProp(MWpage):
             label_lang = label.language
         else:
             label_lang = 'en'
+        # TODO templates use: {{ item['smw_import_info'] }} how to change it?
         self.wikipage_content = render_template(
             template=template_file,
+            term=self.term,
             ns_prefix=self.namespace_prefix,
             item=self.item_dict,
             item_name=self.term_name,
