@@ -1,3 +1,5 @@
+import json
+import sys
 from rdflib import Graph
 from rdflib.namespace import NamespaceManager
 from typing import Dict
@@ -8,6 +10,37 @@ from ontology2smw.jinja_utils import url_termination, render_template
 from ontology2smw.log import logger
 from ontology2smw.mediawikitools import actions as mwactions
 from ontology2smw.file_utils import relative_read_f
+
+xsd2smwdatatype = {
+    'xsd:string': 'Text',
+    'rdfs:Literal': 'Text',
+    'xsd:Name': 'Text',
+    'xsd:normalizedString': 'Text',
+    'xsd:decimal': 'Number',
+    'xsd:float': 'Number',
+    'xsd:integer': 'Number',
+    'xsd:nonNegativeInteger': 'Number',
+    'xsd:positiveInteger': 'Number',
+    'xsd:nonPositiveInteger': 'Number',
+    'xsd:negativeInteger': 'Number',
+    'xsd:int': 'Number',
+    'xsd:double': 'Number',
+    'xsd:long': 'Number',
+    'xsd:short': 'Number',
+    'xsd:unsignedLong': 'Number',
+    'xsd:byte': 'Number',
+    'xsd:boolean': 'Boolean',
+    'xsd:dateTime': 'Date',
+    'xsd:time': 'Text',
+    'xsd:date': 'Date',
+    'xsd:gYearMonth': 'Date',
+    'xsd:gYear': 'Date',
+    'xsd:gMonthDay': 'Text',
+    'xsd:gDay': 'Text',
+    'xsd:gMonth': 'Text',
+    'xsd:anyURI': 'URL',
+    'xsd:language': 'Text'
+}
 
 
 class MWpage:
@@ -46,15 +79,22 @@ class QueryOntology:
         self.format = format_  # TODO: rm format and infer from source=*.ext
         self.source = source
         self.graph = Graph()
+        self.bind_namespaces()
         self.graph.parse(source=self.source, format=self.format)
         self.printouts = None
         self.prefixes = None
         self.query = None  # TMP
 
+    def bind_namespaces(self):
+        all_ns_dict = relative_read_f('queries/all_ns_prefixes.json',
+                                      format_='json')
+        for prefix, ns in all_ns_dict.items():
+            self.graph.bind(prefix, ns)
+
     def get_graph_prefixes(self):
         namespace_manager = NamespaceManager(self.graph)
         all_prefixes = {n[0]: n[1] for n in namespace_manager.namespaces()}
-        all_prefixes.pop('')  # remove '' key
+        # all_prefixes.pop('')  # remove '' key
         self.prefixes = all_prefixes
 
     def query_graph(self):
@@ -75,16 +115,28 @@ class SMWCategoryORProp(MWpage):
     """
     Class represents a SMW Category or Property
     """
-    def __init__(self, item_: Dict, namespace: str,
-                 namespace_prefix: str):
-        self.namespace_prefix = namespace_prefix
-        self.namespace = namespace
+    def __init__(self, item_: Dict, query_):
         self.item = item_
         self.item_dict = item_.asdict()
-        self.resource_type = self.determine_smw_datatype()
-        self.subject = self.item_dict['subject']
+        self.namespace_prefix, self.namespace = self.get_term_ns_prefix(query_)
+        self.resource_type = self.determine_smw_catORprop()
+        self.subject = self.item_dict['term']
         self.subject_name = None
         # pprint(self.item_dict)
+
+    def get_term_ns_prefix(self, query):
+        """
+        Based on term_uri and prefixes determine namespace and prefix of term
+        """
+        for prefix, namespace in query.prefixes.items():
+            if namespace in self.item_dict['term']:
+                return namespace, prefix
+        # TODO:  get/create the prefixes when they are not declared in the
+        #  ontology
+        print(f'Error: The ontology you are parsing has no declared prefix for '
+              f'the term: {self.item_dict["term"]}', file=sys.stderr)
+        sys.exit()
+
 
     def create_wiki_item(self):
         self.subject_name = url_termination(self.item_dict['subject'])
@@ -110,11 +162,19 @@ class SMWCategoryORProp(MWpage):
             term_description_lang=label_lang
         )
 
-    def determine_smw_datatype(self):
-        if str(self.item_dict['smw_datatype']) == 'Category':
-            return 'Category'
+    def determine_smw_catORprop(self):
+        if 'smw_datatype' in self.item_dict.keys():
+            if str(self.item_dict['smw_datatype']) == 'Category':
+                return 'Category'
+            else:
+                return 'Property'
         else:
-            return 'Property'
+            termtype = url_termination(self.item_dict.get('termType')
+                                       ).capitalize()
+            if termtype == 'Class':
+                return 'Category'
+            else:
+                return 'Property'
 
 
 class SMWImportOverview(MWpage):

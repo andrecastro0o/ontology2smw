@@ -1,5 +1,6 @@
 import yaml
 import sys
+import json
 from pathlib import Path
 from typing import Dict
 
@@ -13,10 +14,13 @@ def wikidetails_present():
         sys.exit(1)
 
 
-def relative_read_f(relativepath2f: str) -> str:
+def relative_read_f(relativepath2f: str, format_="txt") -> str:
     path_file = Path(__file__).parent / relativepath2f
     with open(path_file, 'r') as f:
-        f_content = f.read()
+        if format_ == 'json':
+            f_content = json.load(f)
+        else:
+            f_content = f.read()
     return f_content
 
 
