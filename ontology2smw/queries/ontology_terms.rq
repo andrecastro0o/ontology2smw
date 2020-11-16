@@ -41,5 +41,11 @@ WHERE {
     }
 
     FILTER (!isBlank(?term))
+    FILTER (!CONTAINS(STR(?term), 'http://www.w3.org/2001/XMLSchema#' ))
+    FILTER (!CONTAINS(STR(?term), 'http://www.w3.org/1999/02/22-rdf-syntax-ns#' ))
+    FILTER (!CONTAINS(STR(?term), 'http://www.w3.org/2000/01/rdf-schema#' ))
+    FILTER (!CONTAINS(STR(?term), 'http://www.w3.org/XML/1998/namespace' ))
+
+
 }
 ORDER BY ?term
