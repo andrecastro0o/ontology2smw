@@ -118,10 +118,11 @@ class SMWCategoryORProp(MWpage):
     def __init__(self, item_: Dict, query_):
         self.item = item_
         self.item_dict = item_.asdict()
+        self.term = self.item_dict['term']
+        self.term_name = url_termination(self.term)
         self.namespace_prefix, self.namespace = self.get_term_ns_prefix(query_)
         self.resource_type = self.determine_smw_catORprop()
-        self.subject = self.item_dict['term']
-        self.subject_name = None
+
         # pprint(self.item_dict)
 
     def get_term_ns_prefix(self, query):
@@ -129,19 +130,17 @@ class SMWCategoryORProp(MWpage):
         Based on term_uri and prefixes determine namespace and prefix of term
         """
         for prefix, namespace in query.prefixes.items():
-            if namespace in self.item_dict['term']:
+            if namespace in self.term:
                 return namespace, prefix
         # TODO:  get/create the prefixes when they are not declared in the
         #  ontology
         print(f'Error: The ontology you are parsing has no declared prefix for '
-              f'the term: {self.item_dict["term"]}', file=sys.stderr)
+              f'the term: {self.term}', file=sys.stderr)
         sys.exit()
 
-
     def create_wiki_item(self):
-        self.subject_name = url_termination(self.item_dict['subject'])
         self.wikipage_name = f'{self.resource_type.capitalize()}:' \
-                             f'{self.subject_name}'
+                             f'{self.term_name}'
         if self.resource_type.lower() == 'category':
             template_file = 'mw_category.j2'
         else:
@@ -156,7 +155,7 @@ class SMWCategoryORProp(MWpage):
             template=template_file,
             ns_prefix=self.namespace_prefix,
             item=self.item_dict,
-            item_name=self.subject_name,
+            item_name=self.term_name,
             page_info=None,
             term_description=label,
             term_description_lang=label_lang

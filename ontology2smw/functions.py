@@ -66,22 +66,22 @@ def sparql2smwpage(sparql_fn: str, format_: str, source: str):
         term.create_wiki_item()
 
         print(f'\n----------------------------------\n{term.wikipage_name}')
-
-        if args.write is True:
-            term.write_wikipage()
-        else:
-            print(term.wikipage_content)
-
-        if term.namespace_prefix not in smw_import_dict.keys():
-            smw_import_dict[term.namespace_prefix] = SMWImportOverview(
-                ontology_ns=term.namespace,
-                ontology_ns_prefix=term.namespace_prefix
-            )
-        smw_import_dict[term.namespace_prefix].properties.append(
-            (term.subject_name, term.resource_type))
-
-        # print(term.item_dict)
-    create_smw_import_pages(importdict=smw_import_dict)
+    #
+    #     if args.write is True:
+    #         term.write_wikipage()
+    #     else:
+    #         print(term.wikipage_content)
+    #
+    #     if term.namespace_prefix not in smw_import_dict.keys():
+    #         smw_import_dict[term.namespace_prefix] = SMWImportOverview(
+    #             ontology_ns=term.namespace,
+    #             ontology_ns_prefix=term.namespace_prefix
+    #         )
+    #     smw_import_dict[term.namespace_prefix].properties.append(
+    #         (term.term_name, term.resource_type))
+    #
+    #     # print(term.item_dict)
+    # create_smw_import_pages(importdict=smw_import_dict)
 
 
 def writetowiki_decision():
