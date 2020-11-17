@@ -8,8 +8,6 @@ from pathlib import Path
 sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
 from random import choice
 from ontology2smw.classes import QueryOntology, SMWCategoryORProp
-from ontology2smw.functions import get_term_ns_prefix
-from ontology2smw.jinja_utils import url_termination
 from ontology2smw.mediawikitools import actions
 from ontology2smw.file_utils import yaml_get_source
 
@@ -21,15 +19,15 @@ def test_ontology_parse():
         source='aeon/aeon.ttl',
         format='ttl')
     assert graph
-
-
-exp_importfrom = re.compile(
-    "\[\[Imported from::(?P<ontology>\w.*?):(?P<category>\w.*?)]]")
-exp_equivalent_uri = re.compile("\[\[Equivalent URI::(?P<uri>\w.*?)]]")
-exp_categories = re.compile("\[\[Category:(?P<categories>\w.*?)]]")
-exp_subcategory_line = re.compile("Subcategory\sof.*?")
-exp_subcategory = re.compile(
-    "Subcategory\sof.*?\[\[Category:(?P<subcat>.*?)]]")
+#
+#
+# exp_importfrom = re.compile(
+#     "\[\[Imported from::(?P<ontology>\w.*?):(?P<category>\w.*?)]]")
+# exp_equivalent_uri = re.compile("\[\[Equivalent URI::(?P<uri>\w.*?)]]")
+# exp_categories = re.compile("\[\[Category:(?P<categories>\w.*?)]]")
+# exp_subcategory_line = re.compile("Subcategory\sof.*?")
+# exp_subcategory = re.compile(
+#     "Subcategory\sof.*?\[\[Category:(?P<subcat>.*?)]]")
 
 @pytest.mark.skip(reason="no way of currently testing this")
 @pytest.mark.ontology
@@ -47,10 +45,36 @@ def test_query_class():
     # printouts = list(query.return_printout())
     # assert len(printouts) == 0
 
+@pytest.mark.smw
+def test_term_creation_from_remote_onto():
+    regex_import_str = re.compile(
+        r"Imported from \[\[Imported from::(?P<prefix>\w+?):(?P<term>\w+?)\]\]",
+        re.MULTILINE
+    )
+    query = QueryOntology(sparql_fn='ontology2smw/queries/ontology_terms.rq',
+                          format_='application/rdf+xml',
+                          source='https://d-nb.info/standards/elementset/gnd')
+    query.get_graph_prefixes()
+    for printout in query.return_printout():
+        assert printout
+        term = SMWCategoryORProp(item_=printout, query_=query)
+        term.create_wiki_item()
+        assert len(term.wikipage_name)
+        print(term.wikipage_name)
+        assert len(term.wikipage_content)
+        print(term.wikipage_content)
+        # what pattern are we looking for in wikipage_name & wikipage_content
+        # import pdb; pdb.set_trace()
+        assert len(re.findall(regex_import_str, term.wikipage_content)) > 0
+        search = re.search(regex_import_str, term.wikipage_content)
+        assert len(search.group('prefix')) > 1, 'Error: no prefix found'
+        assert len(search.group('term')) > 1, 'Error: no term found'
+        assert search.group('term') in term.wikipage_name
+
 @pytest.mark.skip(reason="no way of currently testing this")
 @pytest.mark.smw
-def test_term_creation():
-    query = QueryOntology(sparql_fn='ontology2smw/queries/query_classes_properties.rq',
+def test_term_creation_from_local_onto():
+    query = QueryOntology(sparql_fn='ontology2smw/queries/ontology_terms.rq',
                           format_='ttl',
                           source='aeon/aeon.ttl')
     query.get_graph_prefixes()
