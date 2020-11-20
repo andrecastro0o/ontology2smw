@@ -11,6 +11,8 @@ from ontology2smw.log import logger
 from ontology2smw.mediawikitools import actions as mwactions
 from ontology2smw.file_utils import relative_read_f
 
+all_ns_dict = relative_read_f('queries/all_ns_prefixes.json', format_='json')
+
 xsd2smwdatatype = {
     'xsd:string': 'Text',
     'rdfs:Literal': 'Text',
@@ -86,8 +88,6 @@ class QueryOntology:
         self.query = None  # TMP
 
     def bind_namespaces(self):
-        all_ns_dict = relative_read_f('queries/all_ns_prefixes.json',
-                                      format_='json')
         for prefix, ns in all_ns_dict.items():
             self.graph.bind(prefix, ns)
 
@@ -120,7 +120,7 @@ class SMWCategoryORProp(MWpage):
         self.item_dict = item_.asdict()
         self.term = self.item_dict['term']
         self.term_name = url_termination(self.term)
-        self.namespace, self.namespace_prefix= self.get_term_ns_prefix(query_)
+        self.namespace, self.namespace_prefix = self.get_term_ns_prefix(query_)
         self.resource_type = self.determine_smw_catORprop()
         # pprint(self.item_dict)
 
