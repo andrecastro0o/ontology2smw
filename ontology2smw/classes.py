@@ -122,6 +122,12 @@ class SMWCategoryORProp(MWpage):
         self.term_name = url_termination(self.term)
         self.namespace, self.namespace_prefix = self.get_term_ns_prefix(query_)
         self.resource_type = self.determine_smw_catORprop()
+        if self.resource_type == 'Property':
+            self.prop_datatype = self.determine_smw_prop_datatype()
+            self.prop_datatype
+        else:
+            self.prop_datatype = None
+
         # pprint(self.item_dict)
 
     def get_term_ns_prefix(self, query):
@@ -160,7 +166,8 @@ class SMWCategoryORProp(MWpage):
             label_lang = label.language
         else:
             label_lang = 'en'
-        # TODO templates use: {{ item['smw_import_info'] }} how to change it?
+        # TODO: ensure that data in self.item_dict is not repeated in other vars
+        # Use self.item_dict
         self.wikipage_content = render_template(
             template=template_file,
             term=self.term,
@@ -169,7 +176,8 @@ class SMWCategoryORProp(MWpage):
             item_name=self.term_name,
             page_info=None,
             term_description=label,
-            term_description_lang=label_lang
+            term_description_lang=label_lang,
+            prop_datatype=self.prop_datatype
         )
 
     def determine_smw_catORprop(self):
@@ -185,6 +193,29 @@ class SMWCategoryORProp(MWpage):
                 return 'Category'
             else:
                 return 'Property'
+
+    def determine_smw_prop_datatype(self):
+        range = self.item_dict.get('range')
+        if range and 'boolean' in range:
+            range = url_termination(range)
+
+
+            # I AM HERE
+            # I need http://www.w3.org/2001/XMLSchema#bool to become xsd:bool
+            # in order to match xsd2smwdatatype.keys()
+
+
+        if range and range in xsd2smwdatatype.keys():
+            # if there is a range value search in xsd2smwdatatype
+            return xsd2smwdatatype[range]
+        else:
+            # defaults
+            if 'DatatypeProperty' in self.item_dict.get('termType'):
+                return 'Text'
+            elif 'ObjectProperty' in self.item_dict.get('termType'):
+                return 'Page'
+            else:
+                return 'Page'
 
 
 class SMWImportOverview(MWpage):

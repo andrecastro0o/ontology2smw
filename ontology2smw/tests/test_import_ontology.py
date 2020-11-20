@@ -5,11 +5,13 @@ import rdflib
 import string
 import pytest
 from pathlib import Path
-sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
 from random import choice
-from ontology2smw.classes import QueryOntology, SMWCategoryORProp
+sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
+from ontology2smw.classes import QueryOntology, SMWCategoryORProp, \
+    xsd2smwdatatype
 from ontology2smw.mediawikitools import actions
 from ontology2smw.file_utils import yaml_get_source
+
 
 @pytest.mark.skip(reason="no way of currently testing this")
 @pytest.mark.ontology
@@ -29,6 +31,7 @@ def test_ontology_parse():
 # exp_subcategory = re.compile(
 #     "Subcategory\sof.*?\[\[Category:(?P<subcat>.*?)]]")
 
+
 @pytest.mark.skip(reason="no way of currently testing this")
 @pytest.mark.ontology
 def test_query_class():
@@ -44,6 +47,7 @@ def test_query_class():
     # query.return_printout()
     # printouts = list(query.return_printout())
     # assert len(printouts) == 0
+
 
 @pytest.mark.smw
 def test_term_creation_from_remote_onto():
@@ -70,6 +74,13 @@ def test_term_creation_from_remote_onto():
         assert len(search.group('prefix')) > 1, 'Error: no prefix found'
         assert len(search.group('term')) > 1, 'Error: no term found'
         assert search.group('term') in term.wikipage_name
+        if term.resource_type == 'Property':
+            print(term.wikipage_name, term.prop_datatype)
+            assert term.prop_datatype, 'Error: NO term.prop_datatype'
+            if term.prop_datatype is not 'Page':
+                assert term.prop_datatype in set(xsd2smwdatatype.values()), \
+                    'Error: prop_datatype not in xsd2smwdatatype'
+
 
 @pytest.mark.skip(reason="no way of currently testing this")
 @pytest.mark.smw

@@ -37,24 +37,16 @@ WHERE {
             FILTER (!isBlank(?subpropertyof))
         }
     }
-    # UNION ## Leaving out owl:AnnotationProperty
-    # {      
-    #     ?term rdf:type owl:AnnotationProperty.
-    #     BIND (owl:AnnotationProperty as ?termType).
-    #     OPTIONAL {?term rdfs:subPropertyOf ?subclassof.}
-    # }
-
+    # Leaving out owl:AnnotationProperty owl:OntologyProperty
+    # These are needed for semantic reasons in ontology construction, not to describe data
     OPTIONAL{ 
         ?term rdfs:label ?label.
         FILTER(LCASE(LANG(?label)) = 'en')
     }
-
     FILTER (!isBlank(?term))
     FILTER (!CONTAINS(STR(?term), 'http://www.w3.org/2001/XMLSchema#' ))
     FILTER (!CONTAINS(STR(?term), 'http://www.w3.org/1999/02/22-rdf-syntax-ns#' ))
     FILTER (!CONTAINS(STR(?term), 'http://www.w3.org/2000/01/rdf-schema#' ))
     FILTER (!CONTAINS(STR(?term), 'http://www.w3.org/XML/1998/namespace' ))
-
-
 }
 ORDER BY ?term
