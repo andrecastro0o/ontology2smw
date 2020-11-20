@@ -13,20 +13,29 @@ WHERE {
     {   
         ?term rdf:type owl:Class. 
         BIND (owl:Class as ?termType).
-        OPTIONAL {?term rdfs:subClassOf ?subclassof.}
+        OPTIONAL {
+            ?term rdfs:subClassOf ?subclassof.
+            FILTER (!isBlank(?subclassof))
+        }
     }
     UNION
     {    
         ?term rdf:type owl:DatatypeProperty.
         BIND (owl:DatatypeProperty as ?termType).
-        OPTIONAL {?term rdfs:subPropertyOf ?subpropertyof.}
+        OPTIONAL {
+            ?term rdfs:subPropertyOf ?subpropertyof.
+            FILTER (!isBlank(?subpropertyof))
+        }
         OPTIONAL{ ?term rdfs:range ?range. }
     }
     UNION
     {      
         ?term rdf:type owl:ObjectProperty.
         BIND (owl:ObjectProperty as ?termType).
-        OPTIONAL {?term rdfs:subPropertyOf ?subpropertyof.}
+        OPTIONAL {
+            ?term rdfs:subPropertyOf ?subpropertyof.
+            FILTER (!isBlank(?subpropertyof))
+        }
     }
     # UNION ## Leaving out owl:AnnotationProperty
     # {      
