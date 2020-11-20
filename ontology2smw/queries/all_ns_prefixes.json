@@ -2660,5 +2660,6 @@
   "trak": "https://trakmetamodel.sourceforge.io/vocab/rdf-schema.rdf#",
   "melding": "http://lblod.data.gift/vocabularies/automatische-melding/",
   "accid": "http://pid.accurids.com/",
-  "ble": "http://vocab.rapidthings.eu/ns/ble.ttl#"
+  "ble": "http://vocab.rapidthings.eu/ns/ble.ttl#",
+  "vio": "https://github.com/tibonto/vio#"
 }
