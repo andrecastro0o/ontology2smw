@@ -121,10 +121,11 @@ class SMWCategoryORProp(MWpage):
         self.term = self.item_dict['term']
         self.term_name = url_termination(self.term)
         self.namespace, self.namespace_prefix = self.get_term_ns_prefix(query_)
+        self.query_ = query_
+        self.query_nsmanager = query_.graph.namespace_manager
         self.resource_type = self.determine_smw_catORprop()
         if self.resource_type == 'Property':
             self.prop_datatype = self.determine_smw_prop_datatype()
-            self.prop_datatype
         else:
             self.prop_datatype = None
 
@@ -195,26 +196,23 @@ class SMWCategoryORProp(MWpage):
                 return 'Property'
 
     def determine_smw_prop_datatype(self):
-        range = self.item_dict.get('range')
-        if range and 'boolean' in range:
-            range = url_termination(range)
-
-
-            # I AM HERE
-            # I need http://www.w3.org/2001/XMLSchema#bool to become xsd:bool
-            # in order to match xsd2smwdatatype.keys()
-
-
-        if range and range in xsd2smwdatatype.keys():
-            # if there is a range value search in xsd2smwdatatype
-            return xsd2smwdatatype[range]
+        # rdfs:type DatatypeProprety terms are queried for their range
+        # ObjectTypeProperty terms have entities as range, hence:
+        # ObjectTypeProperty range == SMW Has type::Page
+        # DatatypeProprety items: match rdf:range value to xsd2smwdatatype
+        if self.item_dict.get('range'):  # certainly a DatatypeProprety
+            # get range with prefix
+            range_ = self.item_dict.get('range').n3(self.query_nsmanager)
+            if range_ in xsd2smwdatatype.keys():
+                # if there is a range value search in xsd2smwdatatype
+                return xsd2smwdatatype[range_]
+            else:  # if the range values is not found in xsd2smwdatatype
+                return 'Text'
         else:
             # defaults
             if 'DatatypeProperty' in self.item_dict.get('termType'):
                 return 'Text'
             elif 'ObjectProperty' in self.item_dict.get('termType'):
-                return 'Page'
-            else:
                 return 'Page'
 
 
