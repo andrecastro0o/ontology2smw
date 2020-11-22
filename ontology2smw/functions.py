@@ -65,8 +65,7 @@ def sparql2smwpage(sparql_fn: str, format_: str, source: str):
         term = SMWCategoryORProp(item_=printout, query_=query)
         term.create_wiki_item()
 
-        print(f'\n----------------------------------\n{term.wikipage_name}'
-              f'{term.wikipage_content}')
+        print(f'\n----------------------------------\n{term.wikipage_name}')
 
         if args.write is True:
             term.write_wikipage()
@@ -89,7 +88,7 @@ def sparql2smwpage(sparql_fn: str, format_: str, source: str):
             smw_import_dict[term.namespace_prefix].terms.append(
                 (term.term_name, f'Type:{term.prop_datatype}'))
 
-        print(term.item_dict)
+        # print(term.item_dict)
     create_smw_import_pages(importdict=smw_import_dict)
 
 
