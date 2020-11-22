@@ -67,22 +67,30 @@ def sparql2smwpage(sparql_fn: str, format_: str, source: str):
 
         print(f'\n----------------------------------\n{term.wikipage_name}'
               f'{term.wikipage_content}')
-    #
-    #     if args.write is True:
-    #         term.write_wikipage()
-    #     else:
-    #         print(term.wikipage_content)
-    #
-    #     if term.namespace_prefix not in smw_import_dict.keys():
-    #         smw_import_dict[term.namespace_prefix] = SMWImportOverview(
-    #             ontology_ns=term.namespace,
-    #             ontology_ns_prefix=term.namespace_prefix
-    #         )
-    #     smw_import_dict[term.namespace_prefix].properties.append(
-    #         (term.term_name, term.resource_type))
-    #
-    #     # print(term.item_dict)
-    # create_smw_import_pages(importdict=smw_import_dict)
+
+        if args.write is True:
+            term.write_wikipage()
+        else:
+            print(term.wikipage_content)
+
+        if term.namespace_prefix not in smw_import_dict.keys():
+            smw_import_dict[term.namespace_prefix] = SMWImportOverview(
+                ontology_ns=term.namespace,
+                ontology_ns_prefix=term.namespace_prefix
+            )
+        # smw_import_dict[term.namespace_prefix].terms is []
+        # of tuples as found in MediaWiki:Smw_import_xyz
+        # ie: abstract|Type:Page
+        #     Location|Category
+        if term.resource_type == 'Category':
+            smw_import_dict[term.namespace_prefix].terms.append(
+                (term.term_name, term.resource_type))
+        elif term.resource_type == 'Property':
+            smw_import_dict[term.namespace_prefix].terms.append(
+                (term.term_name, f'Type:{term.prop_datatype}'))
+
+        print(term.item_dict)
+    create_smw_import_pages(importdict=smw_import_dict)
 
 
 def writetowiki_decision():

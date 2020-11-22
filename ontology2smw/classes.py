@@ -223,20 +223,20 @@ class SMWImportOverview(MWpage):
     def __init__(self, ontology_ns: str, ontology_ns_prefix: str):
         self.ontology_ns = ontology_ns
         self.ontology_ns_prefix = ontology_ns_prefix
-        self.categories = []
-        self.properties = []
+        self.terms = []
         self.ontology_name = None
         self.wikipage_name = f'Mediawiki:Smw_import_{self.ontology_ns_prefix}'
         self.title, self.version, self.description = self.query_ontology()
 
     def create_smw_import(self):
-        all_resources = self.categories + self.properties
+        all_resources = self.terms
         page_info_dict = {'ontology_ns': self.ontology_ns,
                           'ontology_ns_prefix': self.ontology_ns_prefix,
                           'ontology_name': self.ontology_name,
                           }
         self.wikipage_content = render_template(
             template='mw_smw_import.j2',
+            term=None,
             ns_prefix=self.ontology_ns_prefix,
             item=all_resources,
             item_name=None,
@@ -252,7 +252,7 @@ class SMWImportOverview(MWpage):
             graph.parse(location=self.ontology_ns,
                         format="application/rdf+xml")
             sparql_query = relative_read_f('queries/query_ontology_schema.rq')
-            print(sparql_query)
+            # print(sparql_query)
             printouts = graph.query(sparql_query)
             if len(printouts) > 0:
                 printout_dict = (list(printouts)[0]).asdict()
