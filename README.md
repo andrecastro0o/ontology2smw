@@ -82,15 +82,16 @@ Details for that wiki, VM, bot username and password are set in `wikidetails.yml
     
 ### Test on local Virtual Machine
 In order to test ontology2smw in action in a isolated virtual 
-environment, the repository include a Ansible playbook to create a VM with Mediawiki installed.
+environment, the repository includes a Ansible playbook which creates a VM with Mediawiki installed, and also creates a Bot account for wiki user Admin.
 
 The playbook sets Mediawiki with:
- * URL: http://192.168.100.100/w
- * user: Admin 
- * user password: adminpassword
- * bot: Admin@ontology2smwbot
- * bot password: botpasswordbotpasswordbotpassword
- * SemanticMediawiki extension
+* URL: http://192.168.100.100/w
+* SemanticMediawiki extension
+* bot account for Admin, with details (in wikidetail.yml):
+   * user: Admin 
+   * user password: adminpassword
+   * bot: Admin@ontology2smwbot
+   * bot password: botpasswordbotpasswordbotpassword
 
 Requirements:
 * [VirtualBox](https://www.virtualbox.org/)
