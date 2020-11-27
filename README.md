@@ -36,11 +36,13 @@ python setup.py install
 
 **Run:**
 
-Using local ontology:<br/>`ontology2smw --format ttl --ontology aeon/aeon.ttl`
 
 Using a remote ontology:<br/>`ontology2smw --format ttl --ontology https://raw.githubusercontent.com/tibonto/aeon/master/aeon.ttl`
 
-Writing to wiki pages:<br/>`ontology2smw --format ttl --ontology aeon/aeon.ttl --write` 
+Writing to wiki pages:<br/>`ontology2smw --format ttl --ontology https://raw.githubusercontent.com/tibonto/aeon/master/aeon.ttl --write` 
+
+Using local ontology:<br/>`ontology2smw --format ttl --ontology XYZ.ttl`
+
 
 Asking for help:<br/>`ontology2smw --help`
 ```bash
