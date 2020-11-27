@@ -1,6 +1,6 @@
 requests
 rdflib
-jinja2
+Jinja2
 pyyaml
 mwclient
 flake8
