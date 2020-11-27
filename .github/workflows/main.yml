@@ -38,6 +38,7 @@ jobs:
     - name: install application
       run: |
         python setup.py install
+    - name: test
     - name: run application
       run: |
         ontology2smw --format ttl --ontology https://raw.githubusercontent.com/tibonto/aeon/master/aeon.ttl

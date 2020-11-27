@@ -30,6 +30,7 @@ cd ontology2smw
 python -m venv venv
 source venv/bin/activate
 # ---- virtual environment created
+pip install --upgrade setuptools
 python setup.py install
 ```
 
