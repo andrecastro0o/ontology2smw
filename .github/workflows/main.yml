@@ -21,6 +21,8 @@ jobs:
             python-version: 3.6
           - os: windows-latest
             python-version: 3.7
+          - os: windows-latest
+            python-version: 3.8
         # tempdisable windows build until https://github.com/TIBHannover/ontology2smw/issues/35 is crushed
     steps:
     - uses: actions/checkout@v2
