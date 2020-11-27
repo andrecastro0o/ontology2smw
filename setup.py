@@ -16,6 +16,8 @@ setup(
     long_description=README,
     long_description_content_type='text/markdown',
     classifiers=['Programming Language :: Python',
+                 'Programming Language :: Python :: 3',
+                 'Programming Language :: Python :: 3.6',
                  'Programming Language :: Python :: 3.7'],
     keywords='Semantic Mediawiki Ontology RDF SPARQL',
     install_requires=['rdflib', 'pyyaml', 'Jinja2', 'mwclient'],
