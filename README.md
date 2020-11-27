@@ -20,7 +20,10 @@ which can be run at anytime a new version of the ontology is published, hence th
 ```bash
 git clone https://github.com/TIBHannover/ontology2smw.git
 cd ontology2smw
-# (optional) create and activate a virtual-environment
+# ---- (optional) create and activate a virtual-environment
+python -m venv venv
+source venv/bin/activate
+# ---- virtual environment created
 python setup.py install
 ```
 
