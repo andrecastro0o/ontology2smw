@@ -24,9 +24,12 @@ jobs:
         python -m pip install --upgrade pip
         pip install pytest
         if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+    - name: install application
+      run: |
+        python setup install
     - name: run application
       run: |
-        python -m  ontology2smw --format ttl --ontology https://raw.githubusercontent.com/tibonto/aeon/master/aeon.ttl
+        ontology2smw --format ttl --ontology https://raw.githubusercontent.com/tibonto/aeon/master/aeon.ttl
 #    - name: Test with pytest
 #      run: |
 #        pytest
