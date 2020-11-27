@@ -38,7 +38,9 @@ jobs:
     - name: install application
       run: |
         python setup.py install
-    - name: test
+    - name: test rdflib
+      run: |
+        python -c 'import rdflib.plugins.sparql'
     - name: run application
       run: |
         ontology2smw --format ttl --ontology https://raw.githubusercontent.com/tibonto/aeon/master/aeon.ttl
