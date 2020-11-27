@@ -107,13 +107,16 @@ Requirements:
 * [Vagrant](https://www.vagrantup.com/)
 * [Ansible](https://www.ansible.com/) 
 
-Create VM:
+**Create VM:**
 ```bash
 cd vm
 vagrant up
 ansible-playbook playbook_mw.yml
 ```
-    
+Once tests are done you can either,
+* suspend the VM: `vagrant suspend` so it can be reused from the state it was left in with `vagrant up` 
+* destroy it: `vagrant destroy`
+
     
 ## Develop
 
