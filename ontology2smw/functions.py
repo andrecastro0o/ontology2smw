@@ -1,6 +1,6 @@
 import sys
 from pathlib import Path
-from ontology2smw.file_utils import yaml_get_source, relative_read_f
+from ontology2smw.file_utils import yaml_get_source
 from ontology2smw.mediawikitools.actions import login
 from ontology2smw.classes import QueryOntology
 from ontology2smw.classes import SMWCategoryORProp
@@ -17,20 +17,6 @@ def query_graph(sparql_fn, graph):
         sparq_query = query_fobj.read()
     printouts = graph.query(sparq_query)
     return printouts
-
-
-# TODO move into Class SMWCategoryORProp
-# def get_term_ns_prefix(term_uri, allprefixes):
-#     """
-#     Based on term_uri and prefixes determine namespace and prefix of term
-#     """
-#     for prefix, namespace in allprefixes.items():
-#         if namespace in term_uri:
-#             return namespace, prefix
-#     # TODO:  get/create the prefixes when they are not declared in the ontology
-#     print(f'Error: The ontology you are parsing has no declared prefix for '
-#           f'the term: {term_uri}', file=sys.stderr)
-#     sys.exit()
 
 
 def create_smw_import_pages(importdict):
@@ -60,8 +46,6 @@ def sparql2smwpage(sparql_fn: str, format_: str, source: str):
     query.get_graph_prefixes()
     for printout in query.return_printout():
         # loop through each ontology schema term, resulting from SPARQL query
-
-
         term = SMWCategoryORProp(item_=printout, query_=query)
         term.create_wiki_item()
 

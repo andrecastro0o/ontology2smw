@@ -34,13 +34,14 @@ def render_template(template: str,
                     prop_datatype=None) -> str:
     environment.DEFAULT_FILTERS['url_termination'] = url_termination
     template_obj = load_template(template=template)
-    wiki_item = template_obj.render(term=term,
-                                    ns_prefix=ns_prefix,
-                                    item=item,
-                                    item_name=item_name,
-                                    page_info=page_info,
-                                    term_description=term_description,
-                                    term_description_lang=term_description_lang,
-                                    prop_datatype=prop_datatype
-                                    )
+    wiki_item = template_obj.render(
+        term=term,
+        ns_prefix=ns_prefix,
+        item=item,
+        item_name=item_name,
+        page_info=page_info,
+        term_description=term_description,
+        term_description_lang=term_description_lang,
+        prop_datatype=prop_datatype
+    )
     return wiki_item

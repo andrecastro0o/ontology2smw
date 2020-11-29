@@ -1,6 +1,4 @@
-import json
-import sys
-from rdflib import Graph
+from rdflib import Graph, URIRef
 from rdflib.namespace import NamespaceManager
 from typing import Dict
 # from pprint import pprint
@@ -115,9 +113,9 @@ class SMWCategoryORProp(MWpage):
         self.item_dict = item_.asdict()
         self.term = self.item_dict['term']
         self.term_name = url_termination(self.term)
-        self.namespace, self.namespace_prefix = self.get_term_ns_prefix(query_)
-        self.query_ = query_
-        self.query_nsmanager = query_.graph.namespace_manager
+        self.query = query_
+        self.namespace, self.namespace_prefix = self.get_term_ns_prefix()
+        self.query_nsmanager = self.query.graph.namespace_manager
         self.resource_type = self.determine_smw_catORprop()
         if self.resource_type == 'Property':
             self.prop_datatype = self.determine_smw_prop_datatype()
@@ -126,26 +124,32 @@ class SMWCategoryORProp(MWpage):
 
         # pprint(self.item_dict)
 
-    def get_term_ns_prefix(self, query):
+    def get_term_ns_prefix(self):
         """
-        Based on term_uri and prefixes determine namespace and prefix of term
+        Determine the prefix of term
         """
+        # if self.term == https... -> http_or_https_term == http...
+        # so both can be search in loop below
         if self.term.startswith('https'):
             http_or_https_term = self.term.replace('https', 'http')
         else:
             http_or_https_term = self.term.replace('http', 'https')
-
-        #TODO: provide alternatives to when NS cannot be found in query.prefixes.items()
-        # IE. promp the user to provde the prefix
-
-        for prefix, namespace in query.prefixes.items():
-            if namespace in self.term or namespace in http_or_https_term:
+        # loop through prefixes:namespace dict of self.query.prefixes
+        # self.query.prefixes were bound from all_ns_prefixes.json in
+        # class QueryOntology self.bind_namespaces() method
+        # print(self.term)
+        for prefix, namespace in self.query.prefixes.items():
+            if (namespace in self.term or namespace in http_or_https_term)\
+                    and prefix:
                 return namespace, prefix
-        # TODO:  get/create the prefixes when they are not declared in the
-        #  ontology
-        print(f'Error: The ontology you are parsing has no declared prefix for '
-              f'the term: {self.term}', file=sys.stderr)
-        sys.exit()
+        # when prefix cannot be found in self.query.prefixes
+        # promp user to provide the prefix for the NS
+        # and update self.query.prefixes
+        namespace = self.term.replace(self.term_name, '')
+        prefix = input(f"\n\nThe prefix to Namespace {namespace} CANNOT be "
+                       f"found.\nPlease provide it: ")
+        self.query.prefixes[prefix] = URIRef(namespace)
+        return namespace, prefix
 
     def create_wiki_item(self):
         self.wikipage_name = f'{self.resource_type.capitalize()}:' \
@@ -162,7 +166,7 @@ class SMWCategoryORProp(MWpage):
             label_lang = label.language
         else:
             label_lang = 'en'
-        # TODO: ensure that data in self.item_dict is not repeated in other vars
+        # TODO: ensure data in self.item_dict doesnt repeated in other vars
         # Use self.item_dict
         self.wikipage_content = render_template(
             template=template_file,
