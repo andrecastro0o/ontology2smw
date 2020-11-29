@@ -15,10 +15,7 @@ which can be run at anytime a new version of the ontology is published, hence th
 ![ontology2smw import workflow](docs/ontology2smw_aeon.svg?raw=true)
 
 Supports:
-* python3.6, python3.7
-
-Does *not yet* support: 
-* python3.8 as RDFlib is not yet supposrting Python3.8 (see [issue](https://github.com/RDFLib/rdflib/issues/1190))
+* python3.6, python3.7, python3.8
 
 ## Install:
 
@@ -30,8 +27,10 @@ cd ontology2smw
 python -m venv venv
 source venv/bin/activate
 # ---- virtual environment created
+pip install --upgrade setuptools
 python setup.py install
 ```
+
 
 ## Run:
 
