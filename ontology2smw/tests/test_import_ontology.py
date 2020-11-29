@@ -12,11 +12,11 @@ from ontology2smw.jinja_utils import url_termination
 from ontology2smw.mediawikitools import actions
 from ontology2smw.file_utils import yaml_get_source
 
-
+aeon_uri = 'https://raw.githubusercontent.com/tibonto/aeon/master/aeon.ttl'
 def test_ontology_parse():
     graph = rdflib.Graph()
     graph.parse(
-        source='aeon/aeon.ttl',
+        source=aeon_uri,
         format='ttl')
     assert graph
 
@@ -47,7 +47,7 @@ def test_query_class():
 def test_term_creation():
     query = QueryOntology(sparql_fn='ontology2smw/queries/query_classes_properties.rq',
                           format_='ttl',
-                          source='aeon/aeon.ttl')
+                          source=aeon_uri)
     query.get_graph_prefixes()
     assert query
     for printout in query.return_printout():
