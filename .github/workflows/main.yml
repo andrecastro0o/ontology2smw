@@ -4,9 +4,9 @@ name: ontology2smw build
 
 on:
   push:
-    branches: [ master ]
+    branches: [ master, issue31_ontologies_wout_aeon ]
   pull_request:
-    branches: [ master ]
+    branches: [ master, issue31_ontologies_wout_aeon ]
 
 jobs:
   build:
