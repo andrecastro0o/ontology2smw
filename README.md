@@ -37,6 +37,7 @@ python setup.py install
 **Run:**
 
 
+
 Using a remote ontology:<br/>`ontology2smw --format ttl --ontology https://raw.githubusercontent.com/tibonto/aeon/master/aeon.ttl`
 
 Writing to wiki pages:<br/>`ontology2smw --format ttl --ontology https://raw.githubusercontent.com/tibonto/aeon/master/aeon.ttl --write` 
@@ -46,21 +47,21 @@ Using local ontology:<br/>`ontology2smw --format ttl --ontology XYZ.ttl`
 
 Asking for help:<br/>`ontology2smw --help`
 ```bash
-usage: ontology2smw [-h] [-w] [-o ONTOLOGY] [-f {application/rdf+xml,ttl}]
+usage: __main__.py [-h] [-w] [-o ONTOLOGY] [-f {application/rdf+xml,ttl}]
 
                    ___    
                  { . . } 
 --------------o00---'----00o--
-confIDent ontology2SMW  
+              ontology2SMW  
 -----------------------------
 
 optional arguments:
   -h, --help            show this help message and exit
   -w, --write           writes the output to wiki or file. Default: False (dry-run).
   -o ONTOLOGY, --ontology ONTOLOGY
-                        Ontology file or URI
+                        Ontology file or URI. Default: https://raw.githubusercontent.com/tibonto/aeon/master/aeon.ttl 
   -f {application/rdf+xml,ttl}, --format {application/rdf+xml,ttl}
-                        Ontology format. Default value: application/rdf+xml
+                        Ontology format. Default value: ttl
 ```
 
 <!--
