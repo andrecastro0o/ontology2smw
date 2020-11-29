@@ -1,3 +1,5 @@
+![ontology2smw build](https://github.com/TIBHannover/ontology2smw/workflows/ontology2smw%20build/badge.svg)
+
 # Ontology to SMW
 _**Automating an RDF ontology import into Semantic Mediawiki**_
 
