@@ -1,4 +1,0 @@
-[submodule "aeon"]
-	path = aeon
-	url = https://github.com/tibonto/aeon.git
-	branch = master
