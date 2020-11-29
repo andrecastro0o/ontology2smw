@@ -5,7 +5,6 @@ from typing import Dict
 from datetime import datetime
 from rdflib import exceptions
 from ontology2smw.jinja_utils import url_termination, render_template
-from ontology2smw.log import logger
 from ontology2smw.mediawikitools import actions as mwactions
 from ontology2smw.file_utils import relative_read_f
 
@@ -19,21 +18,17 @@ class MWpage:
         self.wikipage_content = None
 
     def write_wikipage(self):
-        now = datetime.now()
-        now = now.isoformat()
-        logger.debug(
-            msg=f'Attempting to write {self.wikipage_name} to wiki')
+        now = datetime.now().isoformat()
+        print(f'Attempting to write {self.wikipage_name} to wiki')
         edit_response = mwactions.edit(page=self.wikipage_name,
                                        content=self.wikipage_content,
                                        summary=f'Edited by Bot at {now}',
                                        append=False,
                                        newpageonly=False)
         if edit_response:
-            logger.debug(
-                msg=f'Wrote {self.wikipage_name} to wiki')
+            print(f'Wrote {self.wikipage_name} to wiki')
         else:
-            logger.warning(
-                msg=f'Failed to write {self.wikipage_name} to wiki')
+            print(f'Failed to write {self.wikipage_name} to wiki')
 
 
 class QueryOntology:
