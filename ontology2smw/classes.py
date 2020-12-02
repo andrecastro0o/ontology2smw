@@ -110,12 +110,13 @@ class SMWCategoryORProp(MWpage):
     """
     def __init__(self, item_: Dict, query_):
         self.term_dict = item_.asdict()
-        self.term = self.term_dict['term']
-        self.term_name = url_termination(self.term)
+        self.term = self.term_dict['term']  # used inside
+        self.term_name = url_termination(self.term)  # used outside
         self.query = query_
         self.namespace, self.namespace_prefix = self.get_term_ns_prefix()
+        # self.namespace_prefix  used outside
         self.query_nsmanager = self.query.graph.namespace_manager
-        self.resource_type = self.determine_smw_catORprop()
+        self.resource_type = self.determine_smw_catORprop()  # used outside
         if self.resource_type == 'Property':
             self.prop_datatype = self.determine_smw_prop_datatype()
         else:
@@ -160,9 +161,8 @@ class SMWCategoryORProp(MWpage):
         else:
             template_file = 'mw_property.j2'
 
-        label = self.term_dict.get('label')
-        if label and label.language:
-            label_lang = label.language
+        if self.term_dict.get('label') and self.term_dict['label'].language:
+            label_lang = self.term_dict['label'].language
         else:
             label_lang = 'en'
         # TODO: ensure data in self.item_dict doesnt repeated in other vars
@@ -173,7 +173,6 @@ class SMWCategoryORProp(MWpage):
             term_dict=self.term_dict,
             term_name=self.term_name,
             page_info=None,
-            term_description=label,
             term_description_lang=label_lang,
             prop_datatype=self.prop_datatype
         )

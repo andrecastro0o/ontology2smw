@@ -55,6 +55,14 @@ def test_term_creation_from_remote_onto():
         r"Imported from \[\[Imported from::(?P<prefix>\w+?):(?P<term>\w+?)]]",
         re.MULTILINE
     )
+    regex_label_str = re.compile(
+        r"\[\[Has property description::(?P<desc>(.|\n)+?)@(?P<lang>\w+?)]]",
+        re.MULTILINE
+    )
+#  regex_label_str = re.compile(r"Has property description::(?P<desc>\w+?)@(
+    #  ?P<lang>\w+?)]]",re.MULTILINE)
+
+
     query = QueryOntology(sparql_fn='ontology2smw/queries/ontology_terms.rq',
                           format_='application/rdf+xml',
                           source='https://d-nb.info/standards/elementset/gnd')
@@ -72,6 +80,16 @@ def test_term_creation_from_remote_onto():
         assert len(search.group('prefix')) > 0, 'Error: no prefix found'
         assert len(search.group('term')) > 0, 'Error: no term found'
         assert search.group('term') in term.wikipage_name
+
+        if term.term_dict['label']:
+            print(f'wiki page: {term.wikipage_content}')
+            label_search = re.search(regex_label_str, term.wikipage_content)
+            assert len(label_search.group('desc')) > 0, 'Error: no term desc ' \
+                                                      'found'
+            #label_search.group('lang')
+        else:
+            import pdb; pdb.set_trace()
+
         if term.resource_type == 'Property':
             assert term.prop_datatype, 'Error: NO term.prop_datatype'
             if term.prop_datatype is not 'Page':
@@ -103,6 +121,7 @@ def randstring(lenght=10):
     out = "".join([choice(list(string.ascii_letters)) for n in range(lenght)])
     return out
 
+
 @pytest.mark.skip(reason="no way of currently testing this")
 @pytest.mark.smw
 def test_category_creation():
@@ -126,6 +145,7 @@ def test_category_creation():
     assert page_lastrev
     assert 'Test' in page_content
 
+
 @pytest.mark.skip(reason="no way of currently testing this")
 @pytest.mark.smw
 def test_smw_import_creation():
@@ -148,6 +168,7 @@ def test_smw_import_creation():
     page_content, page_lastrev = actions.read(page='Category:Test')
     assert page_lastrev
     assert 'Test' in page_content
+
 
 @pytest.mark.ontologyterms
 def test_non_repeating_terms():
