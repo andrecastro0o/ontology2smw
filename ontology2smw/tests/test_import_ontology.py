@@ -52,7 +52,7 @@ def test_query_class():
 @pytest.mark.smw
 def test_term_creation_from_remote_onto():
     regex_import_str = re.compile(
-        r"Imported from \[\[Imported from::(?P<prefix>\w+?):(?P<term>\w+?)\]\]",
+        r"Imported from \[\[Imported from::(?P<prefix>\w+?):(?P<term>\w+?)]]",
         re.MULTILINE
     )
     query = QueryOntology(sparql_fn='ontology2smw/queries/ontology_terms.rq',
@@ -64,18 +64,15 @@ def test_term_creation_from_remote_onto():
         term = SMWCategoryORProp(item_=printout, query_=query)
         term.create_wiki_item()
         assert len(term.wikipage_name)
-        print(term.wikipage_name)
         assert len(term.wikipage_content)
-        print(term.wikipage_content)
         # what pattern are we looking for in wikipage_name & wikipage_content
         # import pdb; pdb.set_trace()
         assert len(re.findall(regex_import_str, term.wikipage_content)) > 0
         search = re.search(regex_import_str, term.wikipage_content)
-        assert len(search.group('prefix')) > 1, 'Error: no prefix found'
-        assert len(search.group('term')) > 1, 'Error: no term found'
+        assert len(search.group('prefix')) > 0, 'Error: no prefix found'
+        assert len(search.group('term')) > 0, 'Error: no term found'
         assert search.group('term') in term.wikipage_name
         if term.resource_type == 'Property':
-            print(term.wikipage_name, term.prop_datatype)
             assert term.prop_datatype, 'Error: NO term.prop_datatype'
             if term.prop_datatype is not 'Page':
                 assert term.prop_datatype in set(xsd2smwdatatype.values()), \
