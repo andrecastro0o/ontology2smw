@@ -109,7 +109,6 @@ class SMWCategoryORProp(MWpage):
     Class represents a SMW Category or Property
     """
     def __init__(self, item_: Dict, query_):
-        self.item = item_
         self.item_dict = item_.asdict()
         self.term = self.item_dict['term']
         self.term_name = url_termination(self.term)
