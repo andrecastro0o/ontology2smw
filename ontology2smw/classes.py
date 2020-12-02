@@ -169,7 +169,6 @@ class SMWCategoryORProp(MWpage):
         # Use self.item_dict
         self.wikipage_content = render_template(
             template=template_file,
-            term=self.term,
             ns_prefix=self.namespace_prefix,
             item=self.item_dict,
             item_name=self.term_name,
@@ -234,7 +233,6 @@ class SMWImportOverview(MWpage):
                           }
         self.wikipage_content = render_template(
             template='mw_smw_import.j2',
-            term=None,
             ns_prefix=self.ontology_ns_prefix,
             item=all_resources,
             item_name=None,
