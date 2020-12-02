@@ -1,10 +1,10 @@
 
-Imported from [[Imported from::{{ ns_prefix }}:{{ item_name }}]]
+Imported from [[Imported from::{{ ns_prefix }}:{{ term_name }}]]
 
-Equivalent URI [[Equivalent URI::{{ item['term'] }}]]
+Equivalent URI [[Equivalent URI::{{ term_dict['term'] }}]]
 
-{% if item['subclassof'] and item['subclassof'] != '' %}
-Subcategory of [[:Category:{{ item['subclassof']|url_termination }}]] [[Category:{{ item['subclassof']|url_termination }}]]
+{% if term_dict['subclassof'] and term_dict['subclassof'] != '' %}
+Subcategory of [[:Category:{{ term_dict['subclassof']|url_termination }}]] [[Category:{{ term_dict['subclassof']|url_termination }}]]
 {% endif %}
 
 {% if term_description %}Term description: [[Has property description::{{ term_description }}@{{ term_description_lang }}]]{% endif %}

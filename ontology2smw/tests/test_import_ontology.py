@@ -95,7 +95,7 @@ def test_term_creation_from_local_onto():
         term = SMWCategoryORProp(item_=printout,
                                  namespace=ns,
                                  namespace_prefix=ns_prefix)
-        assert term.item_dict['smw_import_info']
+        assert term.term_dict['smw_import_info']
         term.create_wiki_item()
 
 

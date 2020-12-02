@@ -109,8 +109,8 @@ class SMWCategoryORProp(MWpage):
     Class represents a SMW Category or Property
     """
     def __init__(self, item_: Dict, query_):
-        self.item_dict = item_.asdict()
-        self.term = self.item_dict['term']
+        self.term_dict = item_.asdict()
+        self.term = self.term_dict['term']
         self.term_name = url_termination(self.term)
         self.query = query_
         self.namespace, self.namespace_prefix = self.get_term_ns_prefix()
@@ -160,7 +160,7 @@ class SMWCategoryORProp(MWpage):
         else:
             template_file = 'mw_property.j2'
 
-        label = self.item_dict.get('label')
+        label = self.term_dict.get('label')
         if label and label.language:
             label_lang = label.language
         else:
@@ -170,8 +170,8 @@ class SMWCategoryORProp(MWpage):
         self.wikipage_content = render_template(
             template=template_file,
             ns_prefix=self.namespace_prefix,
-            item=self.item_dict,
-            item_name=self.term_name,
+            term_dict=self.term_dict,
+            term_name=self.term_name,
             page_info=None,
             term_description=label,
             term_description_lang=label_lang,
@@ -179,13 +179,13 @@ class SMWCategoryORProp(MWpage):
         )
 
     def determine_smw_catORprop(self):
-        if 'smw_datatype' in self.item_dict.keys():
-            if str(self.item_dict['smw_datatype']) == 'Category':
+        if 'smw_datatype' in self.term_dict.keys():
+            if str(self.term_dict['smw_datatype']) == 'Category':
                 return 'Category'
             else:
                 return 'Property'
         else:
-            termtype = url_termination(self.item_dict.get('termType')
+            termtype = url_termination(self.term_dict.get('termType')
                                        ).capitalize()
             if termtype == 'Class':
                 return 'Category'
@@ -197,9 +197,9 @@ class SMWCategoryORProp(MWpage):
         # ObjectTypeProperty terms have entities as range, hence:
         # ObjectTypeProperty range == SMW Has type::Page
         # DatatypeProprety items: match rdf:range value to xsd2smwdatatype
-        if self.item_dict.get('range'):  # certainly a DatatypeProprety
+        if self.term_dict.get('range'):  # certainly a DatatypeProprety
             # get range with prefix
-            range_ = self.item_dict.get('range').n3(self.query_nsmanager)
+            range_ = self.term_dict.get('range').n3(self.query_nsmanager)
             if range_ in xsd2smwdatatype.keys():
                 # if there is a range value search in xsd2smwdatatype
                 return xsd2smwdatatype[range_]
@@ -207,9 +207,9 @@ class SMWCategoryORProp(MWpage):
                 return 'Text'
         else:
             # defaults
-            if 'DatatypeProperty' in self.item_dict.get('termType'):
+            if 'DatatypeProperty' in self.term_dict.get('termType'):
                 return 'Text'
-            elif 'ObjectProperty' in self.item_dict.get('termType'):
+            elif 'ObjectProperty' in self.term_dict.get('termType'):
                 return 'Page'
 
 
@@ -234,8 +234,8 @@ class SMWImportOverview(MWpage):
         self.wikipage_content = render_template(
             template='mw_smw_import.j2',
             ns_prefix=self.ontology_ns_prefix,
-            item=all_resources,
-            item_name=None,
+            term_dict=all_resources,
+            term_name=None,
             page_info=page_info_dict,
             # term_description=''
         )
