@@ -29,7 +29,6 @@ def render_template(template: str,
                     term_dict: Union[Dict, List],
                     term_name: Optional[str],
                     page_info: Optional[Dict],
-                    term_description_lang=None,
                     prop_datatype=None) -> str:
     environment.DEFAULT_FILTERS['url_termination'] = url_termination
     template_obj = load_template(template=template)
@@ -38,7 +37,6 @@ def render_template(template: str,
         term_dict=term_dict,
         term_name=term_name,
         page_info=page_info,
-        term_description_lang=term_description_lang,
         prop_datatype=prop_datatype
     )
     return wiki_item

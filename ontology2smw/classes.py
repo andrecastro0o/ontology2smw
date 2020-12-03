@@ -160,20 +160,12 @@ class SMWCategoryORProp(MWpage):
             template_file = 'mw_category.j2'
         else:
             template_file = 'mw_property.j2'
-
-        if self.term_dict.get('label') and self.term_dict['label'].language:
-            label_lang = self.term_dict['label'].language
-        else:
-            label_lang = 'en'
-        # TODO: ensure data in self.item_dict doesnt repeated in other vars
-        # Use self.item_dict
         self.wikipage_content = render_template(
             template=template_file,
             ns_prefix=self.namespace_prefix,
             term_dict=self.term_dict,
             term_name=self.term_name,
             page_info=None,
-            term_description_lang=label_lang,
             prop_datatype=self.prop_datatype
         )
 
@@ -254,6 +246,7 @@ class SMWImportOverview(MWpage):
                 title = printout_dict.get('title')
                 version = printout_dict.get('version')
                 description = printout_dict.get('description')
+        # TODO update this
         except (exceptions.ParserError, TypeError) as pe:
             msg = f"{self.ontology_ns} failed to resolve to an RDF. Provide " \
                   f"infomartion about the ontology in ontologies.yml"
