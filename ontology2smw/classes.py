@@ -121,6 +121,7 @@ class SMWCategoryORProp(MWpage):
             self.prop_datatype = self.determine_smw_prop_datatype()
         else:
             self.prop_datatype = None
+        self.create_wiki_item()
 
     def get_term_ns_prefix(self):
         """

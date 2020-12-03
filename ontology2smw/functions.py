@@ -49,8 +49,6 @@ def sparql2smwpage(sparql_fn: str, format_: str, source: str):
     for printout in query.return_printout():
         # loop through each ontology schema term, resulting from SPARQL query
         term = SMWCategoryORProp(item_=printout, query_=query)
-        term.create_wiki_item()
-
         print(f'\n----------------------------------\n{term.wikipage_name}')
 
         if args.write is True:
