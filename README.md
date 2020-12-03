@@ -46,7 +46,7 @@ Writing to wiki pages:<br/>`ontology2smw --format ttl --ontology aeon/aeon.ttl -
 
 Asking for help:<br/>`ontology2smw --help`
 ```bash
-usage: __main__.py [-h] [-w] [-o ONTOLOGY] [-f {application/rdf+xml,ttl}]
+usage: __main__.py [-h] [-w] [-o ONTOLOGY] [-f {rdf,ttl}]
 
                    ___    
                  { . . } 
@@ -59,7 +59,7 @@ optional arguments:
   -w, --write           writes the output to wiki or file. Default: False (dry-run).
   -o ONTOLOGY, --ontology ONTOLOGY
                         Ontology file or URI. Default: https://raw.githubusercontent.com/tibonto/aeon/master/aeon.ttl 
-  -f {application/rdf+xml,ttl}, --format {application/rdf+xml,ttl}
+  -f {rdf,ttl}, --format {rdf,ttl}
                         Ontology format. Default value: ttl
 ```
 

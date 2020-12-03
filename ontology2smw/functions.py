@@ -37,6 +37,8 @@ def create_smw_import_pages(importdict):
 
 
 def sparql2smwpage(sparql_fn: str, format_: str, source: str):
+    if format_ == 'rdf':
+        format_ = 'application/rdf+xml'
     """
     Performs the calls necessary to turn SPARQL query to SMW pages required
     to import the ontology
