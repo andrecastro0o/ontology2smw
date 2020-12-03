@@ -122,8 +122,6 @@ class SMWCategoryORProp(MWpage):
         else:
             self.prop_datatype = None
 
-        # pprint(self.item_dict)
-
     def get_term_ns_prefix(self):
         """
         Determine the prefix of term
@@ -228,7 +226,6 @@ class SMWImportOverview(MWpage):
             term_dict=all_resources,
             term_name=None,
             page_info=page_info_dict,
-            # term_description=''
         )
 
     def query_ontology(self):
@@ -246,11 +243,9 @@ class SMWImportOverview(MWpage):
                 title = printout_dict.get('title')
                 version = printout_dict.get('version')
                 description = printout_dict.get('description')
-        # TODO update this
         except (exceptions.ParserError, TypeError) as pe:
-            msg = f"{self.ontology_ns} failed to resolve to an RDF. Provide " \
-                  f"infomartion about the ontology in ontologies.yml"
-            print('Error: ', pe, '\n', msg)
+            msg = f"URI {self.ontology_ns} failed to resolve"
+            print('Warning: ', pe, '\n', msg)
         if not title:
             title = self.ontology_ns_prefix
         return title, version, description
