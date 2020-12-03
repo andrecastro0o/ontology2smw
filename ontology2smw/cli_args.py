@@ -15,6 +15,6 @@ parser.add_argument('-o', '--ontology',
                     help="Ontology file or URI. "
                     "Default: https://raw.githubusercontent.com/tibonto/aeon/master/aeon.ttl ")
 parser.add_argument('-f', '--format',
-                    choices=['application/rdf+xml', 'ttl'],
+                    choices=['rdf', 'ttl'],
                     default='ttl',
                     help="Ontology format. Default value: ttl")

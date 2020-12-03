@@ -52,9 +52,17 @@ def test_query_class():
 @pytest.mark.smw
 def test_term_creation_from_remote_onto():
     regex_import_str = re.compile(
-        r"Imported from \[\[Imported from::(?P<prefix>\w+?):(?P<term>\w+?)\]\]",
+        r"Imported from \[\[Imported from::(?P<prefix>\w+?):(?P<term>\w+?)]]",
         re.MULTILINE
     )
+    regex_label_str = re.compile(
+        r"\[\[Has property description::(?P<desc>(.|\n)+?)@(?P<lang>\w+?)]]",
+        re.MULTILINE
+    )
+#  regex_label_str = re.compile(r"Has property description::(?P<desc>\w+?)@(
+    #  ?P<lang>\w+?)]]",re.MULTILINE)
+
+
     query = QueryOntology(sparql_fn='ontology2smw/queries/ontology_terms.rq',
                           format_='application/rdf+xml',
                           source='https://d-nb.info/standards/elementset/gnd')
@@ -64,18 +72,25 @@ def test_term_creation_from_remote_onto():
         term = SMWCategoryORProp(item_=printout, query_=query)
         term.create_wiki_item()
         assert len(term.wikipage_name)
-        print(term.wikipage_name)
         assert len(term.wikipage_content)
-        print(term.wikipage_content)
         # what pattern are we looking for in wikipage_name & wikipage_content
         # import pdb; pdb.set_trace()
         assert len(re.findall(regex_import_str, term.wikipage_content)) > 0
         search = re.search(regex_import_str, term.wikipage_content)
-        assert len(search.group('prefix')) > 1, 'Error: no prefix found'
-        assert len(search.group('term')) > 1, 'Error: no term found'
+        assert len(search.group('prefix')) > 0, 'Error: no prefix found'
+        assert len(search.group('term')) > 0, 'Error: no term found'
         assert search.group('term') in term.wikipage_name
+
+        if term.term_dict['label']:
+            print(f'wiki page: {term.wikipage_content}')
+            label_search = re.search(regex_label_str, term.wikipage_content)
+            assert len(label_search.group('desc')) > 0, 'Error: no term desc ' \
+                                                      'found'
+            #label_search.group('lang')
+        else:
+            import pdb; pdb.set_trace()
+
         if term.resource_type == 'Property':
-            print(term.wikipage_name, term.prop_datatype)
             assert term.prop_datatype, 'Error: NO term.prop_datatype'
             if term.prop_datatype is not 'Page':
                 assert term.prop_datatype in set(xsd2smwdatatype.values()), \
@@ -98,13 +113,14 @@ def test_term_creation_from_local_onto():
         term = SMWCategoryORProp(item_=printout,
                                  namespace=ns,
                                  namespace_prefix=ns_prefix)
-        assert term.item_dict['smw_import_info']
+        assert term.term_dict['smw_import_info']
         term.create_wiki_item()
 
 
 def randstring(lenght=10):
     out = "".join([choice(list(string.ascii_letters)) for n in range(lenght)])
     return out
+
 
 @pytest.mark.skip(reason="no way of currently testing this")
 @pytest.mark.smw
@@ -129,6 +145,7 @@ def test_category_creation():
     assert page_lastrev
     assert 'Test' in page_content
 
+
 @pytest.mark.skip(reason="no way of currently testing this")
 @pytest.mark.smw
 def test_smw_import_creation():
@@ -151,6 +168,7 @@ def test_smw_import_creation():
     page_content, page_lastrev = actions.read(page='Category:Test')
     assert page_lastrev
     assert 'Test' in page_content
+
 
 @pytest.mark.ontologyterms
 def test_non_repeating_terms():
