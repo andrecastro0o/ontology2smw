@@ -61,11 +61,11 @@ def test_term_creation_from_remote_onto():
         if term.term_dict['label']:
             print(f'wiki page: {term.wikipage_content}')
             label_search = re.search(regex_label_str, term.wikipage_content)
-            assert len(label_search.group('desc')) > 0, 'Error: no term desc ' \
-                                                        'found'
+            assert len(label_search.group('desc')) > 0, \
+                'Error: no term desc found'
         if term.resource_type == 'Property':
             assert term.prop_datatype, 'Error: NO term.prop_datatype'
-            if term.prop_datatype is not 'Page':
+            if term.prop_datatype != 'Page':
                 assert term.prop_datatype in set(xsd2smwdatatype.values()), \
                     'Error: prop_datatype not in xsd2smwdatatype'
 
@@ -123,7 +123,7 @@ def test_smw_import_creation():
     current_file = Path(__file__)
     root_dir = current_file.parent.parent.parent
     print(root_dir)
-    wikidetails = root_dir  / 'wikidetails.yml'
+    wikidetails = root_dir / 'wikidetails.yml'
     print(wikidetails)
     wikidetails = yaml_get_source(wikidetails)
     site = actions.login(host=wikidetails['host'],
