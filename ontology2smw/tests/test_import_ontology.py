@@ -28,6 +28,8 @@ def test_queryontology_class():
     ontos = [
         ('https://d-nb.info/standards/elementset/gnd.ttl', 'ttl'),
         ('http://www.w3.org/ns/dcat#', 'application/rdf+xml'),
+        ('http://rdf.muninn-project.org/ontologies/military.owl',
+         'application/rdf+xml'),
     ]
     onto_uri, onto_format = choice(ontos)
     print(onto_uri)
