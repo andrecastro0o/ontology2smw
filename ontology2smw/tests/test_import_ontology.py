@@ -13,15 +13,6 @@ from ontology2smw.mediawikitools import actions
 from ontology2smw.file_utils import yaml_get_source
 
 
-@pytest.mark.skip(reason="no way of currently testing this")
-@pytest.mark.ontology
-def test_ontology_parse():
-    graph = rdflib.Graph()
-    graph.parse(
-        source='aeon/aeon.ttl',
-        format='ttl')
-    assert graph
-#
 #
 # exp_importfrom = re.compile(
 #     "\[\[Imported from::(?P<ontology>\w.*?):(?P<category>\w.*?)]]")
@@ -32,15 +23,22 @@ def test_ontology_parse():
 #     "Subcategory\sof.*?\[\[Category:(?P<subcat>.*?)]]")
 
 
-@pytest.mark.skip(reason="no way of currently testing this")
 @pytest.mark.ontology
-def test_query_class():
-    ontology_ns = 'http://www.w3.org/2004/02/skos/core#'
+def test_queryontology_class():
+    ontos = [
+        ('https://d-nb.info/standards/elementset/gnd.ttl', 'ttl'),
+        ('http://www.w3.org/ns/dcat#', 'application/rdf+xml'),
+    ]
+    onto_uri, onto_format = choice(ontos)
+    print(onto_uri)
     query = QueryOntology(sparql_fn='ontology2smw/queries/query_ontology_schema.rq',
-                          format_="application/rdf+xml", source=ontology_ns)
+                          format_=onto_format, source=onto_uri)
+    query.get_graph_prefixes()
     printouts = list(query.return_printout())
-    print(printouts)
     assert len(list(printouts)) > 0
+    assert len(query.prefixes) > 0
+
+
     # ontology_ns = 'http://purl.obolibrary.org/obo/'
     # query = Query(sparql_fn='queries/query_ontology_schema.rq',
     #               format_="application/rdf+xml", source=ontology_ns)
