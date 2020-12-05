@@ -90,7 +90,7 @@ Details for that wiki, VM, bot username and password are set in `wikidetails.yml
 
  
     
-### Test on local Virtual Machine
+### Try on local Virtual Machine
 In order to test ontology2smw in action in a isolated virtual 
 environment, the repository includes a Ansible playbook which creates a VM with Mediawiki installed, and also creates a Bot account for wiki user Admin.
 
@@ -128,8 +128,13 @@ cd ontology2smw
 pip install -r requirements.txt
 python -m ontology2smw
 ```
-    
-    
+
+## Test
+
+* without running target VM running Mediawiki + SMW `pytest -m "not smw"`
+* with VM running Mediawiki + SMW `pytest -m smw`
+
+
 ## Properties from other ontologies
 ...
 

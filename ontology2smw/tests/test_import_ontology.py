@@ -31,7 +31,7 @@ def test_queryontology_class():
     assert len(query.prefixes) > 0
 
 
-@pytest.mark.smw
+@pytest.mark.termsinsmw
 def test_term_creation_from_remote_onto():
     regex_import_str = re.compile(
         r"Imported from \[\[Imported from::(?P<prefix>\w+?):(?P<term>\w+?)]]",
@@ -70,7 +70,6 @@ def test_term_creation_from_remote_onto():
                     'Error: prop_datatype not in xsd2smwdatatype'
 
 
-@pytest.mark.skip(reason="no way of currently testing this")
 @pytest.mark.smw
 def test_term_creation_from_local_onto():
     query = QueryOntology(sparql_fn='ontology2smw/queries/ontology_terms.rq',
@@ -95,7 +94,7 @@ def randstring(lenght=10):
     return out
 
 
-@pytest.mark.skip(reason="no way of currently testing this")
+@pytest.mark.skip(reason="requires VM w/ SMW")
 @pytest.mark.smw
 def test_category_creation():
     current_file = Path(__file__)
@@ -118,7 +117,7 @@ def test_category_creation():
     assert 'Test' in page_content
 
 
-@pytest.mark.skip(reason="no way of currently testing this")
+@pytest.mark.skip(reason="requires VM w/ SMW")
 @pytest.mark.smw
 def test_smw_import_creation():
     current_file = Path(__file__)
