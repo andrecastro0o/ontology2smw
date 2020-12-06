@@ -44,6 +44,6 @@ jobs:
         python -m pip install --upgrade pip
         pip install flake8 pytest tox
         pip install -r requirements.txt
-    - name: pytest
+    - name: tox
       run: |
-        pytest -m "not smw"
+        tox -p all -v
