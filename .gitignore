@@ -13,4 +13,3 @@ confident2wikidata_mapping.yml
 /.tox/
 /vm/.vagrant/
 /notebooks/
-/.coverage

@@ -129,20 +129,21 @@ pip install -r requirements.txt
 python -m ontology2smw
 ```
 
-## Test
-**Tox:** automated testing on py37, py38
+## Test 
+
+**Tox:** automated testing on py36, py37, py38
+`tox -p all -v`
+
 * pytest
 * flake8s
 * test coverage report
-
-`tox -p all -v`
 
 
 **pytest**
 * without running target VM running Mediawiki + SMW `pytest -m "not smw"`
 * with VM running Mediawiki + SMW `pytest -m smw`
 
-* test coverage `pytest --cov=ontology2smw ontology2smw/tests -m "not smw"`
+
 ## Properties from other ontologies
 ...
 
