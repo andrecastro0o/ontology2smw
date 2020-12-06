@@ -16,4 +16,5 @@ exclude =
     prototypes,
     cli_args.py
     notebooks
+    tests
 max-complexity = 10

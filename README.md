@@ -130,11 +130,16 @@ python -m ontology2smw
 ```
 
 ## Test
+**Tox:** automated testing on py37, py38
+* pytest
+* flake8s
 
+` tox -p all -v`
+**pytest**
 * without running target VM running Mediawiki + SMW `pytest -m "not smw"`
 * with VM running Mediawiki + SMW `pytest -m smw`
 
-
+* test coverage `pytest --cov=ontology2smw ontology2smw/tests -m "not smw"`
 ## Properties from other ontologies
 ...
 
