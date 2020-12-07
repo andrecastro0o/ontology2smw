@@ -78,7 +78,7 @@ def sparql2smwpage(sparql_fn: str, format_: str, source: str):
 
 def writetowiki_decision():
     """
-    Prompts the uses to affirm she wants or not to write to wiki
+    Prompts the users to confirm they wants to write to the wiki
     If so wiki bot login will take place and connection will be available
     under var site
     """
