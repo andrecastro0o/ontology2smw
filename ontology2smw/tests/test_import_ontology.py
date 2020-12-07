@@ -4,7 +4,7 @@ import string
 import pytest
 from pathlib import Path
 from random import choice
-from ontology2smw.classes import QueryOntology, SMWCategoryORProp, \
+from ontology2smw.classes import MWpage, QueryOntology, SMWCategoryORProp, \
     xsd2smwdatatype
 from ontology2smw.mediawikitools import actions
 from ontology2smw.file_utils import yaml_get_source
@@ -75,6 +75,16 @@ def randstring(lenght=10):
     return out
 
 
+@pytest.mark.ontology
+def test_non_repeating_terms():
+    graph = rdflib.Graph()
+    graph.parse(location=onto_uri, format=onto_format)
+    with open('ontology2smw/queries/ontology_terms.rq', 'r') as query_fobj:
+        sparq_query = query_fobj.read()
+    printouts = graph.query(sparq_query)
+    assert printouts
+
+
 @pytest.mark.smw
 def test_wiki_terms_creation():
     current_file = Path(__file__)
@@ -104,11 +114,11 @@ def test_wiki_terms_creation():
     assert 'Test' in page_content
 
 
-@pytest.mark.ontology
-def test_non_repeating_terms():
-    graph = rdflib.Graph()
-    graph.parse(location=onto_uri, format=onto_format)
-    with open('ontology2smw/queries/ontology_terms.rq', 'r') as query_fobj:
-        sparq_query = query_fobj.read()
-    printouts = graph.query(sparq_query)
-    assert printouts
+@pytest.mark.smw
+def test_MWpage():
+    mwpage = MWpage()
+    mwpage.wikipage_name = "Main_Page"
+    mwpage.wikipage_content = f"=ontology2smw test: {randstring()}="
+    mwpage.write_wikipage()
+    page_content, page_lastrev = actions.read(page=mwpage.wikipage_name)
+    assert page_content == mwpage.wikipage_content
