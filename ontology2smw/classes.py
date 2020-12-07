@@ -207,9 +207,11 @@ class SMWImportOverview(MWpage):
     """
     Class represents the Ontology overview SMW page: Mediawiki:smw_import_XYZ
     """
-    def __init__(self, ontology_ns: str, ontology_ns_prefix: str):
+    def __init__(self, ontology_ns: str, ontology_ns_prefix: str,
+                 ontology_format: str):
         self.ontology_ns = ontology_ns
         self.ontology_ns_prefix = ontology_ns_prefix
+        self.ontology_format = ontology_format
         self.terms = []
         self.ontology_name = None
         self.wikipage_name = f'Mediawiki:Smw_import_{self.ontology_ns_prefix}'
@@ -235,7 +237,7 @@ class SMWImportOverview(MWpage):
         try:
             graph = Graph()
             graph.parse(location=self.ontology_ns,
-                        format="application/rdf+xml")
+                        format=self.ontology_format)
             sparql_query = relative_read_f('queries/query_ontology_schema.rq')
             # print(sparql_query)
             printouts = graph.query(sparql_query)

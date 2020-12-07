@@ -10,13 +10,11 @@ from ontology2smw.mediawikitools import actions
 from ontology2smw.file_utils import yaml_get_source
 
 ontos = [
-    ('https://d-nb.info/standards/elementset/gnd.ttl', 'ttl'),
-    ('http://www.w3.org/ns/dcat#', 'application/rdf+xml'),
-    ('http://rdf.muninn-project.org/ontologies/military.owl',
-     'application/rdf+xml'),
-    ('http://purl.org/spar/datacite', 'application/rdf+xml'),
+    ('https://d-nb.info/standards/elementset/gnd.ttl', 'gndo', 'ttl'),
+    ('http://www.w3.org/ns/dcat#', 'dcat', 'application/rdf+xml'),
+    ('http://purl.org/spar/datacite', 'datacite', 'application/rdf+xml'),
 ]
-onto_uri, onto_format = choice(ontos)
+onto_uri, onto_prefix, onto_format = choice(ontos)
 
 
 @pytest.mark.ontology
@@ -130,12 +128,14 @@ def test_MWpage():
 
 @pytest.mark.termsinsmw
 def test_smwimportoverview():
-    smwimport_term = SMWImportOverview(
-        ontology_ns="http://www.w3.org/ns/dcat#",
-        ontology_ns_prefix="dcat")
-    assert smwimport_term.ontology_ns_prefix == smwimport_term.title
-    assert smwimport_term.ontology_ns_prefix in smwimport_term.wikipage_name
-    smwimport_term.create_smw_import()
-    assert smwimport_term.ontology_ns in smwimport_term.wikipage_content
-    category = f'[[Category:{smwimport_term.ontology_ns_prefix.upper()}]]'
-    assert category in smwimport_term.wikipage_content
+    smwimport_overview = SMWImportOverview(ontology_ns=onto_uri,
+                                           ontology_ns_prefix=onto_prefix,
+                                           ontology_format=onto_format)
+    assert smwimport_overview.ontology_ns_prefix in \
+           smwimport_overview.wikipage_name
+    smwimport_overview.create_smw_import()
+    assert smwimport_overview.ontology_ns in \
+           smwimport_overview.wikipage_content
+    category = f'[[Category:{smwimport_overview.ontology_ns_prefix.upper()}]]'
+    assert category in smwimport_overview.wikipage_content
+    assert smwimport_overview.title
