@@ -236,8 +236,10 @@ class SMWImportOverview(MWpage):
         title, version, description = None, None, None  # default
         try:
             graph = Graph()
+            print(self.ontology_ns, self.ontology_format)
             graph.parse(location=self.ontology_ns,
-                        format=self.ontology_format)
+                        # format=self.ontology_format)
+                        format="application/rdf+xml")
             sparql_query = relative_read_f('queries/query_ontology_schema.rq')
             # print(sparql_query)
             printouts = graph.query(sparql_query)
