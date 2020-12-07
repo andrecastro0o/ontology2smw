@@ -74,7 +74,6 @@ def test_term_creation_from_remote_onto():
                     'Error: prop_datatype not in xsd2smwdatatype'
 
 
-
 def randstring(lenght=10):
     out = "".join([choice(list(string.ascii_letters)) for n in range(lenght)])
     return out
