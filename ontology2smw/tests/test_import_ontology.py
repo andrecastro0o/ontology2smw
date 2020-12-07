@@ -63,11 +63,16 @@ def test_term_creation_from_remote_onto():
             label_search = re.search(regex_label_str, term.wikipage_content)
             assert len(label_search.group('desc')) > 0, \
                 'Error: no term desc found'
+        # tests def determine_smw_catORprop
+        termtype = str(term.term_dict.get('termType'))
+        assert term.resource_type.replace('Category', 'Class') in termtype
+
         if term.resource_type == 'Property':
             assert term.prop_datatype, 'Error: NO term.prop_datatype'
             if term.prop_datatype != 'Page':
                 assert term.prop_datatype in set(xsd2smwdatatype.values()), \
                     'Error: prop_datatype not in xsd2smwdatatype'
+
 
 
 def randstring(lenght=10):
