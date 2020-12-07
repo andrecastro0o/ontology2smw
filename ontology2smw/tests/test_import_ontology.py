@@ -5,7 +5,7 @@ import pytest
 from pathlib import Path
 from random import choice
 from ontology2smw.classes import MWpage, QueryOntology, SMWCategoryORProp, \
-    xsd2smwdatatype
+    SMWImportOverview, xsd2smwdatatype
 from ontology2smw.mediawikitools import actions
 from ontology2smw.file_utils import yaml_get_source
 
@@ -126,3 +126,16 @@ def test_MWpage():
     mwpage.write_wikipage()
     page_content, page_lastrev = actions.read(page=mwpage.wikipage_name)
     assert page_content == mwpage.wikipage_content
+
+
+@pytest.mark.termsinsmw
+def test_smwimportoverview():
+    smwimport_term = SMWImportOverview(
+        ontology_ns="http://www.w3.org/ns/dcat#",
+        ontology_ns_prefix="dcat")
+    assert smwimport_term.ontology_ns_prefix == smwimport_term.title
+    assert smwimport_term.ontology_ns_prefix in smwimport_term.wikipage_name
+    smwimport_term.create_smw_import()
+    assert smwimport_term.ontology_ns in smwimport_term.wikipage_content
+    category = f'[[Category:{smwimport_term.ontology_ns_prefix.upper()}]]'
+    assert category in smwimport_term.wikipage_content
