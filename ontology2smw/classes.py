@@ -257,7 +257,7 @@ class SMWImportOverview(MWpage):
         try:
             response = requests_retry_session().get(
                 url=uri,
-                headers={'content-type': contenttype},
+                headers={'Accept': contenttype},
                 timeout=0.2)
             response.raise_for_status()
         except requests.exceptions.HTTPError:
@@ -269,7 +269,11 @@ class SMWImportOverview(MWpage):
         except requests.exceptions.ConnectionError:
             return False
         else:
-            return True
+            if response.headers.get('content-type') == contenttype:
+                # dismiss the cases where html is returned
+                return True
+            else:
+                return False
 
     def get_ontology_details(self):
         """
@@ -286,7 +290,6 @@ class SMWImportOverview(MWpage):
             graph = Graph()
             print(self.ontology_ns, self.ontology_format)
             graph.parse(location=self.ontology_ns,
-                        # format=self.ontology_format)
                         format="application/rdf+xml")
             sparql_query = relative_read_f('queries/query_ontology_schema.rq')
             # print(sparql_query)
@@ -297,11 +300,5 @@ class SMWImportOverview(MWpage):
                     title = printout_dict.get('title')
                 version = printout_dict.get('version')
                 description = printout_dict.get('description')
-
-        # except (exceptions.ParserError, TypeError) as pe:
-        #     msg = f"URI {self.ontology_ns} failed to resolve"
-        #     print('Warning: ', pe, '\n', msg)
-        # if not title:
-        #     title = self.ontology_ns_prefix
 
         return title, version, description
