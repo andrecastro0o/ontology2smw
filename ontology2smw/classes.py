@@ -6,7 +6,6 @@ from rdflib.namespace import NamespaceManager
 from typing import Dict
 # from pprint import pprint
 from datetime import datetime
-from rdflib import exceptions
 from ontology2smw.jinja_utils import url_termination, render_template
 from ontology2smw.mediawikitools import actions as mwactions
 from ontology2smw.file_utils import relative_read_f
@@ -238,7 +237,7 @@ class SMWImportOverview(MWpage):
         self.terms = []
         self.ontology_name = None
         self.wikipage_name = f'Mediawiki:Smw_import_{self.ontology_ns_prefix}'
-        self.title, self.version, self.description = self.get_ontology_details()
+        self.title, self.version, self.desc = self.get_ontology_details()
 
     def create_smw_import(self):
         all_resources = self.terms

@@ -133,7 +133,6 @@ def test_MWpage():
 def test_smwimportoverview():
     for onto in ontos:
         local_onto_uri, local_onto_prefix, local_onto_format = onto
-        
         smwimport_overview = SMWImportOverview(
             ontology_ns=local_onto_uri,
             ontology_ns_prefix=local_onto_prefix,
@@ -147,7 +146,7 @@ def test_smwimportoverview():
         category = f'[[Category:{prefix_}]]'
         assert category in smwimport_overview.wikipage_content
         print(smwimport_overview.title, smwimport_overview.version,
-              smwimport_overview.description)
+              smwimport_overview.desc)
         assert smwimport_overview.title is not None
 
 
