@@ -1,9 +1,11 @@
+import requests
+from requests.adapters import HTTPAdapter
+from requests.packages.urllib3.util.retry import Retry
 from rdflib import Graph, URIRef
 from rdflib.namespace import NamespaceManager
 from typing import Dict
 # from pprint import pprint
 from datetime import datetime
-from rdflib import exceptions
 from ontology2smw.jinja_utils import url_termination, render_template
 from ontology2smw.mediawikitools import actions as mwactions
 from ontology2smw.file_utils import relative_read_f
@@ -40,6 +42,26 @@ xsd2smwdatatype = {
     'xsd:anyURI': 'URL',
     'xsd:language': 'Text'
 }
+
+
+def requests_retry_session(
+    retries=3,
+    backoff_factor=0.3,
+    status_forcelist=(500, 502, 504),
+    session=None,
+):
+    session = session or requests.Session()
+    retry = Retry(
+        total=retries,
+        read=retries,
+        connect=retries,
+        backoff_factor=backoff_factor,
+        status_forcelist=status_forcelist,
+    )
+    adapter = HTTPAdapter(max_retries=retry)
+    session.mount('http://', adapter)
+    session.mount('https://', adapter)
+    return session
 
 
 class MWpage:
@@ -207,13 +229,15 @@ class SMWImportOverview(MWpage):
     """
     Class represents the Ontology overview SMW page: Mediawiki:smw_import_XYZ
     """
-    def __init__(self, ontology_ns: str, ontology_ns_prefix: str):
+    def __init__(self, ontology_ns: str, ontology_ns_prefix: str,
+                 ontology_format: str):
         self.ontology_ns = ontology_ns
         self.ontology_ns_prefix = ontology_ns_prefix
+        self.ontology_format = ontology_format
         self.terms = []
         self.ontology_name = None
         self.wikipage_name = f'Mediawiki:Smw_import_{self.ontology_ns_prefix}'
-        self.title, self.version, self.description = self.query_ontology()
+        self.title, self.version, self.desc = self.get_ontology_details()
 
     def create_smw_import(self):
         all_resources = self.terms
@@ -229,11 +253,42 @@ class SMWImportOverview(MWpage):
             page_info=page_info_dict,
         )
 
-    def query_ontology(self):
-        # print(f'Query ontology schema: {self.ontology_ns}')
-        title, version, description = None, None, None  # default
+    def can_resolve_uri(self, uri, contenttype):
         try:
+            response = requests_retry_session().get(
+                url=uri,
+                headers={'Accept': contenttype},
+                timeout=0.2)
+            response.raise_for_status()
+        except requests.exceptions.HTTPError:
+            return False
+        except requests.exceptions.ConnectTimeout:
+            return False
+        except requests.exceptions.Timeout:
+            return False
+        except requests.exceptions.ConnectionError:
+            return False
+        else:
+            if response.headers.get('content-type') == contenttype:
+                # dismiss the cases where html is returned
+                return True
+            else:
+                return False
+
+    def get_ontology_details(self):
+        """
+        Tries to find ontology title, verion, description
+        default value title = self.ontology_ns_prefix
+        """
+        title, version, description = self.ontology_ns_prefix, None, None
+        can_resolve = self.can_resolve_uri(
+            uri=self.ontology_ns,
+            contenttype="application/rdf+xml"
+        )
+        if can_resolve:
+
             graph = Graph()
+            print(self.ontology_ns, self.ontology_format)
             graph.parse(location=self.ontology_ns,
                         format="application/rdf+xml")
             sparql_query = relative_read_f('queries/query_ontology_schema.rq')
@@ -241,12 +296,9 @@ class SMWImportOverview(MWpage):
             printouts = graph.query(sparql_query)
             if len(printouts) > 0:
                 printout_dict = (list(printouts)[0]).asdict()
-                title = printout_dict.get('title')
+                if printout_dict.get('title'):
+                    title = printout_dict.get('title')
                 version = printout_dict.get('version')
                 description = printout_dict.get('description')
-        except (exceptions.ParserError, TypeError) as pe:
-            msg = f"URI {self.ontology_ns} failed to resolve"
-            print('Warning: ', pe, '\n', msg)
-        if not title:
-            title = self.ontology_ns_prefix
+
         return title, version, description

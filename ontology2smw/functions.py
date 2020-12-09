@@ -59,8 +59,8 @@ def sparql2smwpage(sparql_fn: str, format_: str, source: str):
         if term.namespace_prefix not in smw_import_dict.keys():
             smw_import_dict[term.namespace_prefix] = SMWImportOverview(
                 ontology_ns=term.namespace,
-                ontology_ns_prefix=term.namespace_prefix
-            )
+                ontology_ns_prefix=term.namespace_prefix,
+                ontology_format=format_)
         # smw_import_dict[term.namespace_prefix].terms is []
         # of tuples as found in MediaWiki:Smw_import_xyz
         # ie: abstract|Type:Page
@@ -78,7 +78,7 @@ def sparql2smwpage(sparql_fn: str, format_: str, source: str):
 
 def writetowiki_decision():
     """
-    Prompts the uses to affirm she wants or not to write to wiki
+    Prompts the users to confirm they wants to write to the wiki
     If so wiki bot login will take place and connection will be available
     under var site
     """

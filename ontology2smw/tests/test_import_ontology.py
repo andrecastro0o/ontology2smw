@@ -1,55 +1,38 @@
-import os
-import sys
 import re
 import rdflib
 import string
 import pytest
 from pathlib import Path
 from random import choice
-sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
-from ontology2smw.classes import QueryOntology, SMWCategoryORProp, \
-    xsd2smwdatatype
+from ontology2smw.classes import MWpage, QueryOntology, SMWCategoryORProp, \
+    SMWImportOverview, xsd2smwdatatype
 from ontology2smw.mediawikitools import actions
 from ontology2smw.file_utils import yaml_get_source
 
+ontos = [
+    # ('https://d-nb.info/standards/elementset/gnd.ttl', 'gndo', 'ttl'),
+    ('http://www.w3.org/ns/dcat#', 'dcat', 'application/rdf+xml'),
+    ('http://www.w3.org/ns/dcat#', 'dcat', 'application/rdf+xml'),
+    ('http://purl.org/spar/datacite', 'datacite', 'application/rdf+xml'),
+    # ('http://purl.obolibrary.org/obo/ncbitaxon.owl#', 'ncbitaxon',
+    #  'application/rdf+xml'),  # too large to handle
+]
+onto_uri, onto_prefix, onto_format = choice(ontos)
 
-@pytest.mark.skip(reason="no way of currently testing this")
+
 @pytest.mark.ontology
-def test_ontology_parse():
-    graph = rdflib.Graph()
-    graph.parse(
-        source='aeon/aeon.ttl',
-        format='ttl')
-    assert graph
-#
-#
-# exp_importfrom = re.compile(
-#     "\[\[Imported from::(?P<ontology>\w.*?):(?P<category>\w.*?)]]")
-# exp_equivalent_uri = re.compile("\[\[Equivalent URI::(?P<uri>\w.*?)]]")
-# exp_categories = re.compile("\[\[Category:(?P<categories>\w.*?)]]")
-# exp_subcategory_line = re.compile("Subcategory\sof.*?")
-# exp_subcategory = re.compile(
-#     "Subcategory\sof.*?\[\[Category:(?P<subcat>.*?)]]")
-
-
-@pytest.mark.skip(reason="no way of currently testing this")
-@pytest.mark.ontology
-def test_query_class():
-    ontology_ns = 'http://www.w3.org/2004/02/skos/core#'
-    query = QueryOntology(sparql_fn='ontology2smw/queries/query_ontology_schema.rq',
-                          format_="application/rdf+xml", source=ontology_ns)
+def test_queryontology_class():
+    print(onto_uri)
+    query = QueryOntology(
+        sparql_fn='ontology2smw/queries/query_ontology_schema.rq',
+        format_=onto_format, source=onto_uri)
+    query.get_graph_prefixes()
     printouts = list(query.return_printout())
-    print(printouts)
     assert len(list(printouts)) > 0
-    # ontology_ns = 'http://purl.obolibrary.org/obo/'
-    # query = Query(sparql_fn='queries/query_ontology_schema.rq',
-    #               format_="application/rdf+xml", source=ontology_ns)
-    # query.return_printout()
-    # printouts = list(query.return_printout())
-    # assert len(printouts) == 0
+    assert len(query.prefixes) > 0
 
 
-@pytest.mark.smw
+@pytest.mark.termsinsmw
 def test_term_creation_from_remote_onto():
     regex_import_str = re.compile(
         r"Imported from \[\[Imported from::(?P<prefix>\w+?):(?P<term>\w+?)]]",
@@ -59,9 +42,6 @@ def test_term_creation_from_remote_onto():
         r"\[\[Has property description::(?P<desc>(.|\n)+?)@(?P<lang>\w+?)]]",
         re.MULTILINE
     )
-#  regex_label_str = re.compile(r"Has property description::(?P<desc>\w+?)@(
-    #  ?P<lang>\w+?)]]",re.MULTILINE)
-
 
     query = QueryOntology(sparql_fn='ontology2smw/queries/ontology_terms.rq',
                           format_='application/rdf+xml',
@@ -73,8 +53,6 @@ def test_term_creation_from_remote_onto():
         term.create_wiki_item()
         assert len(term.wikipage_name)
         assert len(term.wikipage_content)
-        # what pattern are we looking for in wikipage_name & wikipage_content
-        # import pdb; pdb.set_trace()
         assert len(re.findall(regex_import_str, term.wikipage_content)) > 0
         search = re.search(regex_import_str, term.wikipage_content)
         assert len(search.group('prefix')) > 0, 'Error: no prefix found'
@@ -84,37 +62,17 @@ def test_term_creation_from_remote_onto():
         if term.term_dict['label']:
             print(f'wiki page: {term.wikipage_content}')
             label_search = re.search(regex_label_str, term.wikipage_content)
-            assert len(label_search.group('desc')) > 0, 'Error: no term desc ' \
-                                                      'found'
-            #label_search.group('lang')
-        else:
-            import pdb; pdb.set_trace()
+            assert len(label_search.group('desc')) > 0, \
+                'Error: no term desc found'
+        # tests def determine_smw_catORprop
+        termtype = str(term.term_dict.get('termType'))
+        assert term.resource_type.replace('Category', 'Class') in termtype
 
         if term.resource_type == 'Property':
             assert term.prop_datatype, 'Error: NO term.prop_datatype'
-            if term.prop_datatype is not 'Page':
+            if term.prop_datatype != 'Page':
                 assert term.prop_datatype in set(xsd2smwdatatype.values()), \
                     'Error: prop_datatype not in xsd2smwdatatype'
-
-
-@pytest.mark.skip(reason="no way of currently testing this")
-@pytest.mark.smw
-def test_term_creation_from_local_onto():
-    query = QueryOntology(sparql_fn='ontology2smw/queries/ontology_terms.rq',
-                          format_='ttl',
-                          source='aeon/aeon.ttl')
-    query.get_graph_prefixes()
-    assert query
-    for printout in query.return_printout():
-        assert printout
-        ns, ns_prefix = get_term_ns_prefix(term_uri=printout.term,
-                                           allprefixes=query.prefixes)
-
-        term = SMWCategoryORProp(item_=printout,
-                                 namespace=ns,
-                                 namespace_prefix=ns_prefix)
-        assert term.term_dict['smw_import_info']
-        term.create_wiki_item()
 
 
 def randstring(lenght=10):
@@ -122,102 +80,88 @@ def randstring(lenght=10):
     return out
 
 
-@pytest.mark.skip(reason="no way of currently testing this")
+@pytest.mark.ontology
+def test_non_repeating_terms():
+    graph = rdflib.Graph()
+    graph.parse(location=onto_uri, format=onto_format)
+    with open('ontology2smw/queries/ontology_terms.rq', 'r') as query_fobj:
+        sparq_query = query_fobj.read()
+    printouts = graph.query(sparq_query)
+    assert printouts
+
+
 @pytest.mark.smw
-def test_category_creation():
-    # TODO: block should go to fixtures
+def test_wiki_terms_creation():
     current_file = Path(__file__)
     root_dir = current_file.parent.parent.parent
     print(root_dir)
-    wikidetails = root_dir  / 'wikidetails.yml'
+    wikidetails = root_dir / 'wikidetails.yml'
     print(wikidetails)
     wikidetails = yaml_get_source(wikidetails)
-    site = actions.login(host=wikidetails['host'],
-                         path=wikidetails['path'],
-                         scheme=wikidetails['scheme'],
-                         username=wikidetails['username'],
-                         password=wikidetails['password'])
-    # end of block
+    actions.login(host=wikidetails['host'],
+                  path=wikidetails['path'],
+                  scheme=wikidetails['scheme'],
+                  username=wikidetails['username'],
+                  password=wikidetails['password'])
     actions.edit(page='Category:Test', content='Test',
                  summary='Testing Category creation',
                  append=True)
     page_content, page_lastrev = actions.read(page='Category:Test')
     assert page_lastrev
     assert 'Test' in page_content
-
-
-@pytest.mark.skip(reason="no way of currently testing this")
-@pytest.mark.smw
-def test_smw_import_creation():
-    # TODO: block should go to fixtures
-    current_file = Path(__file__)
-    root_dir = current_file.parent.parent.parent
-    print(root_dir)
-    wikidetails = root_dir  / 'wikidetails.yml'
-    print(wikidetails)
-    wikidetails = yaml_get_source(wikidetails)
-    site = actions.login(host=wikidetails['host'],
-                         path=wikidetails['path'],
-                         scheme=wikidetails['scheme'],
-                         username=wikidetails['username'],
-                         password=wikidetails['password'])
-    # end of block
-    actions.edit(page='MediaWiki:Smw_import_test', content='Test',
-                 summary='Testing Smw_import_ creation\n[[Category:Imported vocabulary]]',
-                 append=True)
+    # create the MediaWiki:Smw_import_test page and
+    actions.edit(
+        page='MediaWiki:Smw_import_test', content='Test',
+        summary='Testing Smw_import_ \n[[Category:Imported vocabulary]]',
+        append=True)
     page_content, page_lastrev = actions.read(page='Category:Test')
     assert page_lastrev
     assert 'Test' in page_content
 
 
-@pytest.mark.ontologyterms
-def test_non_repeating_terms():
-    all_ontologies = ['http://purl.org/spar/datacite', 'https://d-nb.info/standards/elementset/gnd']
-    ontology_ns = all_ontologies[1]
-    graph = rdflib.Graph()
-    graph.parse(location=ontology_ns, format="application/rdf+xml")
-    with open('ontology2smw/queries/ontology_terms.rq', 'r') as query_fobj:
-        sparq_query = query_fobj.read()
-    printouts = graph.query(sparq_query)
-    assert printouts
+@pytest.mark.smw
+def test_MWpage():
+    mwpage = MWpage()
+    mwpage.wikipage_name = "Main_Page"
+    mwpage.wikipage_content = f"=ontology2smw test: {randstring()}="
+    mwpage.write_wikipage()
+    page_content, page_lastrev = actions.read(page=mwpage.wikipage_name)
+    assert page_content == mwpage.wikipage_content
 
-# def test_property_creation():
-#     resource = 'property'
-#     query = Query(resource_type='property',
-#                   sparql_fn='query_properties.rq',
-#                   format_='ttl',
-#                   source='aeon/aeon.ttl')
-#     assert query
-#     for printout in query.return_printout():
-#         item = SMWCategoryORProp(resource_type=query.resource_type,
-#                                  item_=printout,
-#                                  namespace='aeon')
-#         assert item.item_dict['smw_import_info']
-#         item.create_wiki_item()
-#         print(item.wikipage_name)
-#         print(item.wikipage_content)
-#         assert item.wikipage_name.startswith(resource.capitalize())
-#         assert item.wikipage_name.split(':')[-1] == item.subject_name and \
-#                item.wikipage_name.split(':')[-1] in item.subject
-#
-#         assert ':]]' not in item.wikipage_content  # empty prop/category
-#         found_importfrom = re.search(pattern=exp_importfrom,
-#                                      string=item.wikipage_content)
-#         assert found_importfrom.group('ontology') == item.ontology_ns
-#         assert found_importfrom.group('category') == item.subject_name
-#         found_equivalent_uri = re.search(pattern=exp_equivalent_uri,
-#                                          string=item.wikipage_content)
-#         assert found_equivalent_uri.group('uri') == str(item.subject)
-#         found_cats = re.findall(pattern=exp_categories,
-#                                 string=item.wikipage_content)
-#         print(f'found_cats: {found_cats}')
-#         assert 'Imported vocabulary' in found_cats and \
-#                item.ontology_ns.upper() in found_cats
-#         # if re.search(pattern=exp_subcategory_line,
-#         #              string=item.wikipage_content):
-#         #     found_subcats = re.findall(pattern=exp_subcategory,
-#         #                                string=item.wikipage_content)
-#         #     subclass_name = url_termination(item.item_dict['subclassof'])
-#         #     print(f'Subcategory: {subclass_name} '
-#         #           f'is found as {found_subcats}')
-#         #     assert subclass_name in found_subcats
+
+@pytest.mark.termsinsmw
+def test_smwimportoverview():
+    for onto in ontos:
+        local_onto_uri, local_onto_prefix, local_onto_format = onto
+        smwimport_overview = SMWImportOverview(
+            ontology_ns=local_onto_uri,
+            ontology_ns_prefix=local_onto_prefix,
+            ontology_format=local_onto_format)
+        assert smwimport_overview.ontology_ns_prefix in \
+               smwimport_overview.wikipage_name
+        smwimport_overview.create_smw_import()
+        assert smwimport_overview.ontology_ns in \
+               smwimport_overview.wikipage_content
+        prefix_ = smwimport_overview.ontology_ns_prefix.upper()
+        category = f'[[Category:{prefix_}]]'
+        assert category in smwimport_overview.wikipage_content
+        print(smwimport_overview.title, smwimport_overview.version,
+              smwimport_overview.desc)
+        assert smwimport_overview.title is not None
+
+
+@pytest.mark.uri
+def test_can_resolve_uri():
+    for onto in ontos:
+        uri = onto[0]
+    smwimport = SMWImportOverview
+    print(uri)
+    uri_resolve = smwimport.can_resolve_uri(self=SMWImportOverview,
+                                            uri=uri,
+                                            contenttype='application/rdf+xml')
+    if uri == 'http://purl.org/spar/datacite/':
+        assert uri_resolve is False
+    elif uri == 'http://purl.obolibrary.org/obo/ncbitaxon.owl#':
+        assert uri_resolve is False
+    elif uri == 'http://www.w3.org/ns/dcat#':
+        assert uri_resolve is False
