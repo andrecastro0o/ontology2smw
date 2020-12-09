@@ -10,7 +10,8 @@ from ontology2smw.mediawikitools import actions
 from ontology2smw.file_utils import yaml_get_source
 
 ontos = [
-    ('https://d-nb.info/standards/elementset/gnd.ttl', 'gndo', 'ttl'),
+    # ('https://d-nb.info/standards/elementset/gnd.ttl', 'gndo', 'ttl'),
+    ('http://www.w3.org/ns/dcat#', 'dcat', 'application/rdf+xml'),
     ('http://www.w3.org/ns/dcat#', 'dcat', 'application/rdf+xml'),
     ('http://purl.org/spar/datacite', 'datacite', 'application/rdf+xml'),
     # ('http://purl.obolibrary.org/obo/ncbitaxon.owl#', 'ncbitaxon',
@@ -130,19 +131,24 @@ def test_MWpage():
 
 @pytest.mark.termsinsmw
 def test_smwimportoverview():
-    smwimport_overview = SMWImportOverview(ontology_ns=onto_uri,
-                                           ontology_ns_prefix=onto_prefix,
-                                           ontology_format=onto_format)
-    assert smwimport_overview.ontology_ns_prefix in \
-           smwimport_overview.wikipage_name
-    smwimport_overview.create_smw_import()
-    assert smwimport_overview.ontology_ns in \
-           smwimport_overview.wikipage_content
-    category = f'[[Category:{smwimport_overview.ontology_ns_prefix.upper()}]]'
-    assert category in smwimport_overview.wikipage_content
-    print(smwimport_overview.title, smwimport_overview.version,
-          smwimport_overview.description)
-    assert smwimport_overview.title is not None
+    for onto in ontos:
+        local_onto_uri, local_onto_prefix, local_onto_format = onto
+        
+        smwimport_overview = SMWImportOverview(
+            ontology_ns=local_onto_uri,
+            ontology_ns_prefix=local_onto_prefix,
+            ontology_format=local_onto_format)
+        assert smwimport_overview.ontology_ns_prefix in \
+               smwimport_overview.wikipage_name
+        smwimport_overview.create_smw_import()
+        assert smwimport_overview.ontology_ns in \
+               smwimport_overview.wikipage_content
+        prefix_ = smwimport_overview.ontology_ns_prefix.upper()
+        category = f'[[Category:{prefix_}]]'
+        assert category in smwimport_overview.wikipage_content
+        print(smwimport_overview.title, smwimport_overview.version,
+              smwimport_overview.description)
+        assert smwimport_overview.title is not None
 
 
 @pytest.mark.uri
