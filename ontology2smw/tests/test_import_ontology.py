@@ -13,6 +13,8 @@ ontos = [
     ('https://d-nb.info/standards/elementset/gnd.ttl', 'gndo', 'ttl'),
     ('http://www.w3.org/ns/dcat#', 'dcat', 'application/rdf+xml'),
     ('http://purl.org/spar/datacite', 'datacite', 'application/rdf+xml'),
+    # ('http://purl.obolibrary.org/obo/ncbitaxon.owl#', 'ncbitaxon',
+    #  'application/rdf+xml'),  # too large to handle
 ]
 onto_uri, onto_prefix, onto_format = choice(ontos)
 
@@ -138,4 +140,23 @@ def test_smwimportoverview():
            smwimport_overview.wikipage_content
     category = f'[[Category:{smwimport_overview.ontology_ns_prefix.upper()}]]'
     assert category in smwimport_overview.wikipage_content
-    assert smwimport_overview.title
+    print(smwimport_overview.title, smwimport_overview.version,
+          smwimport_overview.description)
+    assert smwimport_overview.title is not None
+
+
+@pytest.mark.uri
+def test_can_resolve_uri():
+    for onto in ontos:
+        uri = onto[0]
+    smwimport = SMWImportOverview
+    print(uri)
+    uri_resolve = smwimport.can_resolve_uri(self=SMWImportOverview,
+                                            uri=uri,
+                                            contenttype='application/rdf+xml')
+    if uri == 'http://purl.org/spar/datacite/':
+        assert uri_resolve is False
+    elif uri == 'http://purl.obolibrary.org/obo/ncbitaxon.owl#':
+        assert uri_resolve is False
+    elif uri == 'http://www.w3.org/ns/dcat#':
+        assert uri_resolve is False
