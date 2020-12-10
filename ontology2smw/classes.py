@@ -162,6 +162,12 @@ class SMWCategoryORProp(MWpage):
         for prefix, namespace in self.query.prefixes.items():
             if (namespace in self.term or namespace in http_or_https_term)\
                     and prefix:
+                # prefixes can have an appended number if there is more than
+                # 1 prefix w
+                # same name in self.query.prefixes
+                # hence remove that last number
+                if prefix[-1].isnumeric():
+                    prefix = prefix[:-1]
                 return namespace, prefix
         # when prefix cannot be found in self.query.prefixes
         # promp user to provide the prefix for the NS
@@ -170,6 +176,7 @@ class SMWCategoryORProp(MWpage):
         prefix = input(f"\n\nThe prefix to Namespace {namespace} CANNOT be "
                        f"found.\nPlease provide it: ")
         self.query.prefixes[prefix] = URIRef(namespace)
+
         return namespace, prefix
 
     def create_wiki_item(self):
