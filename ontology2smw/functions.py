@@ -75,7 +75,10 @@ def sparql2smwpage(sparql_fn: str, format_: str, source: str):
 
         # print(term.item_dict)
     create_smw_import_pages(importdict=smw_import_dict)
-    reportobj = Report(importdict=smw_import_dict)
+    reportobj = Report(importdict=smw_import_dict,
+                       write2wiki=args.write,
+                       verbose=args.verbose,
+                       outputfile=args.reportfile)
     print(reportobj.report)
 
 

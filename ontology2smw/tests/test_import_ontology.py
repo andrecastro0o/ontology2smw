@@ -7,7 +7,7 @@ from random import choice
 from ontology2smw.classes import MWpage, QueryOntology, SMWCategoryORProp, \
     SMWImportOverview, xsd2smwdatatype, Report
 from ontology2smw.mediawikitools import actions
-from ontology2smw.file_utils import yaml_get_source
+from ontology2smw.file_utils import yaml_get_source, readfile, removefile
 
 ontos = [
     # ('https://d-nb.info/standards/elementset/gnd.ttl', 'gndo', 'ttl'),
@@ -167,7 +167,7 @@ def test_can_resolve_uri():
         assert uri_resolve is False
 
 
-@pytest.mark.report
+@pytest.mark.outputreport
 def test_report():
     smw_import_dict = {}
     smw_import_dict[onto_prefix] = SMWImportOverview(
@@ -175,8 +175,15 @@ def test_report():
         ontology_ns_prefix=onto_prefix,
         ontology_format=onto_format)
     smw_import_dict[onto_prefix].create_smw_import()
-    reportobj = Report(importdict=smw_import_dict)
-    print(reportobj.report)
+    removefile(filename='report.txt')
+    reportobj = Report(importdict=smw_import_dict,
+                       write2wiki=False,
+                       verbose=False,
+                       output=True)
     assert reportobj.report
     assert onto_prefix in reportobj.report
     assert f'Mediawiki:Smw_import_{onto_prefix}' in reportobj.report
+    assert reportobj.output_file is True or reportobj.output_file is False
+    filepath, content = readfile(filename='report.txt')
+    assert 'report.txt' in str(filepath)
+    assert f'Mediawiki:Smw_import_{onto_prefix}' in content

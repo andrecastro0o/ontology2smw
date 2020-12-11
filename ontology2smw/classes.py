@@ -8,7 +8,7 @@ from typing import Dict
 from datetime import datetime
 from ontology2smw.jinja_utils import url_termination, render_template
 from ontology2smw.mediawikitools import actions as mwactions
-from ontology2smw.file_utils import relative_read_f
+from ontology2smw.file_utils import relative_read_f, write2file
 
 all_ns_dict = relative_read_f('queries/all_ns_prefixes.json', format_='json')
 
@@ -312,8 +312,11 @@ class SMWImportOverview(MWpage):
 
 
 class Report():
-    def __init__(self, importdict):
+    def __init__(self, importdict, write2wiki, verbose, output):
         self.importdict = importdict
+        self.write2wiki = write2wiki
+        self.verbose = verbose
+        self.output_file = output
         self.report = self.create_report()
 
     def create_report(self):
@@ -326,4 +329,6 @@ class Report():
             onto_report_line = f'{prefix} creates {wikipage_name} with' \
                                f' {amount_terms} terms\n'
             report += onto_report_line
+        if self.output_file is True:
+            write2file(filename='report.txt', content=report)
         return report
