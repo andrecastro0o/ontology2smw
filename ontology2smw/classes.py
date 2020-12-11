@@ -317,11 +317,13 @@ class Report():
         self.report = self.create_report()
 
     def create_report(self):
+        report = '\n*********** Import Report: ***********\n'
         for smwimportoverview in self.importdict.values():
             prefix = smwimportoverview.ontology_ns_prefix
             # todo: prepend wiki url if --write
             wikipage_name = smwimportoverview.wikipage_name
             amount_terms = len(smwimportoverview.terms)
-            report = f'{prefix} creates {wikipage_name} with {amount_terms} ' \
-                     f'terms'
-            return report
+            onto_report_line = f'{prefix} creates {wikipage_name} with' \
+                               f' {amount_terms} terms\n'
+            report += onto_report_line
+        return report
