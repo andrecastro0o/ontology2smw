@@ -302,3 +302,16 @@ class SMWImportOverview(MWpage):
                 description = printout_dict.get('description')
 
         return title, version, description
+
+
+class Report():
+    def __init__(self, importdict):
+        self.importdict = importdict
+
+    def create_report(self):
+        for smwimportoverview in self.importdict.values():
+            prefix = smwimportoverview.ontology_ns_prefix
+            # todo: prepend wiki url if --write
+            wikipage_name = smwimportoverview.wikipage_name
+            amount_terms = len(smwimportoverview.terms)
+            print(f'{prefix} creates {wikipage_name} with {amount_terms} terms')

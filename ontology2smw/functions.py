@@ -5,6 +5,7 @@ from ontology2smw.mediawikitools.actions import login
 from ontology2smw.classes import QueryOntology
 from ontology2smw.classes import SMWCategoryORProp
 from ontology2smw.classes import SMWImportOverview
+from ontology2smw.classes import Report
 from ontology2smw.cli_args import parser
 
 args = parser.parse_args()
@@ -74,6 +75,8 @@ def sparql2smwpage(sparql_fn: str, format_: str, source: str):
 
         # print(term.item_dict)
     create_smw_import_pages(importdict=smw_import_dict)
+    report = Report(importdict=smw_import_dict)
+    report.create_report()
 
 
 def writetowiki_decision():
