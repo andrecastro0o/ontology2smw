@@ -75,8 +75,8 @@ def sparql2smwpage(sparql_fn: str, format_: str, source: str):
 
         # print(term.item_dict)
     create_smw_import_pages(importdict=smw_import_dict)
-    report = Report(importdict=smw_import_dict)
-    report.create_report()
+    reportobj = Report(importdict=smw_import_dict)
+    print(reportobj.report)
 
 
 def writetowiki_decision():

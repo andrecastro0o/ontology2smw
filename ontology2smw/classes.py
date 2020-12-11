@@ -307,6 +307,7 @@ class SMWImportOverview(MWpage):
 class Report():
     def __init__(self, importdict):
         self.importdict = importdict
+        self.report = self.create_report()
 
     def create_report(self):
         for smwimportoverview in self.importdict.values():
@@ -314,4 +315,6 @@ class Report():
             # todo: prepend wiki url if --write
             wikipage_name = smwimportoverview.wikipage_name
             amount_terms = len(smwimportoverview.terms)
-            print(f'{prefix} creates {wikipage_name} with {amount_terms} terms')
+            report = f'{prefix} creates {wikipage_name} with {amount_terms} ' \
+                     f'terms'
+            return report

@@ -5,7 +5,7 @@ import pytest
 from pathlib import Path
 from random import choice
 from ontology2smw.classes import MWpage, QueryOntology, SMWCategoryORProp, \
-    SMWImportOverview, xsd2smwdatatype
+    SMWImportOverview, xsd2smwdatatype, Report
 from ontology2smw.mediawikitools import actions
 from ontology2smw.file_utils import yaml_get_source
 
@@ -165,3 +165,18 @@ def test_can_resolve_uri():
         assert uri_resolve is False
     elif uri == 'http://www.w3.org/ns/dcat#':
         assert uri_resolve is False
+
+
+@pytest.mark.report
+def test_report():
+    smw_import_dict = {}
+    smw_import_dict[onto_prefix] = SMWImportOverview(
+        ontology_ns=onto_uri,
+        ontology_ns_prefix=onto_prefix,
+        ontology_format=onto_format)
+    smw_import_dict[onto_prefix].create_smw_import()
+    reportobj = Report(importdict=smw_import_dict)
+    print(reportobj.report)
+    assert reportobj.report
+    assert onto_prefix in reportobj.report
+    assert f'Mediawiki:Smw_import_{onto_prefix}' in reportobj.report
