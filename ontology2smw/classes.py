@@ -326,6 +326,9 @@ class Report():
             # todo: prepend wiki url if --write
             wikipage_name = smwimportoverview.wikipage_name
             amount_terms = len(smwimportoverview.terms)
+            if self.write2wiki is True:
+                wiki_article_path = mwactions.get_articlepath()
+                wikipage_name = wiki_article_path + wikipage_name  # add url
             onto_report_line = f'{prefix} creates {wikipage_name} with' \
                                f' {amount_terms} terms\n'
             report += onto_report_line

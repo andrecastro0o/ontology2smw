@@ -22,4 +22,3 @@ parser.add_argument('-v', '--verbose', action='store_true',
                     help="Verbose output. Default: False.")
 parser.add_argument('-r', '--report', action='store_true',
                     help="Save report in file report.txt Default: False.")
-

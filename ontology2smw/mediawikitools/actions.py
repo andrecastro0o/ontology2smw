@@ -77,6 +77,13 @@ def login(host: str, path: str, scheme: str, username='', password='') -> \
     site = site_
     return site_
 
+
+def get_articlepath():
+    articlepath = site.site['server'] + site.site['articlepath'].replace(
+        '$1', '')
+    return articlepath
+
+
 # def create_mw_site(details):
 #     site = login(host=details['host'],
 #                  path=details['path'],
