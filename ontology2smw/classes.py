@@ -8,7 +8,7 @@ from typing import Dict
 from datetime import datetime
 from ontology2smw.jinja_utils import url_termination, render_template
 from ontology2smw.mediawikitools import actions as mwactions
-from ontology2smw.file_utils import relative_read_f
+from ontology2smw.file_utils import relative_read_f, write2file
 
 all_ns_dict = relative_read_f('queries/all_ns_prefixes.json', format_='json')
 
@@ -74,7 +74,6 @@ class MWpage:
 
     def write_wikipage(self):
         now = datetime.now().isoformat()
-        print(f'Attempting to write {self.wikipage_name} to wiki')
         edit_response = mwactions.edit(page=self.wikipage_name,
                                        content=self.wikipage_content,
                                        summary=f'Edited by Bot at {now}',
@@ -113,7 +112,6 @@ class QueryOntology:
         self.prefixes = all_prefixes
 
     def query_graph(self):
-        print(f'\n\n*** {self.sparql_fn} ***\n')
         with open(self.sparql_fn, 'r') as query_fobj:
             self.query = query_fobj.read()  # TMP
             sparq_query = self.query  # query_fobj.read()
@@ -293,9 +291,8 @@ class SMWImportOverview(MWpage):
             contenttype="application/rdf+xml"
         )
         if can_resolve:
-
             graph = Graph()
-            print(self.ontology_ns, self.ontology_format)
+            # print(self.ontology_ns, self.ontology_format)
             graph.parse(location=self.ontology_ns,
                         format="application/rdf+xml")
             sparql_query = relative_read_f('queries/query_ontology_schema.rq')
@@ -309,3 +306,35 @@ class SMWImportOverview(MWpage):
                 description = printout_dict.get('description')
 
         return title, version, description
+
+
+class Report():
+    def __init__(self, importdict, cli_arg_write, verbose, output, cache):
+        self.importdict = importdict
+        self.cli_arg_write = cli_arg_write
+        self.verbose = verbose
+        self.output_file = output
+        self.report_cache = cache
+        self.report = self.create_report()
+
+    def create_report(self):
+        report = '\n*********** Import Report: ***********\n'
+        for smwimportoverview in self.importdict.values():
+            prefix = smwimportoverview.ontology_ns_prefix
+            # todo: prepend wiki url if --write
+            wikipage_name = smwimportoverview.wikipage_name
+            if self.verbose is True:
+                wikipage_str = f'\n{"-" * 15}\n{wikipage_name}\n{"-" * 15}\n'
+                self.report_cache += wikipage_str
+                self.report_cache += smwimportoverview.wikipage_content
+            amount_terms = len(smwimportoverview.terms)
+            if self.cli_arg_write is True:
+                wiki_article_path = mwactions.get_articlepath()
+                wikipage_name = wiki_article_path + wikipage_name  # adds url
+            onto_report_line = f'{prefix} creates {wikipage_name} with' \
+                               f' {amount_terms} terms\n'
+            report += onto_report_line
+        if self.output_file is True:
+            self.report_cache += report
+            write2file(filename='report.txt', content=self.report_cache)
+        return report
