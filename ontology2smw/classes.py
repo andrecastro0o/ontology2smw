@@ -74,7 +74,6 @@ class MWpage:
 
     def write_wikipage(self):
         now = datetime.now().isoformat()
-        print(f'Attempting to write {self.wikipage_name} to wiki')
         edit_response = mwactions.edit(page=self.wikipage_name,
                                        content=self.wikipage_content,
                                        summary=f'Edited by Bot at {now}',
@@ -113,7 +112,6 @@ class QueryOntology:
         self.prefixes = all_prefixes
 
     def query_graph(self):
-        print(f'\n\n*** {self.sparql_fn} ***\n')
         with open(self.sparql_fn, 'r') as query_fobj:
             self.query = query_fobj.read()  # TMP
             sparq_query = self.query  # query_fobj.read()
@@ -293,9 +291,8 @@ class SMWImportOverview(MWpage):
             contenttype="application/rdf+xml"
         )
         if can_resolve:
-
             graph = Graph()
-            print(self.ontology_ns, self.ontology_format)
+            # print(self.ontology_ns, self.ontology_format)
             graph.parse(location=self.ontology_ns,
                         format="application/rdf+xml")
             sparql_query = relative_read_f('queries/query_ontology_schema.rq')
@@ -312,9 +309,9 @@ class SMWImportOverview(MWpage):
 
 
 class Report():
-    def __init__(self, importdict, write2wiki, verbose, output):
+    def __init__(self, importdict, cli_arg_write, verbose, output):
         self.importdict = importdict
-        self.write2wiki = write2wiki
+        self.cli_arg_write = cli_arg_write
         self.verbose = verbose
         self.output_file = output
         self.report = self.create_report()
@@ -326,7 +323,7 @@ class Report():
             # todo: prepend wiki url if --write
             wikipage_name = smwimportoverview.wikipage_name
             amount_terms = len(smwimportoverview.terms)
-            if self.write2wiki is True:
+            if self.cli_arg_write is True:
                 wiki_article_path = mwactions.get_articlepath()
                 wikipage_name = wiki_article_path + wikipage_name  # add url
             onto_report_line = f'{prefix} creates {wikipage_name} with' \

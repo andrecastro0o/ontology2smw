@@ -13,7 +13,6 @@ args = parser.parse_args()
 
 # def copied from Query Class (should reuse that one)
 def query_graph(sparql_fn, graph):
-    print(f'\n\n*** {sparql_fn} ***\n')
     with open(sparql_fn, 'r') as query_fobj:
         sparq_query = query_fobj.read()
     printouts = graph.query(sparq_query)
@@ -26,15 +25,11 @@ def create_smw_import_pages(importdict):
         For each of the ontologies in importdict (SMWCategoryORProp
         instance)
     """
-    print("\n*** Mediawiki: Smw_import_ PAGES ***\n")
     for prefix, importoverview in importdict.items():
-        print(f'\n{prefix}')
         # pprint(importoverview.__dict__)
         importoverview.create_smw_import()
         if args.write is True:
             importoverview.write_wikipage()  # ATTENTION: will write to wiki
-        else:
-            print(importoverview.wikipage_content)
 
 
 def sparql2smwpage(sparql_fn: str, format_: str, source: str):
@@ -50,12 +45,16 @@ def sparql2smwpage(sparql_fn: str, format_: str, source: str):
     for printout in query.return_printout():
         # loop through each ontology schema term, resulting from SPARQL query
         term = SMWCategoryORProp(item_=printout, query_=query)
-        print(f'\n----------------------------------\n{term.wikipage_name}')
+        if args.verbose is True:
+            print(f'\n----------------------------------\n{term.wikipage_name}'
+                  f'\n----------------------------------')
+        else:
+            print(f'{term.wikipage_name}')
 
         if args.write is True:
             term.write_wikipage()
-        else:
-            print(term.wikipage_content)
+        if args.verbose is True:
+            print(term.wikipage_content.replace('\n\n', '\n'))
 
         if term.namespace_prefix not in smw_import_dict.keys():
             smw_import_dict[term.namespace_prefix] = SMWImportOverview(
@@ -76,7 +75,7 @@ def sparql2smwpage(sparql_fn: str, format_: str, source: str):
         # print(term.item_dict)
     create_smw_import_pages(importdict=smw_import_dict)
     reportobj = Report(importdict=smw_import_dict,
-                       write2wiki=args.write,
+                       cli_arg_write=args.write,
                        verbose=args.verbose,
                        output=args.report)
     print(reportobj.report)

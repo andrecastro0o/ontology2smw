@@ -177,7 +177,7 @@ def test_report():
     smw_import_dict[onto_prefix].create_smw_import()
     removefile(filename='report.txt')
     reportobj = Report(importdict=smw_import_dict,
-                       write2wiki=False,
+                       cli_arg_write=False,
                        verbose=False,
                        output=True)
     assert reportobj.report
