@@ -179,7 +179,8 @@ def test_report():
     reportobj = Report(importdict=smw_import_dict,
                        cli_arg_write=False,
                        verbose=False,
-                       output=True)
+                       output=True,
+                       cache='')
     assert reportobj.report
     assert onto_prefix in reportobj.report
     assert f'Mediawiki:Smw_import_{onto_prefix}' in reportobj.report
@@ -187,3 +188,4 @@ def test_report():
     filepath, content = readfile(filename='report.txt')
     assert 'report.txt' in str(filepath)
     assert f'Mediawiki:Smw_import_{onto_prefix}' in content
+    assert len(reportobj.report_cache) > 0

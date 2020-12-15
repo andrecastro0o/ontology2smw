@@ -8,7 +8,8 @@ from typing import Dict
 
 def removefile(filename):
     filepath = Path(__file__).parent.parent / filename
-    os.remove(filepath)
+    if Path.is_file(filepath):
+        os.remove(filepath)
 
 
 def readfile(filename):

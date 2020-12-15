@@ -323,10 +323,14 @@ class Report():
             prefix = smwimportoverview.ontology_ns_prefix
             # todo: prepend wiki url if --write
             wikipage_name = smwimportoverview.wikipage_name
+            if self.verbose is True:
+                wikipage_str = f'\n{"-" * 15}\n{wikipage_name}\n{"-" * 15}\n'
+                self.report_cache += wikipage_str
+                self.report_cache += smwimportoverview.wikipage_content
             amount_terms = len(smwimportoverview.terms)
             if self.cli_arg_write is True:
                 wiki_article_path = mwactions.get_articlepath()
-                wikipage_name = wiki_article_path + wikipage_name  # add url
+                wikipage_name = wiki_article_path + wikipage_name  # adds url
             onto_report_line = f'{prefix} creates {wikipage_name} with' \
                                f' {amount_terms} terms\n'
             report += onto_report_line
