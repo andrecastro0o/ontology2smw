@@ -11,6 +11,15 @@ from ontology2smw.cli_args import parser
 args = parser.parse_args()
 
 
+def print_n_add2cache(msg, cache):
+    '''
+    To be used by class Report to provide a report
+    '''
+    cache += msg
+    print(msg)
+    return cache
+
+
 # def copied from Query Class (should reuse that one)
 def query_graph(sparql_fn, graph):
     with open(sparql_fn, 'r') as query_fobj:
@@ -33,6 +42,7 @@ def create_smw_import_pages(importdict):
 
 
 def sparql2smwpage(sparql_fn: str, format_: str, source: str):
+    report_cache = ''
     if format_ == 'rdf':
         format_ = 'application/rdf+xml'
     """
@@ -46,15 +56,18 @@ def sparql2smwpage(sparql_fn: str, format_: str, source: str):
         # loop through each ontology schema term, resulting from SPARQL query
         term = SMWCategoryORProp(item_=printout, query_=query)
         if args.verbose is True:
-            print(f'\n----------------------------------\n{term.wikipage_name}'
-                  f'\n----------------------------------')
+            msg_str = f'\n{"-"*10}\n{term.wikipage_name}\n{"-"*10}'
+            report_cache = print_n_add2cache(msg=msg_str, cache=report_cache)
         else:
-            print(f'{term.wikipage_name}')
+            msg_str = f'{term.wikipage_name}\n'
+            report_cache = print_n_add2cache(msg=msg_str, cache=report_cache)
 
         if args.write is True:
             term.write_wikipage()
         if args.verbose is True:
-            print(term.wikipage_content.replace('\n\n', '\n'))
+            msg_str = term.wikipage_content.replace("\n\n", "\n")
+            # msg_str = f'\n{"-"*10}\n{term.wikipage_name}\n{"-"*10}\n{content}'
+            report_cache = print_n_add2cache(msg=msg_str, cache=report_cache)
 
         if term.namespace_prefix not in smw_import_dict.keys():
             smw_import_dict[term.namespace_prefix] = SMWImportOverview(
@@ -77,7 +90,8 @@ def sparql2smwpage(sparql_fn: str, format_: str, source: str):
     reportobj = Report(importdict=smw_import_dict,
                        cli_arg_write=args.write,
                        verbose=args.verbose,
-                       output=args.report)
+                       output=args.report,
+                       cache=report_cache)
     print(reportobj.report)
 
 

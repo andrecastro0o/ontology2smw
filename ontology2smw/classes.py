@@ -309,11 +309,12 @@ class SMWImportOverview(MWpage):
 
 
 class Report():
-    def __init__(self, importdict, cli_arg_write, verbose, output):
+    def __init__(self, importdict, cli_arg_write, verbose, output, cache):
         self.importdict = importdict
         self.cli_arg_write = cli_arg_write
         self.verbose = verbose
         self.output_file = output
+        self.report_cache = cache
         self.report = self.create_report()
 
     def create_report(self):
@@ -330,5 +331,6 @@ class Report():
                                f' {amount_terms} terms\n'
             report += onto_report_line
         if self.output_file is True:
-            write2file(filename='report.txt', content=report)
+            self.report_cache += report
+            write2file(filename='report.txt', content=self.report_cache)
         return report
