@@ -9,4 +9,8 @@ Subcategory of [[:Category:{{ term_dict['subclassof']|url_termination }}]] [[Cat
 {% if term_dict['label'] %}
 Term description: [[Has property description::{{ term_dict['label'] }}{% if term_dict['label'].language %}@{{ term_dict['label'].language }}{% endif %}]]
 {% endif %}
+{% if term_dict['smw_import_info']  %}
+{{ term_dict['smw_import_info'] }}
+{% else %}
 [[Category:Imported vocabulary]] [[Category:{{ ns_prefix|upper }}]]
+{% endif %}
