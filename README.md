@@ -42,11 +42,11 @@ Using local ontology:<br/>`ontology2smw --format ttl --ontology aeon/aeon.ttl`
 
 Using a remote ontology:<br/>`ontology2smw --format ttl --ontology https://raw.githubusercontent.com/tibonto/aeon/master/aeon.ttl`
 
-Writing to wiki pages:<br/>`ontology2smw --format ttl --ontology aeon/aeon.ttl --write` 
+Writing to wiki pages:<br/>`ontology2smw --format ttl --ontology https://raw.githubusercontent.com/tibonto/aeon/master/aeon.ttl --write` 
 
 Asking for help:<br/>`ontology2smw --help`
 ```bash
-usage: __main__.py [-h] [-w] [-o ONTOLOGY] [-f {rdf,ttl}]
+usage: ontology2smw [-h] [-w] [-o ONTOLOGY] [-f {rdf,ttl}] [-v] [-r]
 
                    ___    
                  { . . } 
@@ -61,6 +61,9 @@ optional arguments:
                         Ontology file or URI. Default: https://raw.githubusercontent.com/tibonto/aeon/master/aeon.ttl 
   -f {rdf,ttl}, --format {rdf,ttl}
                         Ontology format. Default value: ttl
+  -v, --verbose         Verbose output. Default: False.
+  -r, --report          Save report in file report.txt Default: False.
+
 ```
 
 <!--
