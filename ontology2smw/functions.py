@@ -66,7 +66,6 @@ def sparql2smwpage(sparql_fn: str, format_: str, source: str):
             term.write_wikipage()
         if args.verbose is True:
             msg_str = term.wikipage_content.replace("\n\n", "\n")
-            # msg_str = f'\n{"-"*10}\n{term.wikipage_name}\n{"-"*10}\n{content}'
             report_cache = print_n_add2cache(msg=msg_str, cache=report_cache)
 
         if term.namespace_prefix not in smw_import_dict.keys():

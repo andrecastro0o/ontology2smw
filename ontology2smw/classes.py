@@ -245,7 +245,6 @@ class SMWImportOverview(MWpage):
         self.title, self.version, self.desc = self.get_ontology_details()
 
     def create_smw_import(self):
-        all_resources = self.terms
         page_info_dict = {'ontology_ns': self.ontology_ns,
                           'ontology_ns_prefix': self.ontology_ns_prefix,
                           'ontology_name': self.ontology_name,
@@ -253,7 +252,7 @@ class SMWImportOverview(MWpage):
         self.wikipage_content = render_template(
             template='mw_smw_import.j2',
             ns_prefix=self.ontology_ns_prefix,
-            term_dict=all_resources,
+            term_dict=self.terms,  # self.terms isn't a dict but [(term,type)]
             term_name=None,
             page_info=page_info_dict,
         )
