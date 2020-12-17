@@ -11,9 +11,6 @@ the wiki pages, which point to IRIs of the imported ontology(s).
 The process of importing is simple, but time consuming. Hence making it a perfect candidate for an automated process, 
 which can be run at anytime a new version of the ontology is published, hence this python script.
 
-**In order for the terms of an ontology to be imported to SMW instance they should include the property
-`aeon:SMW_datatype` and the appropriate [SMW datatype](https://www.semantic-mediawiki.org/wiki/Help:List_of_datatypes) or Category for Classes**
-
 ![ontology2smw import workflow](docs/ontology2smw_aeon.svg?raw=true)
 
 Supports:
