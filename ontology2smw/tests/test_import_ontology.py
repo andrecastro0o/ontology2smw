@@ -139,6 +139,10 @@ def test_smwimportoverview():
             ontology_format=local_onto_format)
         assert smwimport_overview.ontology_ns_prefix in \
                smwimport_overview.wikipage_name
+        smwimport_overview.terms = [('CRO_0000000', 'Category'),
+                                    ('CRO_0000097', 'Category'),
+                                    ('IAO_0000136', 'Type:Page'),
+                                    ('IAO_0000219', 'Type:Page')]  #moking
         smwimport_overview.create_smw_import()
         assert smwimport_overview.ontology_ns in \
                smwimport_overview.wikipage_content
@@ -148,6 +152,10 @@ def test_smwimportoverview():
         print(smwimport_overview.title, smwimport_overview.version,
               smwimport_overview.desc)
         assert smwimport_overview.title is not None
+        regex_term_srt = re.compile(r"^\s\w*?\|[\w\:]*?$", re.MULTILINE)
+        found_terms = re.findall(regex_term_srt,
+                                 smwimport_overview.wikipage_content)
+        assert len(found_terms) > 1
 
 
 @pytest.mark.uri
