@@ -142,7 +142,7 @@ def test_smwimportoverview():
         smwimport_overview.terms = [('CRO_0000000', 'Category'),
                                     ('CRO_0000097', 'Category'),
                                     ('IAO_0000136', 'Type:Page'),
-                                    ('IAO_0000219', 'Type:Page')]  #moking
+                                    ('IAO_0000219', 'Type:Page')]  # moking
         smwimport_overview.create_smw_import()
         assert smwimport_overview.ontology_ns in \
                smwimport_overview.wikipage_content
