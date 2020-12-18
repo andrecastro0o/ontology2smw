@@ -7,7 +7,7 @@ with open(README_path, 'r') as README_f:
 
 setup(
     name='ontology2smw',
-    version='0.0.1',
+    version='0.1.0',
     packages=['ontology2smw'],
     include_package_data=True,
     license='GPLv3',
