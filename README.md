@@ -12,10 +12,13 @@ the wiki pages, which point to IRIs of the imported ontology(s).
 The process of importing is simple, but time consuming. Hence making it a perfect candidate for an automated process, 
 which can be run at anytime a new version of the ontology is published, hence this python script.
 
+Watch [ontology2smw presentation at SWMCon 2020](https://youtu.be/AQfJL-i6s88)
+
 ![ontology2smw import workflow](docs/ontology2smw_aeon.svg?raw=true)
 
 Supports:
 * python3.6, python3.7, python3.8
+
 
 
 ## Install:
