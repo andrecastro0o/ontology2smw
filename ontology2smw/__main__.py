@@ -15,7 +15,7 @@ def main():
         writetowiki_decision()
 
     sparql2smwpage(
-        sparql_fn='ontology2smw/queries/query_classes_properties.rq',
+        sparql_fn='ontology2smw/queries/ontology_terms.rq',
         format_=args.format,
         source=args.ontology,
     )

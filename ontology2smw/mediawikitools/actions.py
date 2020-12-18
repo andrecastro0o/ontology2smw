@@ -66,12 +66,23 @@ def ask(query: str) -> List:
 
 def login(host: str, path: str, scheme: str, username='', password='') -> \
         ClassVar:
+    '''
+    Logs in to wiki. Creates the global var site (instance of mwclient.Site),
+    though which writing to the wiki is possible
+    '''
     site_ = Site(host=host, path=path, scheme=scheme)
     if username and password:
         site_.login(username=username, password=password)
     global site
     site = site_
     return site_
+
+
+def get_articlepath():
+    articlepath = site.site['server'] + site.site['articlepath'].replace(
+        '$1', '')
+    return articlepath
+
 
 # def create_mw_site(details):
 #     site = login(host=details['host'],
