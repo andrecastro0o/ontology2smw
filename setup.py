@@ -13,13 +13,16 @@ setup(
     license='GPLv3',
     author='Andre Castro',
     author_email='andre.castro@tib.eu',
+    description='Automates RDF ontology import into Semantic Mediawiki',
     long_description=README,
     long_description_content_type='text/markdown',
-    classifiers=['Programming Language :: Python',
-                 'Programming Language :: Python :: 3',
-                 'Programming Language :: Python :: 3.6',
-                 'Programming Language :: Python :: 3.7'],
+    classifiers=[
+        "Programming Language :: Python :: 3 :: Only",
+        "License :: OSI Approved :: GNU General Public License v3 (GPLv3)",
+        "Operating System :: OS Independent", ],
     keywords='Semantic Mediawiki Ontology RDF SPARQL',
+    url="https://github.com/TIBHannover/ontology2smw",
+    python_requires='>=3.6',
     install_requires=[
         'pyparsing==2.4.7',  # rdflib requiores  pyparsing at version 2.4.7
         'rdflib',
