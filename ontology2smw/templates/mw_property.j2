@@ -1,18 +1,21 @@
 
-Imported from [[Imported from::{{ ns_prefix }}:{{ item_name }}]]
+Imported from [[Imported from::{{ ns_prefix }}:{{ term_name }}]]
 
-Equivalent URI [[Equivalent URI::{{ item['subject'] }}]]
+Equivalent URI [[Equivalent URI::{{ term_dict['term'] }}]]
 
-Has type [[Has type::{{ item['smw_datatype'] }}]]
+Has type [[Has type::{{ prop_datatype }}]]
 
-{% if item['domain']  %}
-Domain [[Domain::Category:{{ item['domain']|url_termination }}]]
+{% if term_dict['domain']  %}
+Domain [[Domain::Category:{{ term_dict['domain']|url_termination }}]]
 {% endif %}
-
-{% if item['subpropertyof']  %}
-Subcategory of [[Subproperty of::{{ item['subpropertyof']|url_termination }}]]
+{% if term_dict['subpropertyof']  %}
+Subproperty of [[Subproperty of::{{ term_dict['subpropertyof']|url_termination }}]]
 {% endif %}
-
-{% if term_description %}Property description: [[Has property description::{{ term_description }}@{{ term_description_lang }}]]{% endif %}
-
-{{ item['smw_import_info'] }}
+{% if term_dict['label'] %}
+Term description: [[Has property description::{{ term_dict['label'] }}{% if term_dict['label'].language %}@{{ term_dict['label'].language }}{% endif %}]]
+{% endif %}
+{% if term_dict['smw_import_info']  %}
+{{ term_dict['smw_import_info'] }}
+{% else %}
+[[Category:Imported vocabulary]] [[Category:{{ ns_prefix|upper }}]]
+{% endif %}

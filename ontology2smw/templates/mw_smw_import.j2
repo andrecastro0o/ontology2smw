@@ -1,5 +1,5 @@
-{{ page_info['ontology_ns'] }}|[{{ page_info['ontology_ns'] }} {{ page_info['ontology_name'] }}]
-{% for resource_tuple in item %}
+{{ page_info['ontology_ns'] }}|[{{ page_info['ontology_ns'] }} {{ ns_prefix }}]
+{% for resource_tuple in term_dict %}
  {{ resource_tuple[0] }}|{{ resource_tuple[1] }}
 {%- endfor %}
 

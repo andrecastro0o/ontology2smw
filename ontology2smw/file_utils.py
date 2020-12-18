@@ -1,7 +1,28 @@
 import yaml
 import sys
+import json
+import os
 from pathlib import Path
 from typing import Dict
+
+
+def removefile(filename):
+    filepath = Path(__file__).parent.parent / filename
+    if Path.is_file(filepath):
+        os.remove(filepath)
+
+
+def readfile(filename):
+    filepath = Path(__file__).parent.parent / filename
+    with open(filepath, 'r') as filepath_f:
+        content = filepath_f.read()
+    return filepath, content
+
+
+def write2file(filename, content):
+    filepath = Path(__file__).parent.parent / filename
+    with open(filepath, 'w') as filepath_f:
+        filepath_f.write(content)
 
 
 def wikidetails_present():
@@ -13,10 +34,13 @@ def wikidetails_present():
         sys.exit(1)
 
 
-def relative_read_f(relativepath2f: str) -> str:
+def relative_read_f(relativepath2f: str, format_="txt") -> str:
     path_file = Path(__file__).parent / relativepath2f
     with open(path_file, 'r') as f:
-        f_content = f.read()
+        if format_ == 'json':
+            f_content = json.load(f)
+        else:
+            f_content = f.read()
     return f_content
 
 
