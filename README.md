@@ -17,6 +17,7 @@ which can be run at anytime a new version of the ontology is published, hence th
 Supports:
 * python3.6, python3.7, python3.8
 
+
 ## Install:
 
 ### Manually
@@ -36,7 +37,7 @@ python setup.py install
 
 **Run:**
 
-Using local ontology:<br/>`ontology2smw --format ttl --ontology aeon/aeon.ttl`
+
 
 Using a remote ontology:<br/>`ontology2smw --format ttl --ontology https://raw.githubusercontent.com/tibonto/aeon/master/aeon.ttl`
 
@@ -45,6 +46,7 @@ Writing to wiki pages:<br/>`ontology2smw --format ttl --ontology https://raw.git
 Asking for help:<br/>`ontology2smw --help`
 ```bash
 usage: ontology2smw [-h] [-w] [-o ONTOLOGY] [-f {rdf,ttl}] [-v] [-r]
+
 
                    ___    
                  { . . } 
@@ -61,6 +63,7 @@ optional arguments:
                         Ontology format. Default value: ttl
   -v, --verbose         Verbose output. Default: False.
   -r, --report          Save report in file report.txt Default: False.
+
 
 ```
 
@@ -103,6 +106,7 @@ The playbook sets Mediawiki with:
    * wiki user password: adminpassword
    * wiki bot: Admin@ontology2smwbot
    * wiki bot password: botpasswordbotpasswordbotpassword
+
 
 Requirements:
 * [VirtualBox](https://www.virtualbox.org/)

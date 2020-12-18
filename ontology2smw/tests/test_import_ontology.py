@@ -27,6 +27,7 @@ def test_queryontology_class():
         sparql_fn='ontology2smw/queries/query_ontology_schema.rq',
         format_=onto_format, source=onto_uri)
     query.get_graph_prefixes()
+
     printouts = list(query.return_printout())
     assert len(list(printouts)) > 0
     assert len(query.prefixes) > 0

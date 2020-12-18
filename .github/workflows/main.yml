@@ -1,5 +1,6 @@
 # This workflow will install Python dependencies, run tests and lint with a single version of Python
 # For more information see: https://help.github.com/actions/language-and-framework-guides/using-python-with-github-actions
+
 name: ontology2smw build
 
 on:
@@ -7,7 +8,6 @@ on:
     branches: [ master, issue31_ontologies_wout_aeon ]
   pull_request:
     branches: [ master, issue31_ontologies_wout_aeon ]
-
 jobs:
   build:
     runs-on: ${{ matrix.os }}
