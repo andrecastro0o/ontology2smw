@@ -12,7 +12,7 @@ Domain [[Domain::Category:{{ term_dict['domain']|url_termination }}]]
 Subproperty of [[Subproperty of::{{ term_dict['subpropertyof']|url_termination }}]]
 {% endif %}
 {% if term_dict['label'] %}
-Term description: [[Has property description::{{ term_dict['label'] }}{% if term_dict['label'].language %}@{{ term_dict['label'].language }}{% endif %}]]
+Label: [[Has preferred property label::{{ term_dict['label'] }}{% if term_dict['label'].language %}@{{ term_dict['label'].language }}{% endif %}]]
 {% endif %}
 {% if term_dict['smw_import_info']  %}
 {{ term_dict['smw_import_info'] }}
