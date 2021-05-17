@@ -9,8 +9,7 @@ Subcategory of [[:Category:{{ term_dict['subclassof']|url_termination }}]] [[Cat
 {% if term_dict['label'] %}
 Label: [[Has preferred property label::{{ term_dict['label'] }}{% if term_dict['label'].language %}@{{ term_dict['label'].language }}{% endif %}]]
 {% endif %}
-{% if term_dict['smw_import_info']  %}
-{{ term_dict['smw_import_info'] }}
-{% else %}
-[[Category:Imported vocabulary]] [[Category:{{ ns_prefix|upper }}]]
+{% if term_dict['definition'] %}
+Definition: [[Has property description::{{ term_dict['definition'] }}{% if term_dict['definition'].language %}@{{ term_dict['definition'].language }}{% endif %}]]
 {% endif %}
+[[Category:Imported vocabulary]] [[Category:{{ ns_prefix|upper }}]]

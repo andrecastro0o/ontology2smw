@@ -8,8 +8,9 @@ PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
 PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
 PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
 PREFIX aeon: <https://github.com/tibonto/aeon#>
+PREFIX iao: <http://purl.obolibrary.org/obo/>
 
-SELECT DISTINCT ?term ?termType ?label ?range ?subclassof ?subpropertyof ?smw_import_info
+SELECT DISTINCT ?term ?termType ?label ?range ?subclassof ?subpropertyof ?definition
 WHERE {
     {   
         ?term rdf:type owl:Class. 
@@ -44,7 +45,10 @@ WHERE {
         ?term rdfs:label ?label.
         FILTER(LCASE(LANG(?label)) = 'en')
     }
-    OPTIONAL {?term aeon:SMW_import_info ?smw_import_info.}
+    OPTIONAL { ?term skos:definition ?definition .
+    FILTER(lang(?definition) = 'en') }
+    # OPTIONAL { ?term iao:IAO_0000115 ?definition . }
+
     FILTER (!isBlank(?term))
     FILTER (!CONTAINS(STR(?term), 'http://www.w3.org/2001/XMLSchema#' ))
     FILTER (!CONTAINS(STR(?term), 'http://www.w3.org/1999/02/22-rdf-syntax-ns#' ))
