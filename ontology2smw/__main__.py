@@ -1,4 +1,5 @@
 import sys
+from pathlib import Path
 from ontology2smw.cli_args import parser
 from ontology2smw.functions import writetowiki_decision
 from ontology2smw.functions import sparql2smwpage
@@ -14,8 +15,11 @@ def main():
     if args.write:
         writetowiki_decision()
 
+    # get base path of the code
+    base_path = Path(__file__).parent
+
     sparql2smwpage(
-        sparql_fn='ontology2smw/queries/ontology_terms.rq',
+        sparql_fn=base_path / 'queries' / 'ontology_terms.rq',
         format_=args.format,
         source=args.ontology,
     )

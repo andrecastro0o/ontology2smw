@@ -105,7 +105,11 @@ def writetowiki_decision():
         "(If you say yes, make sure to disable cronjob for "
         "mediawiki/maintenance/runJobs.php) [yes/no]")
     if write_confirm == 'yes':
-        wikidetails = Path('.') / 'wikidetails.yml'
+        # use custom wikidetails.yml location
+        if args.settings:
+            wikidetails = Path(args.settings)
+        else:
+            wikidetails = Path('.') / 'wikidetails.yml'
         if Path.is_file(wikidetails) is False:
             print(f'No wikidetails.yml file was found in '
                   f'{wikidetails.absolute()}. Is is not possible to write'

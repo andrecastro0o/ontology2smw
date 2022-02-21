@@ -2,10 +2,10 @@ from argparse import ArgumentParser, RawTextHelpFormatter
 
 parser = ArgumentParser(
     description="""
-                   ___    
-                 { . . } 
+                   ___
+                 { . . }
 --------------o00---'----00o--
-              ontology2SMW  
+              ontology2SMW
 -----------------------------""", formatter_class=RawTextHelpFormatter)
 parser.add_argument('-w', '--write', action='store_true',
                     help="writes the output to wiki or file. "
@@ -22,3 +22,5 @@ parser.add_argument('-v', '--verbose', action='store_true',
                     help="Verbose output. Default: False.")
 parser.add_argument('-r', '--report', action='store_true',
                     help="Save report in file report.txt Default: False.")
+parser.add_argument('-s', '--settings',
+                    help='Use a wikidetails.yml file in a different location.')
